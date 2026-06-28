@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduVision AI - Protótipo Premium</title>
+    <title>EduVision AI - Versão Premium OBNE</title>
     <style>
         * {
             margin: 0;
@@ -99,7 +99,7 @@
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1450px;
             margin: 25px auto;
             padding: 0 20px;
         }
@@ -141,7 +141,7 @@
             gap: 25px;
         }
 
-        @media (max-width: 1000px) {
+        @media (max-width: 1100px) {
             .content-grid { grid-template-columns: 1fr; }
         }
 
@@ -160,9 +160,9 @@
             padding-bottom: 10px;
         }
 
-        /* Formulário de Rolagem para Disciplinas */
+        /* Formulário de Rolagem */
         .scroll-form {
-            max-height: 450px;
+            max-height: 480px;
             overflow-y: auto;
             padding-right: 10px;
             margin-bottom: 15px;
@@ -181,6 +181,31 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
+        }
+
+        /* Filtros da Tabela */
+        .filter-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            background: #fff;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active {
+            background-color: #1e3c72;
+            color: white;
+            border-color: #1e3c72;
         }
 
         /* Tabela */
@@ -219,6 +244,10 @@
         .status-bom { background-color: #d4edda; color: #155724; }
         .status-atencao { background-color: #fff3cd; color: #856404; }
         .status-critico { background-color: #f8d7da; color: #721c24; }
+
+        .trend-up { color: #2ecc71; font-weight: bold; }
+        .trend-down { color: #e74c3c; font-weight: bold; }
+        .trend-stable { color: #f39c12; font-weight: bold; }
 
         /* MODAL (JANELA FLUTUANTE) */
         .modal {
@@ -275,7 +304,6 @@
             margin-top: 5px;
         }
 
-        /* Abas do Modal */
         .modal-tabs {
             display: flex;
             border-bottom: 2px solid #ddd;
@@ -297,13 +325,8 @@
             border-bottom: 3px solid #1e3c72;
         }
 
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
         .boletim-grid {
             display: grid;
@@ -319,6 +342,30 @@
             font-size: 13px;
             display: flex;
             justify-content: space-between;
+        }
+
+        .btn-print {
+            background-color: #34495e;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* CONFIGURAÇÃO DE IMPRESSÃO (CSS PRINT) */
+        @media print {
+            body * { visibility: hidden; }
+            .modal-content, .modal-content * { visibility: visible; }
+            .modal-content { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; padding: 0; }
+            .close-modal, .modal-tabs, .btn-print { display: none !important; }
+            .tab-content { display: block !important; }
         }
     </style>
 </head>
@@ -381,6 +428,10 @@
                                 <label>Frequência (%)</label>
                                 <input type="number" id="frequencia" min="0" max="100" placeholder="Ex: 92" required>
                             </div>
+                            <div class="input-group" style="background: #e8f4fd; padding: 8px; border-radius: 5px;">
+                                <label style="color:#1e3c72;">Média Geral Histórica (Bimestre Passado)</label>
+                                <input type="number" id="media-anterior" step="0.1" min="0" max="10" placeholder="Ex: 7.5" required>
+                            </div>
 
                             <div class="form-category">ITINERÁRIOS FORMATIVOS / TÉCNICOS</div>
                             <div class="notas-grid">
@@ -413,15 +464,24 @@
 
                 <div class="table-section">
                     <h2>📊 Painel de Alunos Cadastrados</h2>
+                    
+                    <div class="filter-container">
+                        <button class="filter-btn active" onclick="filtrarAlunos('todos', this)">Ver Todos</button>
+                        <button class="filter-btn" onclick="filtrarAlunos('estavel', this)">🟢 Estáveis</button>
+                        <button class="filter-btn" onclick="filtrarAlunos('atencao', this)">🟡 Em Atenção</button>
+                        <button class="filter-btn" onclick="filtrarAlunos('critico', this)">🔴 Casos Críticos</button>
+                    </div>
+
                     <div style="overflow-x: auto;">
                         <table>
                             <thead>
                                 <tr>
                                     <th>Nome</th>
                                     <th>Turma</th>
-                                    <th>Média Geral</th>
+                                    <th>Média Atual</th>
+                                    <th>Tendência IA</th>
                                     <th>Frequência</th>
-                                    <th>Diagnóstico Base</th>
+                                    <th>Situação</th>
                                 </tr>
                             </thead>
                             <tbody id="tabela-corpo"></tbody>
@@ -455,32 +515,43 @@
                     <h4>Estatísticas de Força e Fragilidade</h4>
                     <p style="font-size: 14px;">📈 <strong>Maior Aptidão:</strong> <span id="modal-maior-nota">--</span></p>
                     <p style="font-size: 14px; margin-top: 4px;">📉 <strong>Ponto de Atenção:</strong> <span id="modal-menor-nota">--</span></p>
+                    <p style="font-size: 14px; margin-top: 4px; padding-top: 4px; border-top: 1px dashed #ddd;">📉 <strong>Histórico Comparativo:</strong> Média Anterior: <span id="modal-hist-ant">--</span> ➔ Média Atual: <span id="modal-hist-atu">--</span></p>
                 </div>
                 <div class="info-box" style="border-left-color: #e74c3c;">
                     <h4>🚀 Sugestões e Direcionamento da IA (Melhores Ações)</h4>
                     <p id="modal-acao" style="font-size: 14px; color: #333; line-height: 1.4;"></p>
                 </div>
+                
+                <button class="btn-print" onclick="window.print()">🖨️ Exportar Relatório Pedagógico</button>
             </div>
 
             <div id="tab-boletim" class="tab-content">
                 <div class="info-box" style="border-left-color: #2ecc71;">
                     <h4 style="margin-bottom: 15px; color:#2ecc71;">Histórico Geral de Notas</h4>
-                    <div class="boletim-grid" id="modal-boletim-render">
-                        </div>
+                    <div class="boletim-grid" id="modal-boletim-render"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Banco inicial de teste
+        let filtroAtual = 'todos';
+        
         let listaAlunos = [
             {
-                nome: "Bruno Carvalho", turma: "1º Ano Adm", frequencia: 96,
+                nome: "Bruno Carvalho", turma: "1º Ano Adm", frequencia: 96, mediaAnterior: 9.0,
                 notas: {
                     emp: 9.5, mkt: 9.0, agro: 5.0, pjv: 8.5, port: 8.0, mat: 7.5,
                     bio: 7.0, fis: 6.5, qui: 7.0, his: 8.0, geo: 8.5, fil: 9.0,
-                    soc: 9.0, art: 8.5, edf: 10, ing: 9.0, esp: 8.5
+                    soc: 9.0, art: 8.5, edf: 10, ing:                    9.0, esp: 8.5
+                }
+            },
+            {
+                nome: "Juliana Mendes", turma: "2º Ano Agro", frequencia: 90, mediaAnterior: 5.5,
+                notas: {
+                    emp: 6.0, mkt: 5.5, agro: 8.5, pjv: 7.0, port: 6.5, mat: 6.0,
+                    bio: 8.0, fis: 5.0, qui: 5.5, his: 6.0, geo: 7.0, fil: 6.5,
+                    soc: 6.0, art: 7.0, edf: 8.0, ing: 6.0, esp: 6.0
                 }
             }
         ];
@@ -505,6 +576,7 @@
                 nome: document.getElementById('nome').value,
                 turma: document.getElementById('turma').value,
                 frequencia: parseInt(document.getElementById('frequencia').value),
+                mediaAnterior: parseFloat(document.getElementById('media-anterior').value),
                 notas: {
                     emp: parseFloat(document.getElementById('n-emp').value),
                     mkt: parseFloat(document.getElementById('n-mkt').value),
@@ -536,22 +608,40 @@
             return soma / chaves.length;
         }
 
+        function filtrarAlunos(tipo, elemento) {
+            filtroAtual = tipo;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            elemento.classList.add('active');
+            atualizarTela();
+        }
+
         function atualizarTela() {
             const corpo = document.getElementById('tabela-corpo');
-            corpo.innerHTML = '';            let riscos = 0, somaISE = 0;
+            corpo.innerHTML = '';
+            let riscos = 0, somaISE = 0;
 
             listaAlunos.forEach((aluno, idx) => {
                 let media = calcularMediaCompleta(aluno.notas);
+                let sitCorta = 'estavel';
                 let badge = '<span class="status-badge status-bom">🟢 Estável</span>';
-                if (aluno.frequencia < 75) { badge = '<span class="status-badge status-critico">🔴 Risco Evasão</span>'; riscos++; somaISE += 35; }
-                else if (media < 6.0) { badge = '<span class="status-badge status-atencao">🟡 Risco Baixo</span>'; riscos++; somaISE += 60; }
+                
+                if (aluno.frequencia < 75) { badge = '<span class="status-badge status-critico">🔴 Risco Evasão</span>'; riscos++; somaISE += 35; sitCorta = 'critico'; }
+                else if (media < 6.0) { badge = '<span class="status-badge status-atencao">🟡 Risco Baixo</span>'; riscos++; somaISE += 60; sitCorta = 'atencao'; }
                 else { somaISE += 95; }
+
+                let diff = media - aluno.mediaAnterior;
+                let tendenciaElemento = '<span class="trend-stable">➔ Constante</span>';
+                if (diff > 0.4) tendenciaElemento = '<span class="trend-up">▲ Subindo</span>';
+                else if (diff < -0.4) tendenciaElemento = '<span class="trend-down">▼ Caindo</span>';
+
+                if (filtroAtual !== 'todos' && filtroAtual !== sitCorta) return;
 
                 corpo.innerHTML += `
                     <tr>
                         <td><span class="nome-clicavel" onclick="abrirFichaAluno(${idx})">${aluno.nome}</span></td>
                         <td>${aluno.turma}</td>
                         <td><strong>${media.toFixed(1)}</strong></td>
+                        <td>${tendenciaElemento}</td>
                         <td>${aluno.frequencia}%</td>
                         <td>${badge}</td>
                     </tr>`;
@@ -569,8 +659,9 @@
             document.getElementById('modal-nome').innerText = aluno.nome;
             document.getElementById('modal-turma').innerText = aluno.turma;
             document.getElementById('modal-freq').innerText = aluno.frequencia;
+            document.getElementById('modal-hist-ant').innerText = aluno.mediaAnterior.toFixed(1);
+            document.getElementById('modal-hist-atu').innerText = media.toFixed(1);
 
-            // Render do Boletim Completo na segunda aba
             const divBoletim = document.getElementById('modal-boletim-render');
             divBoletim.innerHTML = '';
             Object.keys(aluno.notas).forEach(key => {
@@ -583,34 +674,38 @@
                     </div>`;
             });
 
-            // Ordenação para IA encontrar pontos fortes e fracos
             let arrMaterias = Object.keys(aluno.notas).map(k => ({ nome: dicionarioNomes[k], nota: aluno.notas[k] }));
             arrMaterias.sort((a,b) => b.nota - a.nota);
 
             document.getElementById('modal-maior-nota').innerText = `${arrMaterias[0].nota.toFixed(1)} em ${arrMaterias[0].nome}`;
             document.getElementById('modal-menor-nota').innerText = `${arrMaterias[arrMaterias.length-1].nota.toFixed(1)} em ${arrMaterias[arrMaterias.length-1].nome}`;
 
-            // Lógica de Sugestão e Características Avançadas da IA
             let perfil = "⚖️ Perfil de Aprendizado Equilibrado";
-            let desc = "O aluno demonstra constância nas áreas técnicas e na formação geral básica.";
-            let acao = "Manter acompanhamento de rotina e incentivar a participação nas feiras de ciências da escola.";
+            let desc = "O aluno demonstra constância estável nas frentes técnicas e curriculares da instituição.";
+            let acao = "🟢 **Sugestão da IA:** Manter o plano de estudos atual. O aluno apresenta estabilidade pedagógica equilibrada.";
+
+            let quedaRendimento = (aluno.mediaAnterior - media) > 0.5;
 
             if (aluno.frequencia < 75) {
                 perfil = "⚠️ Aluno Desconectado (Faltas Críticas)";
-                desc = "A baixa assiduidade está bloqueando o aproveitamento de aprendizagem do estudante.";
+                desc = "A baixa assiduidade está bloqueando o aproveitamento de aprendizagem do estudante no período.";
                 acao = "🟢 **Sugestão da IA:** Realizar busca ativa escolar imediatamente. Chamar os responsáveis para firmar um plano de compensação de ausências em parceria com os professores.";
+            } else if (quedaRendimento) {
+                perfil = "📉 Alerta: Queda Abrupta de Desempenho";
+                desc = "A IA detectou que a média geral caiu de maneira significativa comparada ao histórico anterior. Isso costuma indicar fatores socioemocionais externos impactando os estudos.";
+                acao = "🟢 **Sugestão da IA:** Encaminhar para conversa de acolhimento com o orientador pedagógico pelo componente de Projeto de Vida. Investigar se houve mudança na rotina familiar ou cansaço excessivo.";
             } else if (aluno.notas.emp >= 7.5 && aluno.notas.mkt >= 7.5) {
                 perfil = "🚀 Perfil Empreendedor e Inovador";
                 desc = "Forte inclinação e facilidade com liderança, gerenciamento de projetos e conceitos de Marketing e Administração.";
                 acao = "🟢 **Sugestão da IA:** Direcionar o estudante para liderar projetos práticos da escola, empresas juniores ou competições empreendedoras (como a própria OBNE), aproveitando o seu ponto forte.";
             } else if (aluno.notas.agro >= 7.5 && aluno.notas.bio >= 7.5) {
-                perfil = "🌱 Perfil Técnico em Ciências Agrárias / Natureza";
-                desc = "Alta performance conectando a base de biologia com os conceitos técnicos de Agropecuária.";
-                acao = "🟢 **Sugestão da IA:** Estimular atividades de campo ou pesquisas voltadas à sustentabilidade e agronegócio.";
+                perfil = "🌱 Perfil Técnico em Ciências Agrárias";
+                desc = "Alta performance conectando a base de ciências biológicas com os conceitos técnicos e aplicados de Agropecuária.";
+                acao = "🟢 **Sugestão da IA:** Estimular atividades práticas de campo ou pesquisas científicas voltadas à sustentabilidade, ecologia e agronegócio.";
             } else if (media < 6.0) {
                 perfil = "📉 Defasagem Pedagógica Global";
-                desc = "Notas baixas espalhadas em múltiplos componentes curriculares indicam dificuldades de fixação de conteúdo.";
-                acao = "🟢 **Sugestão da IA:** Incluir em regime de tutoria e recuperação paralela focado na matéria de " + arrMaterias[arrMaterias.length-1].nome + ". Revisar o plano de estudos através do componente de Projeto de Vida.";
+                desc = "Notas médias em patamares baixos espalhadas em múltiplos componentes curriculares indicam dificuldades acumuladas.";
+                acao = "🟢 **Sugestão da IA:** Incluir em regime de tutoria e recuperação paralela focado urgentemente na matéria de " + arrMaterias[arrMaterias.length-1].nome + ".";
             }
 
             document.getElementById('modal-perfil').innerText = perfil;
