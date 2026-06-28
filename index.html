@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduVision AI - Protótipo</title>
+    <title>EduVision AI - Protótipo Avançado</title>
     <style>
         * {
             margin: 0;
@@ -59,7 +59,7 @@
             font-size: 14px;
         }
 
-        .input-group input {
+        .input-group input, .input-group select {
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
@@ -86,7 +86,7 @@
 
         /* PAINEL PRINCIPAL (DASHBOARD) */
         #dashboard-screen {
-            display: none; /* Escondido inicialmente */
+            display: none;
         }
 
         header {
@@ -99,12 +99,11 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1300px;
             margin: 30px auto;
             padding: 0 20px;
         }
 
-        /* Cards do Dashboard */
         .metrics-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -136,14 +135,13 @@
             color: #222;
         }
 
-        /* Seção de Cadastro e Tabela */
         .content-grid {
             display: grid;
             grid-template-columns: 1fr 2fr;
             gap: 30px;
         }
 
-        @media (max-width: 800px) {
+        @media (max-width: 900px) {
             .content-grid { grid-template-columns: 1fr; }
         }
 
@@ -162,7 +160,15 @@
             padding-bottom: 10px;
         }
 
-        /* Tabela de Alunos */
+        /* Formulário em Linha para Notas */
+        .notas-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        /* Tabela */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -181,16 +187,89 @@
             color: #555;
         }
 
+        .nome-clicavel {
+            color: #1e3c72;
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .nome-clicavel:hover {
+            color: #2a5298;
+        }
+
         .status-badge {
             padding: 4px 8px;
             border-radius: 4px;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 11px;
+            display: inline-block;
+            margin-bottom: 5px;
         }
 
         .status-bom { background-color: #d4edda; color: #155724; }
         .status-atencao { background-color: #fff3cd; color: #856404; }
         .status-critico { background-color: #f8d7da; color: #721c24; }
+
+        /* MODAL (JANELA FLUTUANTE DA FICHA DO ALUNO) */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #aaa;
+        }
+
+        .close-modal:hover { color: #333; }
+
+        .modal-header h2 { color: #1e3c72; margin-bottom: 5px; }
+        .modal-header p { color: #777; font-size: 14px; margin-bottom: 20px; }
+
+        .info-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border-left: 4px solid #1e3c72;
+        }
+
+        .perfil-badge {
+            background-color: #e8f4fd;
+            color: #1d8cf8;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 13px;
+            display: inline-block;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -223,21 +302,21 @@
             <div class="metrics-grid">
                 <div class="card ise">
                     <h3>❤️ Saúde Escolar (ISE)</h3>
-                    <div class="value" id="ise-val">82/100</div>
+                    <div class="value" id="ise-val">--</div>
                 </div>
                 <div class="card">
                     <h3>👥 Alunos Monitorados</h3>
-                    <div class="value" id="total-alunos">3</div>
+                    <div class="value" id="total-alunos">--</div>
                 </div>
                 <div class="card alerta">
                     <h3>⚠️ Casos de Risco</h3>
-                    <div class="value" id="casos-risco">1</div>
+                    <div class="value" id="casos-risco">--</div>
                 </div>
             </div>
 
             <div class="content-grid">
                 <div class="form-section">
-                    <h2>📝 Cadastrar/Escrever Aluno</h2>
+                    <h2>📝 Cadastrar Notas e Aluno</h2>
                     <form id="cadastro-form" onsubmit="cadastrarAluno(event)">
                         <div class="input-group">
                             <label>Nome Completo</label>
@@ -248,28 +327,45 @@
                             <input type="text" id="turma" placeholder="Ex: 1º Ano A" required>
                         </div>
                         <div class="input-group">
-                            <label>Média Atual (0 a 10)</label>
-                            <input type="number" id="nota" step="0.1" min="0" max="10" placeholder="Ex: 5.5" required>
-                        </div>
-                        <div class="input-group">
                             <label>Frequência (%)</label>
-                            <input type="number" id="frequencia" min="0" max="100" placeholder="Ex: 72" required>
+                            <input type="number" id="frequencia" min="0" max="100" placeholder="Ex: 85" required>
                         </div>
+                        
+                        <p style="font-weight: bold; margin: 15px 0 5px 0; font-size: 14px; color:#1e3c72;">Notas por Disciplina:</p>
+                        <div class="notas-grid">
+                            <div class="input-group">
+                                <label>Matemática</label>
+                                <input type="number" id="nota-mat" step="0.1" min="0" max="10" required>
+                            </div>
+                            <div class="input-group">
+                                <label>Português</label>
+                                <input type="number" id="nota-port" step="0.1" min="0" max="10" required>
+                            </div>
+                            <div class="input-group">
+                                <label>Ciências</label>
+                                <input type="number" id="nota-cie" step="0.1" min="0" max="10" required>
+                            </div>
+                            <div class="input-group">
+                                <label>História</label>
+                                <input type="number" id="nota-hist" step="0.1" min="0" max="10" required>
+                            </div>
+                        </div>
+
                         <button type="submit" class="btn">Analisar com IA</button>
                     </form>
                 </div>
 
                 <div class="table-section">
-                    <h2>📊 Lista de Alunos e Diagnósticos da IA</h2>
+                    <h2>📊 Alunos Cadastrados <span style="font-size: 12px; color: #777; font-weight: normal;">(Clique no nome para abrir a ficha completa)</span></h2>
                     <div style="overflow-x: auto;">
                         <table>
                             <thead>
                                 <tr>
                                     <th>Nome</th>
                                     <th>Turma</th>
-                                    <th>Nota</th>
+                                    <th>Média Geral</th>
                                     <th>Frequência</th>
-                                    <th>Status / Ação recomendada pela IA</th>
+                                    <th>Diagnóstico da IA</th>
                                 </tr>
                             </thead>
                             <tbody id="tabela-corpo">
@@ -281,15 +377,56 @@
         </div>
     </div>
 
+    <div id="modal-aluno" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="fecharModal()">&times;</span>
+            <div class="modal-header">
+                <h2 id="modal-nome">Nome do Aluno</h2>
+                <p>Turma: <span id="modal-turma">--</span> | Frequência Geral: <span id="modal-freq">--</span>%</p>
+            </div>
+            
+            <div class="info-box">
+                <h4 style="color:#1e3c72;">🧠 Perfil Comportamental (Análise de Características)</h4>
+                <div id="modal-perfil" class="perfil-badge">Calculando...</div>
+                <p id="modal-descricao-perfil" style="font-size: 14px; margin-top: 10px; color: #555;"></p>
+            </div>
+
+            <div class="info-box" style="border-left-color: #2ecc71;">
+                <h4 style="color:#2ecc71; margin-bottom: 10px;">📊 Boletim Individual Detalhado</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px;" id="modal-notas-disciplinas">
+                    </div>
+            </div>
+
+            <div class="info-box" style="border-left-color: #e67e22;">
+                <h4 style="color:#e67e22; margin-bottom: 5px;">⭐ Destaques Estatísticos</h4>
+                <p style="font-size: 14px;">📈 <strong>Maior Nota:</strong> <span id="modal-maior-nota">--</span></p>
+                <p style="font-size: 14px; margin-top: 4px;">📉 <strong>Menor Nota:</strong> <span id="modal-menor-nota">--</span></p>
+            </div>
+
+            <div class="info-box" style="border-left-color: #e74c3c;">
+                <h4 style="color:#e74c3c; margin-bottom: 5px;">💡 Plano de Ação Recomendado</h4>
+                <p id="modal-acao" style="font-size: 14px; color: #444;"></p>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Banco de dados simulado inicial
+        // Banco de dados simulado inicial, agora com notas individuais
         let listaAlunos = [
-            { nome: "Ana Costa", turma: "3º Ano C", nota: 4.5, frequencia: 68 },
-            { nome: "Pedro Santos", turma: "2º Ano B", nota: 8.5, frequencia: 95 },
-            { nome: "Maria Oliveira", turma: "1º Ano A", nota: 6.2, frequencia: 88 }
+            { 
+                nome: "Ana Costa", turma: "3º Ano C", frequencia: 68,
+                notas: { matematica: 4.0, portugues: 5.0, ciencias: 4.5, historia: 4.5 }
+            },
+            { 
+                nome: "Pedro Santos", turma: "2º Ano B", frequencia: 95,
+                notas: { matematica: 9.0, portugues: 8.0, ciencias: 8.5, historia: 8.5 }
+            },
+            { 
+                nome: "Maria Oliveira", turma: "1º Ano A", frequencia: 88,
+                notas: { matematica: 5.5, portugues: 7.0, ciencias: 6.0, historia: 6.5 }
+            }
         ];
 
-        // Função de Login Simples
         function fazerLogin(event) {
             event.preventDefault();
             document.getElementById('login-screen').style.display = 'none';
@@ -297,77 +434,146 @@
             atualizarTela();
         }
 
-        // Função para Cadastrar Aluno digitado pela Coordenação
         function cadastrarAluno(event) {
             event.preventDefault();
 
             const nome = document.getElementById('nome').value;
             const turma = document.getElementById('turma').value;
-            const nota = parseFloat(document.getElementById('nota').value);
             const frequencia = parseInt(document.getElementById('frequencia').value);
+            
+            const notas = {
+                matematica: parseFloat(document.getElementById('nota-mat').value),
+                portugues: parseFloat(document.getElementById('nota-port').value),
+                ciencias: parseFloat(document.getElementById('nota-cie').value),
+                historia: parseFloat(document.getElementById('nota-hist').value)
+            };
 
-            // Adiciona na lista
-            listaAlunos.push({ nome, turma, nota, frequencia });
-
-            // Limpa o formulário
+            listaAlunos.push({ nome, turma, frequencia, notas });
             document.getElementById('cadastro-form').reset();
-
-            // Atualiza o painel visual
             atualizarTela();
         }
 
-        // Função que processa a lógica de IA e atualiza o HTML
+        // Calcula a média das 4 matérias de um aluno
+        function calcularMediaGeral(notas) {
+            return (notas.matematica + notas.portugues + notas.ciencias + notas.historia) / 4;
+        }
+
         function atualizarTela() {
             const corpoTabela = document.getElementById('tabela-corpo');
-            corpoTabela.innerHTML = ''; // Limpa tabela
+            corpoTabela.innerHTML = '';
 
             let totalAlunos = listaAlunos.length;
             let casosRisco = 0;
             let somaISE = 0;
 
-            listaAlunos.forEach(aluno => {
+            listaAlunos.forEach((aluno, index) => {
+                let mediaGeral = calcularMediaGeral(aluno.notas);
                 let statusBadge = '';
-                let recomendacaoIA = '';
+                let recomendacaoCurta = '';
 
-                // Regras da Inteligência Artificial Preditiva
                 if (aluno.frequencia < 75) {
                     casosRisco++;
                     statusBadge = '<span class="status-badge status-critico">🔴 Risco Alto</span>';
-                    recomendacaoIA = 'Risco de Evasão por faltas. Enviar alerta aos pais e agendar reunião.';
-                    somaISE += 40; // Peso baixo para a saúde escolar
-                } else if (aluno.nota < 6.0) {
+                    recomendacaoCurta = 'Risco severo de evasão por faltas.';
+                    somaISE += 40;
+                } else if (mediaGeral < 6.0) {
                     casosRisco++;
                     statusBadge = '<span class="status-badge status-atencao">🟡 Atenção</span>';
-                    recomendacaoIA = 'Desempenho baixo. Indicar para aulas de Reforço Escolar.';
+                    recomendacaoCurta = 'Desempenho acadêmico abaixo da média.';
                     somaISE += 60;
                 } else {
                     statusBadge = '<span class="status-badge status-bom">🟢 Estável</span>';
-                    recomendacaoIA = 'Bom rendimento. Manter acompanhamento padrão.';
+                    recomendacaoCurta = 'Regular. Bom ritmo escolar.';
                     somaISE += 95;
                 }
 
-                // Cria a linha na tabela
+                // Note que o nome do aluno ganha um "onclick" passando o índice dele para abrir o modal
                 const linha = `
                     <tr>
-                        <td><strong>${aluno.nome}</strong></td>
+                        <td><span class="nome-clicavel" onclick="abrirFichaAluno(${index})">${aluno.nome}</span></td>
                         <td>${aluno.turma}</td>
-                        <td>${aluno.nota.toFixed(1)}</td>
+                        <td><strong>${mediaGeral.toFixed(1)}</strong></td>
                         <td>${aluno.frequencia}%</td>
-                        <td>${statusBadge} <br> <small style="color:#555">${recomendacaoIA}</small></td>
+                        <td>${statusBadge} <br><small style="color:#555">${recomendacaoCurta}</small></td>
                     </tr>
                 `;
                 corpoTabela.innerHTML += linha;
             });
 
-            // Atualiza os Cards Superiores
             document.getElementById('total-alunos').innerText = totalAlunos;
             document.getElementById('casos-risco').innerText = casosRisco;
-            
-            // Calcula o Índice de Saúde Escolar médio
             let iseMedio = Math.round(somaISE / totalAlunos);
             document.getElementById('ise-val').innerText = `${iseMedio}/100`;
         }
+
+        // FUNÇÃO QUE ABRE A ABA DE CARACTERÍSTICAS (MODAL)
+        function abrirFichaAluno(index) {
+            const aluno = listaAlunos[index];
+            const media = calcularMediaGeral(aluno.notas);
+
+            // Preenche dados básicos
+            document.getElementById('modal-nome').innerText = aluno.nome;
+            document.getElementById('modal-turma').innerText = aluno.turma;
+            document.getElementById('modal-freq').innerText = aluno.frequencia;
+
+            // Preenche boletim no modal
+            document.getElementById('modal-notas-disciplinas').innerHTML = `
+                <div>🧮 Matemática: <strong>${aluno.notas.matematica.toFixed(1)}</strong></div>
+                <div>📚 Português: <strong>${aluno.notas.portugues.toFixed(1)}</strong></div>
+                <div>🧪 Ciências: <strong>${aluno.notas.ciencias.toFixed(1)}</strong></div>
+                <div>📜 História: <strong>${aluno.notas.historia.toFixed(1)}</strong></div>
+            `;
+
+            // Encontra a maior e menor nota e suas respectivas disciplinas
+            let materias = [
+                {nome: "Matemática", nota: aluno.notas.matematica},
+                {nome: "Português", nota: aluno.notas.portugues},
+                {nome: "Ciências", nota: aluno.notas.ciencias},
+                {nome: "História", nota: aluno.notas.historia}
+            ];
+            materias.sort((a, b) => b.nota - a.nota); // Ordena do maior para o menor
+
+            document.getElementById('modal-maior-nota').innerText = `${materias[0].nota.toFixed(1)} em ${materias[0].nome}`;
+            document.getElementById('modal-menor-nota').innerText = `${materias[3].nota.toFixed(1)} em ${materias[3].nome}`;
+
+            // LÓGICA DA IA: Classificação das Características e Tipo de Aluno
+            let perfil = "";
+            let descricaoPerfil = "";
+            let acaoRecomendada = "";
+
+            if (aluno.frequencia < 75) {
+                perfil = "⚠️ Aluno Desconectado (Risco de Evasão)";
+                descricaoPerfil = "O aluno apresenta um padrão severo de faltas. A IA detectou que a desconexão com o ambiente escolar está afetando o rendimento direto, gerando desinteresse generalizado.";
+                acaoRecomendada = "Acionar imediatamente a assistência social ou ligar para os pais. Desenhar um plano de reposição de carga horária para evitar a retenção por faltas.";
+            } else if (media >= 8.0) {
+                perfil = "🌟 Aluno Altamente Engajado (Destaque)";
+                descricaoPerfil = "Apresenta excelente aproveitamento e constância nas entregas. Demonstra raciocínio lógico forte, principalmente em disciplinas como " + materias[0].nome + ". Pode atuar como monitor.";
+                acaoRecomendada = "Estimular o protagonismo convidando-o para ajudar colegas em projetos em grupo ou monitorias de " + materias[3].nome + " (sua menor nota).";
+            } else if (aluno.notas.matematica < 6.0 && aluno.notas.portugues >= 6.5) {
+                perfil = "✍️ Aluno com Perfil de Humanas / Linguagens";
+                descricaoPerfil = "O aluno vai muito bem interpretando textos e na comunicação, mas a inteligência preditiva acendeu um alerta para dificuldades específicas em raciocínio lógico-matemático.";
+                acaoRecomendada = "Direcionar para o plantão de dúvidas focado em Matemática. Utilizar metodologias ativas que misturem histórias ou cenários reais para ensinar exatas.";
+            } else if (media < 6.0) {
+                perfil = "📉 Aluno em Vulnerabilidade Pedagógica";
+                descricaoPerfil = "Apresenta rendimento abaixo da média na maior parte das disciplinas. A IA aponta fadiga escolar ou falta de base em conceitos anteriores essenciais.";
+                acaoRecomendada = "Montar um plano de recuperação paralela imediata nas matérias críticas e sugerir uma conversa com a coordenação para avaliar o método de estudos em casa.";
+            } else {
+                perfil = "⚖️ Aluno Regular / Perfil Linear";
+                descricaoPerfil = "O aluno mantém notas equilibradas e frequência estável. Cumpre os requisitos básicos e responde bem ao formato padrão de ensino.";
+                acaoRecomendada = "Manter o monitoramento contínuo. Incentivar o aumento de metas nas notas de " + materias[3].nome + " para que ele atinja o nível de destaque.";
+            }
+
+            document.getElementById('modal-perfil').innerText = perfil;
+            document.getElementById('modal-descricao-perfil').innerText = descricaoPerfil;
+            document.getElementById('modal-acao').innerText = acaoRecomendada;
+
+            // Mostra a janela (Modal)
+            document.getElementById('modal-aluno').style.display = 'flex';
+        }
+
+        function fecharModal() {
+            document.getElementById('modal-aluno').style.display = 'none';
+        }
     </script>
 </body>
-                  </html>
-                  
+</html>
