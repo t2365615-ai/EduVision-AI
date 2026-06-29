@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduVision AI - Versão Premium OBNE</title>
+    <title>EduVision AI - Matriz Adaptativa OBNE</title>
     <style>
         * {
             margin: 0;
@@ -59,12 +59,13 @@
             font-size: 13px;
         }
 
-        .input-group input {
+        .input-group input, .input-group select {
             width: 100%;
             padding: 8px 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 14px;
+            background-color: white;
         }
 
         .btn {
@@ -160,7 +161,6 @@
             padding-bottom: 10px;
         }
 
-        /* Formulário de Rolagem */
         .scroll-form {
             max-height: 480px;
             overflow-y: auto;
@@ -249,7 +249,7 @@
         .trend-down { color: #e74c3c; font-weight: bold; }
         .trend-stable { color: #f39c12; font-weight: bold; }
 
-        /* MODAL (JANELA FLUTUANTE) */
+        /* MODAL */
         .modal {
             display: none;
             position: fixed;
@@ -359,7 +359,6 @@
             gap: 5px;
         }
 
-        /* CONFIGURAÇÃO DE IMPRESSÃO (CSS PRINT) */
         @media print {
             body * { visibility: hidden; }
             .modal-content, .modal-content * { visibility: visible; }
@@ -422,7 +421,14 @@
                             </div>
                             <div class="input-group">
                                 <label>Turma</label>
-                                <input type="text" id="turma" placeholder="Ex: 1º Ano Técnico" required>
+                                <select id="turma" onchange="ajustarCamposDisciplinas()" required>
+                                    <option value="1º Ano A">1º Ano A (Téc. Administração - Empreendedorismo)</option>
+                                    <option value="1º Ano B">1º Ano B (Téc. Agropecuária)</option>
+                                    <option value="2º Ano A">2º Ano A (Téc. Administração - Empreendedorismo)</option>
+                                    <option value="2º Ano B">2º Ano B (Téc. Agropecuária)</option>
+                                    <option value="3º Ano A">3º Ano A (Téc. Marketing)</option>
+                                    <option value="3º Ano B">3º Ano B (Téc. Agropecuária)</option>
+                                </select>
                             </div>
                             <div class="input-group">
                                 <label>Frequência (%)</label>
@@ -433,12 +439,12 @@
                                 <input type="number" id="media-anterior" step="0.1" min="0" max="10" placeholder="Ex: 7.5" required>
                             </div>
 
-                            <div class="form-category">ITINERÁRIOS FORMATIVOS / TÉCNICOS</div>
+                            <div class="form-category">TÉCNICOS E ITINERÁRIOS (ADAPTATIVO)</div>
                             <div class="notas-grid">
-                                <div class="input-group"><label>Empreendedorismo</label><input type="number" id="n-emp" step="0.1" min="0" max="10" required></div>
-                                <div class="input-group"><label>Marketing</label><input type="number" id="n-mkt" step="0.1" min="0" max="10" required></div>
-                                <div class="input-group"><label>Agropecuária</label><input type="number" id="n-agro" step="0.1" min="0" max="10" required></div>
-                                <div class="input-group"><label>Projeto de Vida</label><input type="number" id="n-pjv" step="0.1" min="0" max="10" required></div>
+                                <div class="input-group" id="box-emp"><label>Empreendedorismo</label><input type="number" id="n-emp" step="0.1" min="0" max="10" value="0"></div>
+                                <div class="input-group" id="box-mkt"><label>Marketing</label><input type="number" id="n-mkt" step="0.1" min="0" max="10" value="0"></div>
+                                <div class="input-group" id="box-agro"><label>Agropecuária</label><input type="number" id="n-agro" step="0.1" min="0" max="10" value="0"></div>
+                                <div class="input-group" id="box-pjv"><label>Projeto de Vida</label><input type="number" id="n-pjv" step="0.1" min="0" max="10" value="0"></div>
                             </div>
 
                             <div class="form-category">FORMAÇÃO GERAL BÁSICA</div>
@@ -526,8 +532,7 @@
             </div>
 
             <div id="tab-boletim" class="tab-content">
-                <div class="info-box" style="border-left-color: #2ecc71;">
-                    <h4 style="margin-bottom: 15px; color:#2ecc71;">Histórico Geral de Notas</h4>
+                <div class="info-box" style="border-left-color: #2ecc71;">                    <h4 style="margin-bottom: 15px; color:#2ecc71;">Histórico Geral de Notas</h4>
                     <div class="boletim-grid" id="modal-boletim-render"></div>
                 </div>
             </div>
@@ -539,19 +544,19 @@
         
         let listaAlunos = [
             {
-                nome: "Bruno Carvalho", turma: "1º Ano Adm", frequencia: 96, mediaAnterior: 9.0,
+                nome: "Bruno Carvalho", turma: "1º Ano A", frequencia: 96, mediaAnterior: 8.8,
                 notas: {
-                    emp: 9.5, mkt: 9.0, agro: 5.0, pjv: 8.5, port: 8.0, mat: 7.5,
-                    bio: 7.0, fis: 6.5, qui: 7.0, his: 8.0, geo: 8.5, fil: 9.0,
-                    soc: 9.0, art: 8.5, edf: 10, ing:                    9.0, esp: 8.5
+                    emp: 9.5, pjv: 8.5, port: 8.0, mat: 7.5, bio: 7.0, fis: 6.5, 
+                    qui: 7.0, his: 8.0, geo: 8.5, fil: 9.0, soc: 9.0, art: 8.5, 
+                    edf: 10, ing: 9.0, esp: 8.5
                 }
             },
             {
-                nome: "Juliana Mendes", turma: "2º Ano Agro", frequencia: 90, mediaAnterior: 5.5,
+                nome: "Juliana Mendes", turma: "2º Ano B", frequencia: 90, mediaAnterior: 7.2,
                 notas: {
-                    emp: 6.0, mkt: 5.5, agro: 8.5, pjv: 7.0, port: 6.5, mat: 6.0,
-                    bio: 8.0, fis: 5.0, qui: 5.5, his: 6.0, geo: 7.0, fil: 6.5,
-                    soc: 6.0, art: 7.0, edf: 8.0, ing: 6.0, esp: 6.0
+                    agro: 8.5, pjv: 7.0, port: 6.5, mat: 6.0, bio: 8.0, fis: 6.0, 
+                    qui: 6.5, his: 6.0, geo: 7.0, fil: 6.5, soc: 6.0, art: 7.0, 
+                    edf: 8.0, ing: 6.0, esp: 6.0
                 }
             }
         ];
@@ -563,42 +568,70 @@
             edf: "Educação Física", ing: "Língua Inglesa", esp: "Língua Espanhola"
         };
 
+        function ajustarCamposDisciplinas() {
+            const turma = document.getElementById('turma').value;
+            
+            document.getElementById('box-emp').style.display = 'none';
+            document.getElementById('box-mkt').style.display = 'none';
+            document.getElementById('box-agro').style.display = 'none';
+
+            if (turma === "1º Ano A" || turma === "2º Ano A") {
+                document.getElementById('box-emp').style.display = 'block';
+            } else if (turma === "1º Ano B" || turma === "2º Ano B" || turma === "3º Ano B") {
+                document.getElementById('box-agro').style.display = 'block';
+            } else if (turma === "3º Ano A") {
+                document.getElementById('box-mkt').style.display = 'block';
+            }
+        }
+
         function fazerLogin(event) {
             event.preventDefault();
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('dashboard-screen').style.display = 'block';
+            ajustarCamposDisciplinas();
             atualizarTela();
         }
 
         function cadastrarAluno(event) {
             event.preventDefault();
+            const turma = document.getElementById('turma').value;
+            
+            let notasColetadas = {
+                pjv: parseFloat(document.getElementById('n-pjv').value) || 0,
+                port: parseFloat(document.getElementById('n-port').value) || 0,
+                mat: parseFloat(document.getElementById('n-mat').value) || 0,
+                bio: parseFloat(document.getElementById('n-bio').value) || 0,
+                fis: parseFloat(document.getElementById('n-fis').value) || 0,
+                qui: parseFloat(document.getElementById('n-qui').value) || 0,
+                his: parseFloat(document.getElementById('n-his').value) || 0,
+                geo: parseFloat(document.getElementById('n-geo').value) || 0,
+                fil: parseFloat(document.getElementById('n-fil').value) || 0,
+                soc: parseFloat(document.getElementById('n-soc').value) || 0,
+                art: parseFloat(document.getElementById('n-art').value) || 0,
+                edf: parseFloat(document.getElementById('n-edf').value) || 0,
+                ing: parseFloat(document.getElementById('n-ing').value) || 0,
+                esp: parseFloat(document.getElementById('n-esp').value) || 0
+            };
+
+            if (turma === "1º Ano A" || turma === "2º Ano A") {
+                notasColetadas.emp = parseFloat(document.getElementById('n-emp').value) || 0;
+            } else if (turma === "1º Ano B" || turma === "2º Ano B" || turma === "3º Ano B") {
+                notasColetadas.agro = parseFloat(document.getElementById('n-agro').value) || 0;
+            } else if (turma === "3º Ano A") {
+                notasColetadas.mkt = parseFloat(document.getElementById('n-mkt').value) || 0;
+            }
+
             const novo = {
                 nome: document.getElementById('nome').value,
-                turma: document.getElementById('turma').value,
-                frequencia: parseInt(document.getElementById('frequencia').value),
-                mediaAnterior: parseFloat(document.getElementById('media-anterior').value),
-                notas: {
-                    emp: parseFloat(document.getElementById('n-emp').value),
-                    mkt: parseFloat(document.getElementById('n-mkt').value),
-                    agro: parseFloat(document.getElementById('n-agro').value),
-                    pjv: parseFloat(document.getElementById('n-pjv').value),
-                    port: parseFloat(document.getElementById('n-port').value),
-                    mat: parseFloat(document.getElementById('n-mat').value),
-                    bio: parseFloat(document.getElementById('n-bio').value),
-                    fis: parseFloat(document.getElementById('n-fis').value),
-                    qui: parseFloat(document.getElementById('n-qui').value),
-                    his: parseFloat(document.getElementById('n-his').value),
-                    geo: parseFloat(document.getElementById('n-geo').value),
-                    fil: parseFloat(document.getElementById('n-fil').value),
-                    soc: parseFloat(document.getElementById('n-soc').value),
-                    art: parseFloat(document.getElementById('n-art').value),
-                    edf: parseFloat(document.getElementById('n-edf').value),
-                    ing: parseFloat(document.getElementById('n-ing').value),
-                    esp: parseFloat(document.getElementById('n-esp').value)
-                }
+                turma: turma,
+                frequencia: parseInt(document.getElementById('frequencia').value) || 0,
+                mediaAnterior: parseFloat(document.getElementById('media-anterior').value) || 0,
+                notas: notasColetadas
             };
+
             listaAlunos.push(novo);
             document.getElementById('cadastro-form').reset();
+            ajustarCamposDisciplinas();
             atualizarTela();
         }
 
@@ -619,6 +652,13 @@
             const corpo = document.getElementById('tabela-corpo');
             corpo.innerHTML = '';
             let riscos = 0, somaISE = 0;
+
+            if (listaAlunos.length === 0) {
+                document.getElementById('total-alunos').innerText = "0";
+                document.getElementById('casos-risco').innerText = "0";
+                document.getElementById('ise-val').innerText = "--";
+                return;
+            }
 
             listaAlunos.forEach((aluno, idx) => {
                 let media = calcularMediaCompleta(aluno.notas);
@@ -694,14 +734,18 @@
                 perfil = "📉 Alerta: Queda Abrupta de Desempenho";
                 desc = "A IA detectou que a média geral caiu de maneira significativa comparada ao histórico anterior. Isso costuma indicar fatores socioemocionais externos impactando os estudos.";
                 acao = "🟢 **Sugestão da IA:** Encaminhar para conversa de acolhimento com o orientador pedagógico pelo componente de Projeto de Vida. Investigar se houve mudança na rotina familiar ou cansaço excessivo.";
-            } else if (aluno.notas.emp >= 7.5 && aluno.notas.mkt >= 7.5) {
-                perfil = "🚀 Perfil Empreendedor e Inovador";
-                desc = "Forte inclinação e facilidade com liderança, gerenciamento de projetos e conceitos de Marketing e Administração.";
-                acao = "🟢 **Sugestão da IA:** Direcionar o estudante para liderar projetos práticos da escola, empresas juniores ou competições empreendedoras (como a própria OBNE), aproveitando o seu ponto forte.";
-            } else if (aluno.notas.agro >= 7.5 && aluno.notas.bio >= 7.5) {
-                perfil = "🌱 Perfil Técnico em Ciências Agrárias";
-                desc = "Alta performance conectando a base de ciências biológicas com os conceitos técnicos e aplicados de Agropecuária.";
-                acao = "🟢 **Sugestão da IA:** Estimular atividades práticas de campo ou pesquisas científicas voltadas à sustentabilidade, ecologia e agronegócio.";
+            } else if (aluno.notas.emp !== undefined && aluno.notas.emp >= 7.5) {
+                perfil = "🚀 Perfil Empreendedor (Téc. Administração)";
+                desc = "Forte inclinação e facilidade com frentes de liderança, gerenciamento de projetos e modelos de negócios.";
+                acao = "🟢 **Sugestão da IA:** Direcionar o estudante para liderar frentes práticas, simulações empresariais ou maratonas de negócios (como a OBNE), potencializando seu perfil de gestão.";
+            } else if (aluno.notas.mkt !== undefined && aluno.notas.mkt >= 7.5) {
+                perfil = "🎯 Perfil de Comunicação e Mercado (Téc. Marketing)";
+                desc = "Excelente desempenho no terceiro ano em quesitos de posicionamento de mercado, estratégias e comunicação corporativa.";
+                acao = "🟢 **Sugestão da IA:** Incentivar o aluno a desenvolver planos de divulgação prática para cooperativas locais ou projetos escolares internos utilizando canais digitais.";
+            } else if (aluno.notas.agro !== undefined && aluno.notas.agro >= 7.5) {
+                perfil = "🌱 Perfil Técnico de Campo (Téc. Agropecuária)";
+                desc = "Alta performance com os conceitos técnicos das frentes agrícolas e de manejo do agronegócio.";
+                acao = "🟢 **Sugestão da IA:** Estimular atividades de extensão prática no campo da instituição, pesquisas científicas em sustentabilidade ou projetos de cultivo orgânico.";
             } else if (media < 6.0) {
                 perfil = "📉 Defasagem Pedagógica Global";
                 desc = "Notas médias em patamares baixos espalhadas em múltiplos componentes curriculares indicam dificuldades acumuladas.";
