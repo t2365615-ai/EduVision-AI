@@ -154,7 +154,6 @@
             transition: width 0.5s ease, background-color 0.5s ease;
         }
 
-        /* Listagem rápida de médias por turma no Card */
         .turma-item-mini {
             display: flex;
             justify-content: space-between;
@@ -291,6 +290,14 @@
         .trend-down { color: #e74c3c; font-weight: bold; }
         .trend-stable { color: #f39c12; font-weight: bold; }
 
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 5px;
+        }
+
         /* MODAL */
         .modal {
             display: none;
@@ -310,7 +317,7 @@
             padding: 30px;
             border-radius: 10px;
             width: 95%;
-            max-width: 750px;
+            max-width: 850px;
             max-height: 90vh;
             overflow-y: auto;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
@@ -370,11 +377,10 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* NOVO DESIGN DO BOLETIM E SEMESTRES */
         .dashboard-semestres-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
             margin-bottom: 20px;
         }
 
@@ -410,9 +416,6 @@
             border: 1px solid #eee;
             border-radius: 6px;
             font-size: 13px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
         }
 
         .boletim-header-row {
@@ -420,6 +423,15 @@
             justify-content: space-between;
             align-items: center;
             font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .boletim-sub-row {
+            display: flex;
+            gap: 15px;
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 6px;
         }
 
         .nota-meter-bg {
@@ -437,6 +449,12 @@
             transition: width 0.5s ease;
         }
 
+        .btn-panel {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
         .btn-print {
             background-color: #34495e;
             color: white;
@@ -446,18 +464,68 @@
             font-size: 13px;
             cursor: pointer;
             font-weight: bold;
-            margin-top: 10px;
             display: inline-flex;
             align-items: center;
             gap: 5px;
+        }
+
+        .btn-excel {
+            background-color: #27ae60;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* COMUNICADOS INTELIGENTES */
+        .comunicado-box {
+            background: #eef9ff;
+            border: 1px dashed #1d8cf8;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: Courier, monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            margin-top: 10px;
+            color: #2c3e50;
+        }
+
+        .btn-copy {
+            background-color: #1d8cf8;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            float: right;
+            margin-top: -5px;
+        }
+
+        .pai-template {
+            border: 2px double #ccc;
+            padding: 20px;
+            background: #fff;
+            margin-top: 10px;
+        }
+
+        .pai-header {
+            text-align: center;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
         }
 
         @media print {
             body * { visibility: hidden; }
             .modal-content, .modal-content * { visibility: visible; }
             .modal-content { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; padding: 0; }
-            .close-modal, .modal-tabs, .btn-print { display: none !important; }
-            .tab-content { display: block !important; }
+            .close-modal, .modal-tabs, .btn-panel, .btn-copy { display: none !important; }
+            .tab-content { display: block !important; margin-bottom: 30px; }
         }
     </style>
 </head>
@@ -513,8 +581,9 @@
 
             <div class="content-grid">
                 <div class="form-section">
-                    <h2>📝 Matrícula e Notas</h2>
+                    <h2 id="form-titulo">📝 Matrícula e Notas</h2>
                     <form id="cadastro-form" onsubmit="cadastrarAluno(event)">
+                        <input type="hidden" id="edit-index" value="-1">
                         <div class="scroll-form">
                             <div class="input-group">
                                 <label>Nome Completo</label>
@@ -523,9 +592,9 @@
                             <div class="input-group">
                                 <label>Turma</label>
                                 <select id="turma" onchange="ajustarCamposDisciplinas()" required>
-                                    <option value="1º Ano A">1º Ano A (Téc. Administração - Empreendedorismo)</option>
+                                    <option value="1º Ano A">1º Ano A (Téc. Administração)</option>
                                     <option value="1º Ano B">1º Ano B (Téc. Agropecuária)</option>
-                                    <option value="2º Ano A">2º Ano A (Téc. Administração - Empreendedorismo)</option>
+                                    <option value="2º Ano A">2º Ano A (Téc. Administração)</option>
                                     <option value="2º Ano B">2º Ano B (Téc. Agropecuária)</option>
                                     <option value="3º Ano A">3º Ano A (Téc. Marketing)</option>
                                     <option value="3º Ano B">3º Ano B (Téc. Agropecuária)</option>
@@ -535,9 +604,15 @@
                                 <label>Frequência (%)</label>
                                 <input type="number" id="frequencia" min="0" max="100" placeholder="Ex: 92" required>
                             </div>
-                            <div class="input-group" style="background: #e8f4fd; padding: 8px; border-radius: 5px;">
-                                <label style="color:#1e3c72;">Média Geral Histórica (Bimestre Passado)</label>
-                                <input type="number" id="media-anterior" step="0.1" min="0" max="10" placeholder="Ex: 7.5" required>
+                            
+                            <div class="input-group" style="background: #e8f4fd; padding: 10px; border-radius: 5px;">
+                                <label style="color:#1e3c72; font-weight: bold;">Lançar Notas do:</label>
+                                <select id="bimestre-alvo" style="border: 1px solid #1e3c72;">
+                                    <option value="b1">1º Bimestre</option>
+                                    <option value="b2" selected>2º Bimestre</option>
+                                    <option value="b3">3º Bimestre</option>
+                                    <option value="b4">4º Bimestre</option>
+                                </select>
                             </div>
 
                             <div class="form-category">TÉCNICOS E ITINERÁRIOS (ADAPTATIVO)</div>
@@ -565,22 +640,7 @@
                                 <div class="input-group"><label>Espanhol</label><input type="number" id="n-esp" step="0.1" min="0" max="10" required></div>
                             </div>
                         </div>
-                        <button type="submit" class="btn">Processar com EduVision AI</button>
-                    </form>
-                </div>
-
-                <div class="table-section">
-                    <h2>📊 Painel de Alunos Cadastrados</h2>
-                    
-                    <div class="filter-container">
-                        <button class="filter-btn active" onclick="filtrarAlunos('todos', this)">Ver Todos</button>
-                        <button class="filter-btn" onclick="filtrarAlunos('estavel', this)">🟢 Estáveis</button>
-                        <button class="filter-btn" onclick="filtrarAlunos('atencao', this)">🟡 Em Atenção</button>
-                        <button class="filter-btn" onclick="filtrarAlunos('critico', this)">🔴 Casos Críticos</button>
-                        
-                        <select id="filtro-turma-select" class="filter-select" onchange="atualizarTela()">
-                            <option value="todas">Todas as Turmas</option>
-                            <option value="1º Ano A">tton>
+                        <button type="submit" id="btn-salvar" class="btn">Processar com EduVision AI</button>
                     </form>
                 </div>
 
@@ -638,6 +698,7 @@
             <div class="modal-tabs">
                 <button class="tab-btn active" onclick="mudarAba('diagnostico')">🧠 Análise da IA</button>
                 <button class="tab-btn" onclick="mudarAba('boletim')">📋 Boletim Completo</button>
+                <button class="tab-btn" onclick="mudarAba('intervencao')">⚡ Hub de Intervenção Ativa</button>
             </div>
 
             <div id="tab-diagnostico" class="tab-content active">
@@ -670,16 +731,39 @@
                     <h4>🚀 Sugestões e Direcionamento da IA (Melhores Ações)</h4>
                     <p id="modal-acao" style="font-size: 14px; color: #333; line-height: 1.4;"></p>
                 </div>
-                
-                <div class="btn-panel">
-                    <button class="btn-print" onclick="window.print()">🖨️ Exportar Relatório Pedagógico</button>
-                </div>
             </div>
 
             <div id="tab-boletim" class="tab-content">
                 <div class="info-box" style="border-left-color: #2ecc71;">
                     <h4 style="margin-bottom: 15px; color:#2ecc71;">Histórico Curricular Consolidado (B1 ao B4)</h4>
                     <div class="boletim-grid" id="modal-boletim-render"></div>
+                </div>
+            </div>
+
+            <div id="tab-intervencao" class="tab-content">
+                <div class="info-box" style="border-left-color: #1d8cf8;">
+                    <h4>💌 Notificação Inteligente para os Responsáveis</h4>
+                    <p style="font-size: 12px; color: #666; margin-bottom: 8px;">Texto gerado pela IA com linguagem acolhedora para envio imediato (WhatsApp ou E-mail):</p>
+                    <button class="btn-copy" onclick="copiarComunicado()">📋 Copiar Texto</button>
+                    <div id="modal-comunicado" class="comunicado-box"></div>
+                </div>
+
+                <div class="pai-template">
+                    <div class="pai-header">
+                        <h3>PLANO DE ACOMPANHAMENTO INDIVIDUAL (PAI)</h3>
+                        <p style="font-size: 11px; text-transform: uppercase;">Gerado Automaticamente por EduVision AI</p>
+                    </div>
+                    <p style="font-size: 13px; margin-bottom: 10px;"><strong>Compromisso de Desempenho e Metas Acadêmicas</strong></p>
+                    <p style="font-size: 13px; color: #444;" id="pai-corpo-texto"></p>
+                    
+                    <div style="margin-top: 40px; display: flex; justify-content: space-around; font-size: 12px;">
+                        <div style="border-top: 1px solid #333; width: 200px; text-align: center; padding-top: 5px;">Assinatura do Estudante</div>
+                        <div style="border-top: 1px solid #333; width: 200px; text-align: center; padding-top: 5px;">Coordenação Pedagógica</div>
+                    </div>
+                </div>
+
+                <div class="btn-panel">
+                    <button class="btn-print" onclick="window.print()">🖨️ Imprimir Plano Completo + PAI</button>
                 </div>
             </div>
         </div>
@@ -972,7 +1056,14 @@
                     <div class="boletim-row">
                         <div class="boletim-header-row">
                             <span>${dicionarioNomes[d]}</span>
-                            <strong style="color:${mAcumulada >= 6 ? '#155724' : '#721c24'}">${mAcumulada.toFixed(1)}</strong>                        </div>
+                            <strong style="color:${mAcumulada >= 6 ? '#155724' : '#721c24'}">${mAcumulada.toFixed(1)}</strong>
+                        </div>
+                        <div class="boletim-sub-row">
+                            <span>B1: ${n1.toFixed(1)}</span>
+                            <span>B2: ${n2.toFixed(1)}</span>
+                            <span>B3: ${n3 > 0 ? n3.toFixed(1) : '-'}</span>
+                            <span>B4: ${n4 > 0 ? n4.toFixed(1) : '-'}</span>
+                        </div>
                         <div class="nota-meter-bg">
                             <div class="nota-meter-fill" style="width: ${mAcumulada * 10}%; background-color: ${barraCor};"></div>
                         </div>
@@ -985,23 +1076,40 @@
             let perfil = "⚖️ Promovido por Projeção Direta";
             let desc = "O ritmo acadêmico acumulado nos semestres garante folga matemática para aprovação sem sobressaltos.";
             let acao = "🟢 **Sugestão da IA:** Manter rotina de acompanhamento regular. Estimular participação em olimpíadas e projetos científicos.";
+            
+            let txtComunicado = `Olá! Entramos em contato da Coordenação do EduVision para compartilhar uma excelente notícia: o(a) estudante *${aluno.nome}* apresenta desempenho estável com média geral de *${res.anual.toFixed(1)}*. Parabéns pelo empenho e parceria com a escola!`;
+            let txtPAI = `O estudante compromete-se a manter sua rotina de estudos atual, focando na expansão de suas maiores aptidões em *${matMaior}*, visando projetos de monitoria voluntária na turma de *${aluno.turma}*.`;
 
             if (aluno.frequencia < 75) {
                 perfil = "❌ Reter por Inassiduidade (Faltas Críticas)";
                 desc = "O volume de ausências superou o limite de 25% permitido por lei. Mesmo se possuir notas altas, o status atual é de retenção.";
                 acao = "🟢 **Sugestão da IA:** Notificar os responsáveis imediatamente e criar plano de reposição de conteúdo por tarefas complementares.";
+                
+                txtComunicado = `Prezados responsáveis por *${aluno.nome}*,\n\nNotamos pelo sistema EduVision AI que a frequência escolar de seu(a) filho(a) caiu para *${aluno.frequencia}%*, patamar que requer nossa atenção urgente para evitar prejuízos legais e de aprendizado. Convidamos vocês para uma conversa de acolhimento nesta semana. Podemos agendar?`;
+                txtPAI = `O estudante compromete-se a cumprir um plano intensivo de reposição de conteúdos teóricos e registrar frequência integral obrigatória nas próximas semanas na turma de *${aluno.turma}*, sob pena de retenção legal por faltas.`;
             } else if (res.anual < 6.0) {
                 perfil = "⚠️ Alerta de Retenção (Média Insuficiente)";
                 desc = "A projeção de rendimento anual está abaixo de 6.0. O estudante corre sério risco se mantiver o ritmo atual no próximo ciclo.";
                 acao = "🟢 **Sugestão da IA:** Alocar em regime de recuperação pedagógica focada estruturalmente nas frentes de " + matMenor;
+                
+                txtComunicado = `Prezados responsáveis por *${aluno.nome}*,\n\nAcompanhando o rendimento escolar através do EduVision AI, identificamos que a média projetada atual está em *${res.anual.toFixed(1)}*, com desafios acentuados na disciplina de *${matMenor}*. Gostaríamos de propor um plano de reforço em parceria com a família para superarmos esta etapa com sucesso!`;
+                txtPAI = `O estudante compromete-se a frequentar as aulas de reforço escolar no contraturno, focando esforços estruturais em sanar dúvidas na frente de *${matMenor}*, buscando elevar sua média para acima de 6.0.`;
             }
 
             document.getElementById('modal-perfil').innerText = perfil;
             document.getElementById('modal-descricao-perfil').innerText = desc;
             document.getElementById('modal-acao').innerHTML = acao;
+            document.getElementById('modal-comunicado').innerText = txtComunicado;
+            document.getElementById('pai-corpo-texto').innerText = txtPAI;
 
             mudarAba('diagnostico');
             document.getElementById('modal-aluno').style.display = 'flex';
+        }
+
+        function copiarComunicado() {
+            const texto = document.getElementById('modal-comunicado').innerText;
+            navigator.clipboard.writeText(texto);
+            alert("Mensagem copiada para a área de transferência! Pronta para colar no WhatsApp ou E-mail.");
         }
 
         function exportarCSV() {
@@ -1023,12 +1131,16 @@
         function mudarAba(aba) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
             if (aba === 'diagnostico') {
                 document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
                 document.getElementById('tab-diagnostico').classList.add('active');
-            } else {
+            } else if (aba === 'boletim') {
                 document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
                 document.getElementById('tab-boletim').classList.add('active');
+            } else {
+                document.querySelector('.tab-btn:nth-child(3)').classList.add('active');
+                document.getElementById('tab-intervencao').classList.add('active');
             }
         }
 
@@ -1036,11 +1148,3 @@
     </script>
 </body>
 </html>
-
-                        </div>
-                        <div class="boletim-sub-row">
-                            <span>B1: ${n1.toFixed(1)}</span>
-                            <span>B2: ${n2.toFixed(1)}</span>
-                            <span>B3: ${n3 > 0 ? n3.toFixed(1) : '-'}</span>
-                            <span>B4: ${n4 > 0 ? n4.toFixed(1) : '-'}</span>
-             
