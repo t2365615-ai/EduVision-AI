@@ -166,11 +166,11 @@
 
         .content-grid {
             display: grid;
-            grid-template-columns: 1.2fr 2fr;
+            grid-template-columns: 1fr 2fr;
             gap: 25px;
         }
 
-        @media (max-width: 1100px) {
+        @media (max-width: 1200px) {
             .content-grid { grid-template-columns: 1fr; }
         }
 
@@ -215,13 +215,16 @@
         .filter-container {
             display: flex;
             gap: 8px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
             align-items: center;
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
         }
 
         .filter-btn {
-            padding: 6px 12px;
+            padding: 6px 14px;
             border: 1px solid #ddd;
             background: #fff;
             border-radius: 20px;
@@ -249,10 +252,24 @@
             background-color: #fff;
         }
 
-        /* Tabela */
+        /* Agrupamento por Turmas */
+        .turma-group-header {
+            background-color: #eef2f7;
+            color: #1e3c72;
+            padding: 10px 15px;
+            font-weight: bold;
+            font-size: 14px;
+            margin-top: 20px;
+            border-radius: 6px;
+            border-left: 4px solid #1e3c72;
+            display: flex;
+            justify-content: space-between;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 10px;
         }
 
         th, td {
@@ -265,6 +282,7 @@
         th {
             background-color: #f8f9fa;
             color: #555;
+            font-weight: 600;
         }
 
         .nome-clicavel {
@@ -351,6 +369,46 @@
             font-size: 13px;
             display: inline-block;
             margin-top: 5px;
+        }
+
+        /* Estrutura de IA no Modal */
+        .ai-section-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #1e3c72;
+            margin-top: 12px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .ai-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .ai-list li {
+            font-size: 13.5px;
+            margin-bottom: 6px;
+            position: relative;
+            padding-left: 20px;
+            line-height: 1.4;
+        }
+
+        .ai-list.domina li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #2ecc71;
+            font-weight: bold;
+        }
+
+        .ai-list.aprimorar li::before {
+            content: "➔";
+            position: absolute;
+            left: 0;
+            color: #e67e22;
+            font-weight: bold;
         }
 
         .modal-tabs {
@@ -663,25 +721,11 @@
                             <option value="3º Ano B">3º Ano B (Agro)</option>
                         </select>
 
-                        <button class="btn-excel" onclick="exportarCSV()">📥 Baixar Planilha Excel/CSV</button>
+                        <button class="btn-excel" onclick="exportarCSV()">📥 Exportar CSV</button>
                     </div>
 
-                    <div style="overflow-x: auto;">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>Turma</th>
-                                    <th>Média Anual</th>
-                                    <th>Tendência IA</th>
-                                    <th>Frequência</th>
-                                    <th>Situação</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabela-corpo"></tbody>
-                        </table>
-                    </div>
+                    <div id="tabelas-agrupadas-container" style="overflow-x: auto;">
+                        </div>
                 </div>
             </div>
         </div>
@@ -722,14 +766,17 @@
                     <div id="modal-perfil" class="perfil-badge">--</div>
                     <p id="modal-descricao-perfil" style="font-size: 14px; margin-top: 10px; color: #555;"></p>
                 </div>
-                <div class="info-box" style="border-left-color: #e67e22;">
-                    <h4>Estatísticas de Força e Fragilidade (Geral)</h4>
-                    <p style="font-size: 14px;">📈 <strong>Maior Aptidão Histórica:</strong> <span id="modal-maior-nota">--</span></p>
-                    <p style="font-size: 14px; margin-top: 4px;">📉 <strong>Ponto Crítico Requerente:</strong> <span id="modal-menor-nota">--</span></p>
+
+                <div class="info-box" style="border-left-color: #2ecc71;">
+                    <div class="ai-section-title">⭐ Pontos de Domínio do Aluno</div>
+                    <ul id="modal-ai-domina" class="ai-list domina">
+                        </ul>
                 </div>
-                <div class="info-box" style="border-left-color: #e74c3c;">
-                    <h4>🚀 Sugestões e Direcionamento da IA (Melhores Ações)</h4>
-                    <p id="modal-acao" style="font-size: 14px; color: #333; line-height: 1.4;"></p>
+
+                <div class="info-box" style="border-left-color: #e67e22;">
+                    <div class="ai-section-title">🚀 Plano de Aprimoramento Direcionado</div>
+                    <ul id="modal-ai-aprimorar" class="ai-list aprimorar">
+                        </ul>
                 </div>
             </div>
 
@@ -782,6 +829,10 @@
             edf: "Educação Física", ing: "Língua Inglesa", esp: "Língua Espanhola"
         };
 
+        const turmasDisponiveis = [
+            "1º Ano A", "1º Ano B", "2º Ano A", "2º Ano B", "3º Ano A", "3º Ano B"
+        ];
+
         window.onload = function() {
             let dadosLocais = localStorage.getItem('eduVision_alunos');
             if (dadosLocais) {
@@ -795,6 +846,15 @@
                             b2: { emp:9.5, pjv:8.5, port:8, mat:7.5, bio:7, fis:6.5, qui:7, his:8, geo:8.5, fil:9, soc:9, art:8.5, edf:10, ing:9, esp:8.5 },
                             b3: { emp:0, pjv:0, port:0, mat:0, bio:0, fis:0, qui:0, his:0, geo:0, fil:0, soc:0, art:0, edf:0, ing:0, esp:0 },
                             b4: { emp:0, pjv:0, port:0, mat:0, bio:0, fis:0, qui:0, his:0, geo:0, fil:0, soc:0, art:0, edf:0, ing:0, esp:0 }
+                        }
+                    },
+                    {
+                        nome: "Ana Clara Silva", turma: "1º Ano B", frequencia: 71,
+                        historico: {
+                            b1: { agro:5, pjv:6, port:6, mat:5, bio:6, fis:5, qui:5, his:6, geo:6, fil:6, soc:7, art:7, edf:8, ing:6, esp:6 },
+                            b2: { agro:5.5, pjv:6, port:5.8, mat:5.2, bio:5.5, fis:4.8, qui:5, his:6, geo:5.8, fil:6.2, soc:6.8, art:7, edf:8, ing:6, esp:6 },
+                            b3: { agro:0, pjv:0, port:0, mat:0, bio:0, fis:0, qui:0, his:0, geo:0, fil:0, soc:0, art:0, edf:0, ing:0, esp:0 },
+                            b4: { agro:0, pjv:0, port:0, mat:0, bio:0, fis:0, qui:0, his:0, geo:0, fil:0, soc:0, art:0, edf:0, ing:0, esp:0 }
                         }
                     }
                 ];
@@ -813,8 +873,8 @@
             document.getElementById('box-agro').style.display = 'none';
 
             if (turma.includes("Ano A")) document.getElementById('box-emp').style.display = 'block';
-            else if (turma === "3º Ano A") document.getElementById('box-mkt').style.display = 'block';
-            else document.getElementById('box-agro').style.display = 'block';
+            if (turma === "3º Ano A") document.getElementById('box-mkt').style.display = 'block';
+            if (turma.includes("Ano B")) document.getElementById('box-agro').style.display = 'block';
         }
 
         function fazerLogin(event) {
@@ -904,9 +964,9 @@
         }
 
         function atualizarTela() {
-            const corpo = document.getElementById('tabela-corpo');
+            const containerTabelas = document.getElementById('tabelas-agrupadas-container');
             const filtroTurma = document.getElementById('filtro-turma-select').value;
-            corpo.innerHTML = '';
+            containerTabelas.innerHTML = '';
             
             let riscos = 0, somaISE = 0;
             let mapaTurmas = {
@@ -920,51 +980,90 @@
                 document.getElementById('casos-risco').innerText = "0";
                 document.getElementById('ise-val').innerText = "--";
                 document.getElementById('container-medias-turma').innerHTML = "Sem registros.";
+                containerTabelas.innerHTML = '<p style="color:#777; padding:20px; text-align:center;">Nenhum aluno cadastrado.</p>';
                 return;
             }
 
-            listaAlunos.forEach((aluno, idx) => {
+            listaAlunos.forEach((aluno) => {
                 let res = calcularResultadosAnuais(aluno);
-                
                 if (mapaTurmas[aluno.turma]) {
                     mapaTurmas[aluno.turma].soma += res.anual;
                     mapaTurmas[aluno.turma].qtd++;
                 }
-
-                let sitCorta = 'estavel';
-                let badge = '<span class="status-badge status-bom">🟢 Estável</span>';
-                
-                if (aluno.frequencia < 75) { 
-                    badge = '<span class="status-badge status-critico">🔴 Risco Evasão</span>'; 
-                    riscos++; somaISE += 30; sitCorta = 'critico'; 
-                } else if (res.anual < 6.0) { 
-                    badge = '<span class="status-badge status-atencao">🟡 Risco Retenção</span>'; 
-                    riscos++; somaISE += 55; sitCorta = 'atencao'; 
-                } else { 
-                    somaISE += 95; 
-                }
-
-                if (filtroAtual !== 'todos' && filtroAtual !== sitCorta) return;
-                if (filtroTurma !== 'todas' && aluno.turma !== filtroTurma) return;
-
-                let tendencia = '<span class="trend-stable">➔ Constante</span>';
-                if (res.b2 > res.b1 && res.b1 > 0) tendencia = '<span class="trend-up">▲ Subindo</span>';
-                else if (res.b2 < res.b1 && res.b1 > 0) tendencia = '<span class="trend-down">▼ Caindo</span>';
-
-                corpo.innerHTML += `
-                    <tr>
-                        <td><span class="nome-clicavel" onclick="abrirFichaAluno(${idx})">${aluno.nome}</span></td>
-                        <td>${aluno.turma}</td>
-                        <td><strong>${res.anual.toFixed(1)}</strong></td>
-                        <td>${tendencia}</td>
-                        <td>${aluno.frequencia}%</td>
-                        <td>${badge}</td>
-                        <td>
-                            <button class="action-btn" onclick="prepararEdicao(${idx})" title="Editar Notas">✏️</button>
-                            <button class="action-btn" onclick="removerAluno(${idx})" title="Excluir Aluno">🗑️</button>
-                        </td>
-                    </tr>`;
+                if (aluno.frequencia < 75) { riscos++; somaISE += 30; }
+                else if (res.anual < 6.0) { riscos++; somaISE += 55; }
+                else { somaISE += 95; }
             });
+
+            turmasDisponiveis.forEach(turmaDaVez => {
+                if (filtroTurma !== 'todas' && turmaDaVez !== filtroTurma) return;
+
+                let alunosDaTurma = listaAlunos.map((a, idx) => ({...a, originalIndex: idx})).filter(aluno => {
+                    if (aluno.turma !== turmaDaVez) return false;
+                    
+                    let res = calcularResultadosAnuais(aluno);
+                    let sitCorta = 'estavel';
+                    if (aluno.frequencia < 75) sitCorta = 'critico';
+                    else if (res.anual < 6.0) sitCorta = 'atencao';
+
+                    if (filtroAtual !== 'todos' && filtroAtual !== sitCorta) return false;
+                    return true;
+                });
+
+                if (alunosDaTurma.length === 0) return;
+
+                let totalAlunosTurma = listaAlunos.filter(a => a.turma === turmaDaVez).length;
+                let mediaGeralTurma = mapaTurmas[turmaDaVez].qtd > 0 ? (mapaTurmas[turmaDaVez].soma / mapaTurmas[turmaDaVez].qtd).toFixed(1) : "0.0";
+
+                let blocoHTML = `
+                    <div class="turma-group-header">
+                        <span>📍 ${turmaDaVez}</span>
+                        <span style="font-size:12px; font-weight:normal; color:#555;">Média Geral: <strong>${mediaGeralTurma}</strong> | Cadastrados: ${totalAlunosTurma}</span>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 30%;">Nome</th>
+                                <th style="width: 15%;">Média Anual</th>
+                                <th style="width: 15%;">Tendência IA</th>
+                                <th style="width: 15%;">Frequência</th>
+                                <th style="width: 15%;">Situação</th>
+                                <th style="width: 10%;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+                alunosDaTurma.forEach(aluno => {
+                    let res = calcularResultadosAnuais(aluno);
+                    let badge = '<span class="status-badge status-bom">🟢 Estável</span>';
+                    if (aluno.frequencia < 75) badge = '<span class="status-badge status-critico">🔴 Risco Evasão</span>';
+                    else if (res.anual < 6.0) badge = '<span class="status-badge status-atencao">🟡 Risco Retenção</span>';
+
+                    let tendencia = '<span class="trend-stable">➔ Constante</span>';
+                    if (res.b2 > res.b1 && res.b1 > 0) tendencia = '<span class="trend-up">▲ Subindo</span>';
+                    else if (res.b2 < res.b1 && res.b1 > 0) tendencia = '<span class="trend-down">▼ Caindo</span>';
+
+                    blocoHTML += `
+                        <tr>
+                            <td><span class="nome-clicavel" onclick="abrirFichaAluno(${aluno.originalIndex})">${aluno.nome}</span></td>
+                            <td><strong>${res.anual.toFixed(1)}</strong></td>
+                            <td>${tendencia}</td>
+                            <td>${aluno.frequencia}%</td>
+                            <td>${badge}</td>
+                            <td>
+                                <button class="action-btn" onclick="prepararEdicao(${aluno.originalIndex})" title="Editar">✏️</button>
+                                <button class="action-btn" onclick="removerAluno(${aluno.originalIndex})" title="Excluir">🗑️</button>
+                            </td>
+                        </tr>`;
+                });
+
+                blocoHTML += `</tbody></table>`;
+                containerTabelas.innerHTML += blocoHTML;
+            });
+
+            if (containerTabelas.innerHTML === '') {
+                containerTabelas.innerHTML = '<p style="color:#777; padding:20px; text-align:center;">Nenhum registro encontrado para este filtro.</p>';
+            }
 
             const boxTurmas = document.getElementById('container-medias-turma');
             boxTurmas.innerHTML = '';
@@ -1070,35 +1169,54 @@
                     </div>`;
             });
 
-            document.getElementById('modal-maior-nota').innerText = `${maiorNotaGlobal.toFixed(1)} em ${matMaior}`;
-            document.getElementById('modal-menor-nota').innerText = `${menorNotaGlobal.toFixed(1)} em ${matMenor}`;
+            const boxDomina = document.getElementById('modal-ai-domina');
+            const boxAprimorar = document.getElementById('modal-ai-aprimorar');
+            
+            boxDomina.innerHTML = '';
+            boxAprimorar.innerHTML = '';
 
             let perfil = "⚖️ Promovido por Projeção Direta";
             let desc = "O ritmo acadêmico acumulado nos semestres garante folga matemática para aprovação sem sobressaltos.";
-            let acao = "🟢 **Sugestão da IA:** Manter rotina de acompanhamento regular. Estimular participação em olimpíadas e projetos científicos.";
             
             let txtComunicado = `Olá! Entramos em contato da Coordenação do EduVision para compartilhar uma excelente notícia: o(a) estudante *${aluno.nome}* apresenta desempenho estável com média geral de *${res.anual.toFixed(1)}*. Parabéns pelo empenho e parceria com a escola!`;
             let txtPAI = `O estudante compromete-se a manter sua rotina de estudos atual, focando na expansão de suas maiores aptidões em *${matMaior}*, visando projetos de monitoria voluntária na turma de *${aluno.turma}*.`;
 
             if (aluno.frequencia < 75) {
                 perfil = "❌ Reter por Inassiduidade (Faltas Críticas)";
-                desc = "O volume de ausências superou o limite de 25% permitido por lei. Mesmo se possuir notas altas, o status atual é de retenção.";
-                acao = "🟢 **Sugestão da IA:** Notificar os responsáveis imediatamente e criar plano de reposição de conteúdo por tarefas complementares.";
+                desc = "O volume de ausências superou o limite legal permitido de 25%. Risco máximo de quebra de vínculo escolar.";
                 
-                txtComunicado = `Prezados responsáveis por *${aluno.nome}*,\n\nNotamos pelo sistema EduVision AI que a frequência escolar de seu(a) filho(a) caiu para *${aluno.frequencia}%*, patamar que requer nossa atenção urgente para evitar prejuízos legais e de aprendizado. Convidamos vocês para uma conversa de acolhimento nesta semana. Podemos agendar?`;
-                txtPAI = `O estudante compromete-se a cumprir um plano intensivo de reposição de conteúdos teóricos e registrar frequência integral obrigatória nas próximas semanas na turma de *${aluno.turma}*, sob pena de retenção legal por faltas.`;
+                boxDomina.innerHTML += `<li>Aptidão pontual conservada em <strong>${matMaior}</strong> (Média ${maiorNotaGlobal.toFixed(1)}).</li>`;
+                boxDomina.innerHTML += `<li>Potencial de retenção ativa de conteúdo quando presente em sala de aula.</li>`;
+                
+                boxAprimorar.innerHTML += `<li><strong>Convocação Imediata:</strong> Acionar responsáveis para reunião pedagógica de urgência.</li>`;
+                boxAprimorar.innerHTML += `<li><strong>Plano de Reposição:</strong> Aplicar cronograma emergencial de tarefas domiciliares para compensação de carga horária.</li>`;
+                boxAprimorar.innerHTML += `<li><strong>Monitoramento Diário:</strong> Lançar controle rigoroso de presença nas próximas 3 semanas.</li>`;
+
+                txtComunicado = `Prezados responsáveis por *${aluno.nome}*,\n\nNotamos pelo sistema EduVision AI que a frequência escolar de seu(a) filho(a) caiu para *${aluno.frequencia}%*, patamar crítico. Convidamos vocês para uma conversa de acolhimento nesta semana. Podemos agendar?`;
+                txtPAI = `O estudante compromete-se a cumprir um plano intensivo de reposição de conteúdos teóricos e registrar frequência integral obrigatória nas próximas semanas na turma de *${aluno.turma}*.`;
             } else if (res.anual < 6.0) {
                 perfil = "⚠️ Alerta de Retenção (Média Insuficiente)";
-                desc = "A projeção de rendimento anual está abaixo de 6.0. O estudante corre sério risco se mantiver o ritmo atual no próximo ciclo.";
-                acao = "🟢 **Sugestão da IA:** Alocar em regime de recuperação pedagógica focada estruturalmente nas frentes de " + matMenor;
+                desc = "A projeção de rendimento anual está abaixo da média mínima 6.0. Apresenta lacunas de aprendizado em disciplinas chave.";
                 
-                txtComunicado = `Prezados responsáveis por *${aluno.nome}*,\n\nAcompanhando o rendimento escolar através do EduVision AI, identificamos que a média projetada atual está em *${res.anual.toFixed(1)}*, com desafios acentuados na disciplina de *${matMenor}*. Gostaríamos de propor um plano de reforço em parceria com a família para superarmos esta etapa com sucesso!`;
-                txtPAI = `O estudante compromete-se a frequentar as aulas de reforço escolar no contraturno, focando esforços estruturais em sanar dúvidas na frente de *${matMenor}*, buscando elevar sua média para acima de 6.0.`;
+                boxDomina.innerHTML += `<li>Demonstra bom desempenho e engajamento na disciplina de <strong>${matMaior}</strong>.</li>`;
+                boxDomina.innerHTML += `<li>Frequência escolar adequada (${aluno.frequencia}%), garantindo base presencial para recuperação.</li>`;
+                
+                boxAprimorar.innerHTML += `<li><strong>Reforço Focal:</strong> Inclusão obrigatória em regime de recuperação pedagógica contraturno na disciplina de <strong>${matMenor}</strong>.</li>`;
+                boxAprimorar.innerHTML += `<li><strong>Matriz de Estudos:</strong> Reorganizar agenda semanal focando nas dificuldades de <strong>${matMenor}</strong>.</li>`;
+                boxAprimorar.innerHTML += `<li><strong>Avaliação Formativa:</strong> Aplicar simulados adaptativos de base para monitorar evolução antes do fechamento do ciclo.</li>`;
+
+                txtComunicado = `Prezados responsáveis por *${aluno.nome}*,\n\nAcompanhando o rendimento escolar através do EduVision AI, identificamos que a média projetada atual está em *${res.anual.toFixed(1)}*, com desafios acentuados em *${matMenor}*. Gostaríamos de complementar com um plano de reforço em parceria com a família!`;
+                txtPAI = `O estudante compromete-se a frequentar as aulas de reforço escolar no contraturno, focando esforços estruturais em sanar dúvidas na frente de *${matMenor}*.`;
+            } else {
+                boxDomina.innerHTML += `<li>Excelente nível de retenção de conhecimento, destacando-se fortemente em <strong>${matMaior}</strong>.</li>`;
+                boxDomina.innerHTML += `<li>Constância pedagógica e alto índice de assiduidade em todos os componentes curriculares.</li>`;
+                
+                boxAprimorar.innerHTML += `<li><strong>Nivelamento Avançado:</strong> Estimular a participação ativa em olimpíadas de conhecimento e projetos científicos da escola.</li>`;
+                boxAprimorar.innerHTML += `<li><strong>Monitoria Voluntária:</strong> Convidar o estudante para atuar como monitor auxiliando colegas com dificuldades na turma.</li>`;
             }
 
             document.getElementById('modal-perfil').innerText = perfil;
             document.getElementById('modal-descricao-perfil').innerText = desc;
-            document.getElementById('modal-acao').innerHTML = acao;
             document.getElementById('modal-comunicado').innerText = txtComunicado;
             document.getElementById('pai-corpo-texto').innerText = txtPAI;
 
