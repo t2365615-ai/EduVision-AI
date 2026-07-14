@@ -578,6 +578,68 @@
             margin-bottom: 15px;
         }
 
+        /* ESTILOS NOVOS DOS RECURSOS SELECIONADOS */
+        .simulador-container {
+            background: #fdfefe;
+            border: 1px solid #d4e6f1;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .simulador-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .simulador-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            background: #f4f6f9;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .radar-box {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 25px;
+            border-top: 4px solid #e74c3c;
+        }
+
+        .radar-list {
+            list-style: none;
+            padding: 0;
+            font-size: 13px;
+        }
+
+        .radar-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            line-height: 1.4;
+        }
+
+        .plano-cronograma {
+            margin-top: 15px;
+            padding-left: 15px;
+            border-left: 3px solid #1e3c72;
+        }
+
+        .plano-etapa {
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+
+        .plano-etapa strong {
+            color: #1e3c72;
+        }
+
         @media print {
             body * { visibility: hidden; }
             .modal-content, .modal-content * { visibility: visible; }
@@ -614,11 +676,11 @@
         </header>
 
         <div class="container">
-            
-            <div class="card" style="border-left-color: #f39c12; margin-bottom: 25px;">
-                <h3 style="color: #d35400;">🚨 Radar de Insights Ativos (IA)</h3>
-                <ul id="radar-insights-lista" style="list-style: none; margin-top: 10px; font-size: 13.5px; line-height: 1.6; color: #444;">
-                    </ul>
+            <div class="radar-box" id="radar-section">
+                <h3 style="color: #e74c3c; display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">🚨 Radar de Riscos Ativo (IA)</h3>
+                <ul class="radar-list" id="radar-insights-lista">
+                    <li>🟢 Carregando diagnóstico preditivo em tempo real...</li>
+                </ul>
             </div>
 
             <div class="metrics-grid">
@@ -644,13 +706,6 @@
                 </div>
             </div>
 
-            <div class="table-section" style="margin-bottom: 25px;">
-                <h2>🗺️ Mapa de Risco por Sala de Aula</h2>
-                <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Clique em uma sala para visualizar o diagnóstico de calor instantâneo gerado pela IA:</p>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px;" id="mapa-salas-container">
-                    </div>
-            </div>
-
             <div class="content-grid">
                 <div class="form-section">
                     <h2 id="form-titulo">📝 Matrícula e Notas</h2>
@@ -668,833 +723,594 @@
                                     <option value="1º Ano B">1º Ano B (Téc. Agropecuária)</option>
                                     <option value="2º Ano A">2º Ano A (Téc. Administração)</option>
                                     <option value="2º Ano B">2º Ano B (Téc. Agropecuária)</option>
-                                    <option value="3º Ano A">3º Ano A (Téc. Marketing)</option>
+                                    <optio                                    <option value="3º Ano A">3º Ano A (Téc. Administração)</option>
                                     <option value="3º Ano B">3º Ano B (Téc. Agropecuária)</option>
                                 </select>
                             </div>
                             <div class="input-group">
                                 <label>Frequência (%)</label>
-                                <input type="number" id="frequencia" min="0" max="100" placeholder="Ex: 92" required>
-                            </div>
-                            
-                            <div class="input-group" style="background: #e8f4fd; padding: 10px; border-radius: 5px;">
-                                <label style="color:#1e3c72; font-weight: bold;">Lançar Notas do:</label>
-                                <select id="bimestre-alvo" style="border: 1px solid #1e3c72;">
-                                    <option value="b1">1º Bimestre</option>
-                                    <option value="b2" selected>2º Bimestre</option>                                    <option value="b3">3º Bimestre</option>
-                                    <option value="b4">4º Bimestre</option>
-                                </select>
+                                <input type="number" id="frequencia" min="0" max="100" placeholder="Ex: 85" required>
                             </div>
 
-                            <div class="form-category">TÉCNICOS E ITINERÁRIOS (ADAPTATIVO)</div>
+                            <div class="form-category">Componentes da Base Nacional Comum (BNC)</div>
                             <div class="notas-grid">
-                                <div class="input-group" id="box-emp"><label>Empreendedorismo</label><input type="number" id="n-emp" step="0.1" min="0" max="10" value="0"></div>
-                                <div class="input-group" id="box-mkt"><label>Marketing</label><input type="number" id="n-mkt" step="0.1" min="0" max="10" value="0"></div>
-                                <div class="input-group" id="box-agro"><label>Agropecuária</label><input type="number" id="n-agro" step="0.1" min="0" max="10" value="0"></div>
-                                <div class="input-group" id="box-pjv"><label>Projeto de Vida</label><input type="number" id="n-pjv" step="0.1" min="0" max="10" value="0"></div>
+                                <div class="input-group">
+                                    <label>Português</label>
+                                    <input type="number" step="0.1" min="0" max="10" id="nota-port" placeholder="0.0" required>
+                                </div>
+                                <div class="input-group">
+                                    <label>Matemática</label>
+                                    <input type="number" step="0.1" min="0" max="10" id="nota-mat" placeholder="0.0" required>
+                                </div>
+                                <div class="input-group">
+                                    <label>História</label>
+                                    <input type="number" step="0.1" min="0" max="10" id="nota-hist" placeholder="0.0" required>
+                                </div>
+                                <div class="input-group">
+                                    <label>Geografia</label>
+                                    <input type="number" step="0.1" min="0" max="10" id="nota-geo" placeholder="0.0" required>
+                                </div>
+                                <div class="input-group">
+                                    <label>Biologia</label>
+                                    <input type="number" step="0.1" min="0" max="10" id="nota-bio" placeholder="0.0" required>
+                                </div>
+                                <div class="input-group">
+                                    <label>Física/Química</label>
+                                    <input type="number" step="0.1" min="0" max="10" id="nota-exatas" placeholder="0.0" required>
+                                </div>
                             </div>
 
-                            <div class="form-category">FORMAÇÃO GERAL BÁSICA</div>
-                            <div class="notas-grid">
-                                <div class="input-group"><label>Português</label><input type="number" id="n-port" step="0.1" min="0" max="10" required></div>
-                                <div class="input-group"><label>Matemática</label><input type="number" id="n-mat" step="0.1" min="0" max="10" required></div>
-                                <div class="input-group"><label>Biologia</label><input type="number" id="n-bio" step="0.1" min="0" max="10" required></div>
-                                <div class="input-group"><label>Física</label><input type="number" id="n-fis" step="0.1" min="0" max="10" required></div>
-                                <div class="input-group"><label>Química</label><input type="number" id="n-qui" step="0.1" min="0" max="10" required></div>
-                                <div class="input-group"><label>História</label><input type="number" id="n-his" step="0.1" min="0" max="10" required></div>
-                                <div class="input-group"><label>Geografia</label><input type="number" id="n-geo" step="0.1" min="0" max="10" required></div>
-                                <div class="input-group"><label>Filosofia</label><input type="number" id="n-fil" step="0.1" min="0" max="10" required></div>
-                                <div class="input-group"><label>Sociologia</label><input type="number" id="n-soc" step="0.1" min="0" max="10" required></div>
-                                <div class="input-group"><label>Arte</label><input type="number" id="n-art" step="0.1" min="0" max="10" required></div>
-                                <div class="input-group"><label>Ed. Física</label><input type="number" id="n-edf" step="0.1" min="0" max="10" required></div>
-                                <div class="input-group"><label>Inglês</label><input type="number" id="n-ing" step="0.1" min="0" max="10" required></div>
-                                <div class="input-group"><label>Espanhol</label><input type="number" id="n-esp" step="0.1" min="0" max="10" required></div>
-                            </div>
+                            <div class="form-category" id="categoria-tecnica-titulo">Componente Técnico Profissional</div>
+                            <div class="notas-grid" id="campos-tecnicos">
+                                </div>
                         </div>
-                        <button type="submit" id="btn-salvar" class="btn">Processar com EduVision AI</button>
+                        <button type="submit" class="btn" id="btn-salvar">Salvar na Matriz</button>
+                        <button type="button" class="btn" id="btn-cancelar" style="background-color: #7f8c8d; margin-top: 8px; display: none;" onclick="limparFormulario()">Cancelar Edição</button>
                     </form>
                 </div>
 
                 <div class="table-section">
-                    <h2>📊 Painel de Alunos Cadastrados</h2>
-                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h2>📊 Matriz Adaptativa de Desempenho</h2>
+                        <button class="btn-excel" onclick="exportarExcel()">📥 Exportar XLS</button>
+                    </div>
+
                     <div class="filter-container">
-                        <button class="filter-btn active" onclick="filtrarAlunos('todos', this)">Ver Todos</button>
-                        <button class="filter-btn" onclick="filtrarAlunos('estavel', this)">🟢 Estáveis</button>
-                        <button class="filter-btn" onclick="filtrarAlunos('atencao', this)">🟡 Em Atenção</button>
-                        <button class="filter-btn" onclick="filtrarAlunos('critico', this)">🔴 Casos Críticos</button>
+                        <button class="filter-btn active" onclick="filtrarStatus('todos', this)">Todos</button>
+                        <button class="filter-btn" onclick="filtrarStatus('bom', this)">🟢 Bom Desempenho</button>
+                        <button class="filter-btn" onclick="filtrarStatus('atencao', this)">🟡 Atenção</button>
+                        <button class="filter-btn" onclick="filtrarStatus('critico', this)">🔴 Crítico</button>
                         
-                        <select id="filtro-turma-select" class="filter-select" onchange="atualizarTela()">
+                        <select class="filter-select" id="filtro-turma-select" onchange="atualizarTabela()">
                             <option value="todas">Todas as Turmas</option>
-                            <option value="1º Ano A">1º Ano A (Adm)</option>
-                            <option value="1º Ano B">1º Ano B (Agro)</option>
-                            <option value="2º Ano A">2º Ano A (Adm)</option>
-                            <option value="2º Ano B">2º Ano B (Agro)</option>
-                            <option value="3º Ano A">3º Ano A (Mkt)</option>
-                            <option value="3º Ano B">3º Ano B (Agro)</option>
+                            <option value="1º Ano A">1º Ano A</option>
+                            <option value="1º Ano B">1º Ano B</option>
+                            <option value="2º Ano A">2º Ano A</option>
+                            <option value="2º Ano B">2º Ano B</option>
+                            <option value="3º Ano A">3º Ano A</option>
+                            <option value="3º Ano B">3º Ano B</option>
                         </select>
-
-                        <button class="btn-excel" onclick="exportarCSV()">📥 Exportar CSV</button>
                     </div>
 
-                    <div id="tabelas-agrupadas-container" style="overflow-x: auto;"></div>
+                    <div id="tabela-agrupada-container">
+                        </div>
                 </div>
             </div>
-
-            <div class="form-section" style="margin-top: 25px; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white;">
-                <h2 style="color: white; border-bottom: 1px solid rgba(255,255,255,0.3);">📈 Painel de Impacto Institucional (Pós-Metodologias)</h2>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; text-align: center; margin-top: 15px;">
-                    <div>
-                        <span style="font-size: 13px; text-transform: uppercase; opacity: 0.9;">Risco Médio Original</span>
-                        <div style="font-size: 32px; font-weight: bold; text-decoration: line-through; opacity: 0.8;">75%</div>
-                    </div>
-                    <div>
-                        <span style="font-size: 13px; text-transform: uppercase; opacity: 0.9;">Risco Médio Atual</span>
-                        <div style="font-size: 36px; font-weight: bold;" id="impacto-risco-atual">--</div>
-                    </div>
-                    <div>
-                        <span style="font-size: 13px; text-transform: uppercase; opacity: 0.9;">Alunos em Zona Saudável</span>
-                        <div style="font-size: 36px; font-weight: bold;" id="impacto-resgatados">--</div>
-                    </div>
-                    <div>
-                        <span style="font-size: 13px; text-transform: uppercase; opacity: 0.9;">Taxa de Evasão Evitada</span>
-                        <div style="font-size: 36px; font-weight: bold;">- 64%</div>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
 
-    <div id="modal-aluno" class="modal">
+    <div id="student-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="fecharModal()">&times;</span>
-            <div class="modal-header">
-                <h2 id="modal-nome">--</h2>
-                <p>Turma: <span id="modal-turma">--</span> | Frequência: <span id="modal-freq">--</span>%</p>
+            <h2 id="modal-aluno-nome" style="color: #1e3c72; margin-bottom: 5px;">Nome do Aluno</h2>
+            <div id="modal-aluno-sub" style="margin-bottom: 15px;">
+                <span class="status-badge status-bom" id="modal-aluno-status">Bom</span>
+                <span class="perfil-badge" id="modal-aluno-perfil">Perfil</span>
             </div>
-            
+
             <div class="modal-tabs">
-                <button class="tab-btn active" onclick="mudarAba('diagnostico')">🧠 Análise da IA</button>
-                <button class="tab-btn" onclick="mudarAba('boletim')">📋 Boletim Completo</button>
-                <button class="tab-btn" onclick="mudarAba('intervencao')">⚡ Hub de Intervenção Ativa</button>
+                <button class="tab-btn active" onclick="mudarTab('diagnostico', this)">🧠 Diagnóstico IA</button>
+                <button class="tab-btn" onclick="mudarTab('historico', this)">📅 Histórico & Boletim</button>
+                <button class="tab-btn" onclick="mudarTab('plano', this)">🛠️ Plano de Ação (PAI)</button>
             </div>
 
             <div id="tab-diagnostico" class="tab-content active">
-                <div class="dashboard-semestres-grid">
-                    <div class="semestre-card-mini">
-                        <h5>1º Semestre</h5>
-                        <div class="semestre-value" id="modal-sem1" style="color:#8e44ad;">--</div>
-                    </div>
-                    <div class="semestre-card-mini">
-                        <h5>2º Semestre</h5>
-                        <div class="semestre-value" id="modal-sem2" style="color:#2980b9;">--</div>
-                    </div>
-                    <div class="semestre-card-mini" style="border: 2px solid #2a5298; background: #e8f4fd;">
-                        <h5>Média Geral Anual</h5>
-                        <div class="semestre-value" id="modal-media-anual" style="color:#2a5298;">--</div>
-                    </div>
-                </div>
-
                 <div class="info-box">
-                    <h4>Características Identificadas & Projeção de Fim de Ano</h4>
-                    <div id="modal-perfil" class="perfil-badge">--</div>
-                    <p id="modal-descricao-perfil" style="font-size: 14px; margin-top: 10px; color: #555;"></p>
+                    <strong>Análise Preditiva do Algoritmo:</strong>
+                    <p id="ia-predicao" style="margin-top: 5px; font-size: 13.5px;"></p>
                 </div>
+                <div class="ai-section-title">Habilidades Dominadas</div>
+                <ul class="ai-list domina" id="ia-domina"></ul>
+                <div class="ai-section-title">Habilidades a Aprimorar</div>
+                <ul class="ai-list aprimorar" id="ia-aprimorar"></ul>
 
-                <div class="info-box" style="border-left-color: #2ecc71;">
-                    <div class="ai-section-title">⭐ Pontos de Domínio do Aluno</div>
-                    <ul id="modal-ai-domina" class="ai-list domina"></ul>
-                </div>
-
-                <div class="info-box" style="border-left-color: #e67e22;">
-                    <div class="ai-section-title">🚀 Plano de Aprimoramento Direcionado</div>
-                    <ul id="modal-ai-aprimorar" class="ai-list aprimorar"></ul>
-                </div>
-            </div>
-
-            <div id="tab-boletim" class="tab-content">
-                <div class="info-box" style="border-left-color: #2ecc71;">
-                    <h4 style="margin-bottom: 15px; color:#2ecc71;">Histórico Curricular Consolidado (B1 ao B4)</h4>
-                    <div class="boletim-grid" id="modal-boletim-render"></div>
-                </div>
-            </div>
-
-            <div id="tab-intervencao" class="tab-content">
-                <div class="info-box" style="border-left-color: #9b59b6;">
-                    <h4>🔮 Simulador de Impacto de Intervenção</h4>
-                    <p style="font-size: 12px; color: #666; margin-bottom: 12px;">Selecione as ações planejadas para ver a projeção de redução de risco do aluno em tempo real:</p>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
-                        <label><input type="checkbox" class="simulador-chk" value="reforco" onchange="simularImpacto()"> 📘 Reforço Escolar (-30% risco)</label>
-                        <label><input type="checkbox" class="simulador-chk" value="familia" onchange="simularImpacto()"> 👥 Conversa com Família (-20% risco)</label>
-                        <label><input type="checkbox" class="simulador-chk" value="monitoria" onchange="simularImpacto()"> 🤝 Monitoria (-15% risco)</label>
-                        <label><input type="checkbox" class="simulador-chk" value="psico" onchange="simularImpacto()"> 🧠 Apoio Psicológico (-10% risco)</label>
-                    </div>
-                    <div style="background: #f3e5f5; padding: 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <span style="font-size: 11px; font-weight: bold; color: #8e44ad; display: block; text-transform: uppercase;">Projeção do Risco</span>
-                            <strong id="simulador-resultado" style="font-size: 20px; color: #8e44ad;">Calculando...</strong>
+                <div class="simulador-container">
+                    <strong style="color: #1e3c72; font-size: 13px;">📊 Simulador Volumetria de Notas (Impacto no ISE)</strong>
+                    <div class="simulador-grid">
+                        <div class="simulador-item">
+                            <label>Frequência Alvo:</label>
+                            <input type="number" id="sim-freq" style="width: 50px; padding: 2px;" oninput="calcularSimulacao()">%
                         </div>
-                        <p id="simulador-justificativa" style="font-size: 11.5px; color: #555; max-width: 65%; font-style: italic;"></p>
+                        <div class="simulador-item">
+                            <label>Média Geral Alvo:</label>
+                            <input type="number" step="0.1" id="sim-media" style="width: 50px; padding: 2px;" oninput="calcularSimulacao()">
+                        </div>
+                        <div class="simulador-item" style="background: #eef9ff; font-weight: bold; color: #1e3c72;">
+                            ISE Estimado: <span id="sim-ise-resultado">--</span>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="info-box" style="border-left-color: #1d8cf8;">
-                    <h4>💌 Notificação Inteligente para os Responsáveis</h4>
-                    <p style="font-size: 12px; color: #666; margin-bottom: 8px;">Texto gerado pela IA com linguagem acolhedora para envio imediato (WhatsApp ou E-mail):</p>
-                    <button class="btn-copy" onclick="copiarComunicado()">📋 Copiar Texto</button>
-                    <div id="modal-comunicado" class="comunicado-box"></div>
+            <div id="tab-historico" class="tab-content">
+                <div class="dashboard-semestres-grid">
+                    <div class="semestre-card-mini"><h5>1º Bim</h5><div class="semestre-value" id="b1-val">--</div></div>
+                    <div class="semestre-card-mini"><h5>2º Bim</h5><div class="semestre-value" id="b2-val">--</div></div>
+                    <div class="semestre-card-mini"><h5>3º Bim</h5><div class="semestre-value" id="b3-val">--</div></div>
+                    <div class="semestre-card-mini"><h5>4º Bim (Previsto)</h5><div class="semestre-value" id="b4-val">--</div></div>
                 </div>
+                <div class="boletim-grid" id="boletim-linhas"></div>
+            </div>
 
+            <div id="tab-plano" class="tab-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <strong style="color: #1e3c72;">Plano de Acompanhamento Individual (PAI) personalizado por IA</strong>
+                    <button class="btn-print" onclick="window.print()">🖨️ Imprimir PAI</button>
+                </div>
+                
                 <div class="pai-template">
                     <div class="pai-header">
-                        <h3>📅 CRONOGRAMA DE INTERVENÇÃO (PAI)</h3>
-                        <p style="font-size: 11px; text-transform: uppercase;">Metas e Ações de Acompanhamento Temporal</p>
+                        <h3>PLANO DE ACOMPANHAMENTO INDIVIDUAL (PAI)</h3>
+                        <p style="font-size: 12px; color: #555;">Gerado automaticamente via EduVision AI em tempo real</p>
                     </div>
-                    <div id="timeline-cronograma" style="margin: 20px 0; border-left: 2px solid #1e3c72; padding-left: 15px;">
-                        </div>
+                    <p style="font-size: 13px;"><strong>Responsável Pedagógico:</strong> Coordenação de Curso / Orientação Educacional</p>
+                    <p style="font-size: 13px; margin-bottom: 15px;"><strong>Objetivo:</strong> Reverter cenários de risco acadêmico e potencializar competências técnicas.</p>
                     
-                    <div style="margin-top: 40px; display: flex; justify-content: space-around; font-size: 12px;">
-                        <div style="border-top: 1px solid #333; width: 200px; text-align: center; padding-top: 5px;">Assinatura do Estudante</div>
-                        <div style="border-top: 1px solid #333; width: 200px; text-align: center; padding-top: 5px;">Coordenação Pedagógica</div>
-                    </div>
-                </div>
+                    <div class="plano-cronograma" id="pai-cronograma-conteudo"></div>
 
-                <div class="btn-panel">
-                    <button class="btn-print" onclick="window.print()">🖨️ Imprimir Plano Completo + PAI</button>
+                    <div style="margin-top: 20px;">
+                        <button class="btn-copy" onclick="copiarComunicado()">Copiar Comunicado</button>
+                        <strong style="color: #1e3c72; font-size: 12px; display: block; margin-bottom: 5px;">📱 Sugestão de Comunicado Responsáveis (WhatsApp/E-mail):</strong>
+                        <div class="comunicado-box" id="comunicado-texto"></div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        let filtroAtual = 'todos';
-        let listaAlunos = [];
-
-        const disciplinasPadrao = ["pjv", "port", "mat", "bio", "fis", "qui", "his", "geo", "fil", "soc", "art", "edf", "ing", "esp", "emp", "mkt", "agro"];
-
-        const dicionarioNomes = {
-            emp: "Empreendedorismo", mkt: "Marketing", agro: "Agropecuária", pjv: "Projeto de Vida",
-            port: "Língua Portuguesa", mat: "Matemática", bio: "Biologia", fis: "Física", qui: "Química",
-            his: "História", geo: "Geografia", fil: "Filosofia", soc: "Sociologia", art: "Arte",
-            edf: "Educação Física", ing: "Língua Inglesa", esp: "Língua Espanhola"
-        };
-
-        const turmasDisponiveis = [
-            "1º Ano A", "1º Ano B", "2º Ano A", "2º Ano B", "3º Ano A", "3º Ano B"
+        // Banco de dados em memória inicial (Mock estruturado para OBNE)
+        let alunos = [
+            { nome: "Lucas Sousa", turma: "1º Ano A", frequencia: 92, notas: { port: 8.5, mat: 7.2, hist: 8.0, geo: 7.8, bio: 8.2, exatas: 7.0, tec1: 9.0, tec2: 8.5 }, tendencia: "↑" },
+            { nome: "Ana Julia Costa", turma: "1º Ano A", frequencia: 72, notas: { port: 5.5, mat: 4.2, hist: 6.0, geo: 5.0, bio: 4.8, exatas: 4.0, tec1: 5.8, tec2: 5.0 }, tendencia: "↓" },
+            { nome: "Carlos Eduardo", turma: "1º Ano B", frequencia: 84, notas: { port: 6.8, mat: 6.0, hist: 7.2, geo: 6.5, bio: 7.0, exatas: 6.2, tec1: 7.5, tec2: 6.8 }, tendencia: "→" },
+            { nome: "Mariana Silva", turma: "2º Ano B", frequencia: 64, notas: { port: 4.0, mat: 3.5, hist: 5.0, geo: 4.5, bio: 3.8, exatas: 3.0, tec1: 4.2, tec2: 4.0 }, tendencia: "↓" },
+            { nome: "Beatriz Ribeiro", turma: "3º Ano A", frequencia: 96, notas: { port: 9.5, mat: 9.8, hist: 9.2, geo: 9.4, bio: 9.6, exatas: 9.8, tec1: 10, tec2: 9.5 }, tendencia: "↑" }
         ];
 
-        window.onload = function() {
-            let dadosLocais = localStorage.getItem('eduVision_alunos');
-            if (dadosLocais) {
-                listaAlunos = JSON.parse(dadosLocais);
-            } else {
-                listaAlunos = [
-                    {
-                        id: "1",
-                        nome: "Bruno Carvalho", turma: "1º Ano A", frequencia: 96,
-                        historico: {
-                            b1: { emp:8, pjv:8, port:8, mat:7, bio:7, fis:6, qui:7, his:8, geo:8, fil:9, soc:9, art:8, edf:10, ing:9, esp:8 },
-                            b2: { emp:9.5, pjv:8.5, port:8, mat:7.5, bio:7, fis:6.5, qui:7, his:8, geo:8.5, fil:9, soc:9, art:8.5, edf:10, ing:9, esp:8.5 },
-                            b3: { emp:0, pjv:0, port:0, mat:0, bio:0, fis:0, qui:0, his:0, geo:0, fil:0, soc:0, art:0, edf:0, ing:0, esp:0 },
-                            b4: { emp:0, pjv:0, port:0, mat:0, bio:0, fis:0, qui:0, his:0, geo:0, fil:0, soc:0, art:0, edf:0, ing:0, esp:0 }
-                        }
-                    },
-                    {
-                        id: "2",
-                        nome: "Ana Clara Silva", turma: "1º Ano B", frequencia: 71,
-                        historico: {
-                            b1: { agro:5, pjv:6, port:6, mat:5, bio:6, fis:5, qui:5, his:6, geo:6, fil:6, soc:7, art:7, edf:8, ing:6, esp:6 },
-                            b2: { agro:5.5, pjv:6, port:5.8, mat:5.2, bio:5.5, fis:4.8, qui:5, his:6, geo:5.8, fil:6.2, soc:6.8, art:7, edf:8, ing:6, esp:6 },
-                            b3: { agro:0, pjv:0, port:0, mat:0, bio:0, fis:0, qui:0, his:0, geo:0, fil:0, soc:0, art:0, edf:0, ing:0, esp:0 },
-                            b4: { agro:0, pjv:0, port:0, mat:0, bio:0, fis:0, qui:0, his:0, geo:0, fil:0, soc:0, art:0, edf:0, ing:0, esp:0 }
-                        }
-                    }
-                ];
-                salvarBancoLocal();
-            }
+        let filtroStatusAtual = 'todos';
+        let alunoSelecionadoIndex = null;
+
+        // Estruturas de disciplinas técnicas por ramificação do Ensino Médio Técnico
+        const disciplinasTecnicas = {
+            "Administração": [
+                { id: "tec1", label: "Gestão Organizacional" },
+                { id: "tec2", label: "Contabilidade Geral" }
+            ],
+            "Agropecuária": [
+                { id: "tec1", label: "Zootecnia Aplicada" },
+                { id: "tec2", label: "Fitotecnia e Solo" }
+            ]
         };
 
-        function salvarBancoLocal() {
-            localStorage.setItem('eduVision_alunos', JSON.stringify(listaAlunos));
+        function fazerLogin(e) {
+            e.preventDefault();
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('dashboard-screen').style.display = 'block';
+            inicializarDashboard();
+        }
+
+        function inicializarDashboard() {
+            ajustarCamposDisciplinas();
+            atualizarCalculosERadar();
+            atualizarTabela();
+        }
+
+        function obterRamificacaoTecnica(turma) {
+            return turma.includes('Ano A') ? 'Administração' : 'Agropecuária';
         }
 
         function ajustarCamposDisciplinas() {
-            const turma = document.getElementById('turma').value;
-            document.getElementById('box-emp').style.display = 'none';
-            document.getElementById('box-mkt').style.display = 'none';
-            document.getElementById('box-agro').style.display = 'none';
-
-            if (turma.includes("Ano A")) document.getElementById('box-emp').style.display = 'block';
-            if (turma === "3º Ano A") document.getElementById('box-mkt').style.display = 'block';
-            if (turma.includes("Ano B")) document.getElementById('box-agro').style.display = 'block';
-        }
-
-        function fazerLogin(event) {
-            event.preventDefault();
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('dashboard-screen').style.display = 'block';
-            ajustarCamposDisciplinas();
-            atualizarTela();
-        }
-
-        function cadastrarAluno(event) {
-            event.preventDefault();
-            const idEdicao = document.getElementById('edit-index').value;
-            const bim = document.getElementById('bimestre-alvo').value;
-            const turma = document.getElementById('turma').value;
-
-            let notasForm = {};
-            disciplinasPadrao.forEach(d => {
-                let campo = document.getElementById(`n-${d}`);
-                if (campo) notasForm[d] = parseFloat(campo.value) || 0;
+            const turmaSelect = document.getElementById('turma').value;
+            const ramificacao = obterRamificacaoTecnica(turmaSelect);
+            const container = document.getElementById('campos-tecnicos');
+            document.getElementById('categoria-tecnica-titulo').innerText = `Componente Técnico Profissional (${ramificacao})`;
+            
+            container.innerHTML = '';
+            disciplinasTecnicas[ramificacao].forEach(disc => {
+                container.innerHTML += `
+                    <div class="input-group">
+                        <label>${disc.label}</label>
+                        <input type="number" step="0.1" min="0" max="10" id="nota-${disc.id}" placeholder="0.0" required>
+                    </div>`;
             });
+        }
 
-            if (idEdicao === "-1") {
-                let novoHist = { b1:{}, b2:{}, b3:{}, b4:{} };
-                ["b1","b2","b3","b4"].forEach(b => {
-                    disciplinasPadrao.forEach(d => novoHist[b][d] = 0);
-                });
-                novoHist[bim] = notasForm;
+        function calcularMediaAluno(aluno) {
+            const n = aluno.notas;
+            const soma = n.port + n.mat + n.hist + n.geo + n.bio + n.exatas + n.tec1 + n.tec2;
+            return parseFloat((soma / 8).toFixed(1));
+        }
 
-                listaAlunos.push({
-                    id: Date.now().toString(),
-                    nome: document.getElementById('nome').value,
-                    turma: turma,
-                    frequencia: parseInt(document.getElementById('frequencia').value) || 0,
-                    historico: novoHist
-                });
-            } else {
-                let alunoIndex = listaAlunos.findIndex(a => a.id === idEdicao);
-                if (alunoIndex !== -1) {
-                    listaAlunos[alunoIndex].nome = document.getElementById('nome').value;
-                    listaAlunos[alunoIndex].turma = turma;
-                    listaAlunos[alunoIndex].frequencia = parseInt(document.getElementById('frequencia').value) || 0;
-                    listaAlunos[alunoIndex].historico[bim] = notasForm;
-                }
+        function obterStatusEClasse(media, freq) {
+            if (freq < 75 || media < 5.0) return { status: "Crítico", classe: "status-critico" };
+            if (freq < 80 || media < 7.0) return { status: "Atenção", classe: "status-atencao" };
+            return { status: "Bom", classe: "status-bom" };
+        }
+
+        function atualizarCalculosERadar() {
+            let totalISE = 0;
+            let totalAlunos = alunos.length;
+            let casosRisco = 0;
+            let somaTurmas = {};
+            let contTurmas = {};
+            let radarInsights = [];
+
+            alunos.forEach(aluno => {
+                const media = calcularMediaAluno(aluno);
+                const info = obterStatusEClasse(media, aluno.frequencia);
                 
-                document.getElementById('edit-index').value = "-1";
-                document.getElementById('form-titulo').innerText = "📝 Matrícula e Notas";
-                document.getElementById('btn-salvar').innerText = "Processar com EduVision AI";
-            }
+                // Cálculo de Saúde Escolar Individualizada
+                let iseIndividual = (media * 7) + (aluno.frequencia * 0.3);
+                totalISE += iseIndividual;
 
-            salvarBancoLocal();
-            document.getElementById('cadastro-form').reset();
-            ajustarCamposDisciplinas();
-            atualizarTela();
-        }
+                if (info.status === "Crítico") casosRisco++;
 
-        function obterMediaBimestre(aluno, bim) {
-            let notas = aluno.historico[bim];
-            let chavesValidas = Object.keys(notas).filter(k => {
-                if (aluno.turma.includes("Ano A") && (k === 'mkt' || k === 'agro')) return false;
-                if (!aluno.turma.includes("Ano A") && k === 'emp') return false;
-                if (aluno.turma !== "3º Ano A" && k === 'mkt') return false;
-                return true;
-            });
-            
-            let soma = chavesValidas.reduce((acc, k) => acc + (notas[k] || 0), 0);
-            return chavesValidas.length > 0 ? soma / chavesValidas.length : 0;
-        }
-
-        function calcularResultadosAnuais(aluno) {
-            let b1 = obterMediaBimestre(aluno, 'b1');
-            let b2 = obterMediaBimestre(aluno, 'b2');
-            let b3 = obterMediaBimestre(aluno,             let b3 = obterMediaBimestre(aluno, 'b3');
-            let b4 = obterMediaBimestre(aluno, 'b4');
-
-            let sem1 = (b1 + b2) / 2;
-            if (b1 > 0 && b2 === 0) sem1 = b1;
-
-            let sem2 = (b3 + b4) / 2;
-            if (b3 === 0 && b4 === 0) sem2 = sem1;
-
-            let anual = (sem1 + sem2) / 2;
-            return { b1, b2, b3, b4, sem1, sem2, anual };
-        }
-
-        function filtrarAlunos(tipo, elemento) {
-            filtroAtual = tipo;
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            elemento.classList.add('active');
-            atualizarTela();
-        }
-
-        function atualizarTela() {
-            const containerTabelas = document.getElementById('tabelas-agrupadas-container');
-            const filtroTurma = document.getElementById('filtro-turma-select').value;
-            containerTabelas.innerHTML = '';
-            
-            let riscos = 0, somaISE = 0;
-            let mapaTurmas = {
-                "1º Ano A": { soma: 0, qtd: 0 }, "1º Ano B": { soma: 0, qtd: 0 },
-                "2º Ano A": { soma: 0, qtd: 0 }, "2º Ano B": { soma: 0, qtd: 0 },
-                "3º Ano A": { soma: 0, qtd: 0 }, "3º Ano B": { soma: 0, qtd: 0 }
-            };
-
-            if (listaAlunos.length === 0) {
-                document.getElementById('total-alunos').innerText = "0";
-                document.getElementById('casos-risco').innerText = "0";
-                document.getElementById('ise-val').innerText = "--";
-                document.getElementById('container-medias-turma').innerHTML = "Sem registros.";
-                containerTabelas.innerHTML = '<p style="color:#777; padding:20px; text-align:center;">Nenhum aluno cadastrado.</p>';
-                return;
-            }
-
-            listaAlunos.forEach((aluno) => {
-                let res = calcularResultadosAnuais(aluno);
-                if (mapaTurmas[aluno.turma]) {
-                    mapaTurmas[aluno.turma].soma += res.anual;
-                    mapaTurmas[aluno.turma].qtd++;
+                // Agrupando Médias por Turma
+                if (!somaTurmas[aluno.turma]) {
+                    somaTurmas[aluno.turma] = 0;
+                    contTurmas[aluno.turma] = 0;
                 }
-                if (aluno.frequencia < 75) { riscos++; somaISE += 30; }
-                else if (res.anual < 6.0) { riscos++; somaISE += 55; }
-                else { somaISE += 95; }
+                somaTurmas[aluno.turma] += media;
+                contTurmas[aluno.turma]++;
+
+                // Motor de Regras IA do Radar de Alertas Preditivos
+                if (aluno.frequencia < 75 && media < 5.5) {
+                    radarInsights.push(`⚠️ <strong>${aluno.nome} (${aluno.turma})</strong>: Alto risco de evasão e retenção combinados. Ação imediata recomendada.`);
+                } else if (aluno.frequencia < 75) {
+                    radarInsights.push(`⚠️ <strong>${aluno.nome} (${aluno.turma})</strong>: Queda severa na frequência (${aluno.frequencia}%), risco iminente de quebra de vínculo.`);
+                } else if (media < 5.0) {
+                    radarInsights.push(`📉 <strong>${aluno.nome} (${aluno.turma})</strong>: Desfasagem conceitual severa (Média: ${media}). Necessita de nivelamento imediato.`);
+                }
             });
 
-            turmasDisponiveis.forEach(turmaDaVez => {
-                if (filtroTurma !== 'todas' && turmaDaVez !== filtroTurma) return;
+            // Interface do Painel Principal
+            const iseFinal = totalAlunos > 0 ? Math.min(Math.round(totalISE / totalAlunos), 100) : 0;
+            document.getElementById('ise-val').innerText = iseFinal + "%";
+            document.getElementById('ise-graph-bar').style.width = iseFinal + "%";
+            document.getElementById('total-alunos').innerText = totalAlunos;
+            document.getElementById('casos-risco').innerText = casosRisco;
 
-                let alunosDaTurma = listaAlunos.filter(aluno => {
-                    if (aluno.turma !== turmaDaVez) return false;
-                    
-                    let res = calcularResultadosAnuais(aluno);
-                    let sitCorta = 'estavel';
-                    if (aluno.frequencia < 75) sitCorta = 'critico';
-                    else if (res.anual < 6.0) sitCorta = 'atencao';
+            // Renderizar Médias por Turma
+            const containerMedias = document.getElementById('container-medias-turma');
+            containerMedias.innerHTML = '';
+            for (let t in somaTurmas) {
+                let med = (somaTurmas[t] / contTurmas[t]).toFixed(1);
+                containerMedias.innerHTML += `
+                    <div class="turma-item-mini">
+                        <span>${t}</span><strong>${med}</strong>
+                    </div>`;
+            }
 
-                    if (filtroAtual !== 'todos' && filtroAtual !== sitCorta) return false;
-                    return true;
-                });
+            // Alimentação do Box de IA Ativo
+            const radarLista = document.getElementById('radar-insights-lista');
+            if (radarInsights.length === 0) {
+                radarLista.innerHTML = `<li>🟢 <strong>Estabilidade Sistêmica:</strong> Nenhum padrão crítico ou anomalia preditiva detectada nas últimas 24 horas.</li>`;
+            } else {
+                radarLista.innerHTML = radarInsights.map(ins => `<li>${ins}</li>`).join('');
+            }
+        }
 
-                if (alunosDaTurma.length === 0) return;
+        function atualizarTabela() {
+            const container = document.getElementById('tabela-agrupada-container');
+            const filtroTurma = document.getElementById('filtro-turma-select').value;
+            container.innerHTML = '';
 
-                let totalAlunosTurma = listaAlunos.filter(a => a.turma === turmaDaVez).length;
-                let mediaGeralTurma = mapaTurmas[turmaDaVez].qtd > 0 ? (mapaTurmas[turmaDaVez].soma / mapaTurmas[turmaDaVez].qtd).toFixed(1) : "0.0";
+            // Agrupar alunos por turmas vigentes
+            let turmasAgrupadas = {};
+            alunos.forEach((aluno, index) => {
+                if (filtroTurma !== 'todas' && aluno.turma !== filtroTurma) return;
+                
+                const media = calcularMediaAluno(aluno);
+                const info = obterStatusEClasse(media, aluno.frequencia);
 
-                let blocoHTML = `
+                // Aplicar filtro de status superior
+                if (filtroStatusAtual !== 'todos') {
+                    if (filtroStatusAtual === 'bom' && info.status !== 'Bom') return;
+                    if (filtroStatusAtual === 'atencao' && info.status !== 'Atenção') return;
+                    if (filtroStatusAtual === 'critico' && info.status !== 'Crítico') return;
+                }
+
+                if (!turmasAgrupadas[aluno.turma]) turmasAgrupadas[aluno.turma] = [];
+                turmasAgrupadas[aluno.turma].push({ ...aluno, index, media, info });
+            });
+
+            // Renderizar tabelas segregadas por turma
+            for (let t in turmasAgrupadas) {
+                let divGrupo = document.createElement('div');
+                divGrupo.innerHTML = `
                     <div class="turma-group-header">
-                        <span>📍 ${turmaDaVez}</span>
-                        <span style="font-size:12px; font-weight:normal; color:#555;">Média Geral: <strong>${mediaGeralTurma}</strong> | Cadastrados: ${totalAlunosTurma}</span>
+                        <span>${t}</span>
+                        <span style="font-size:11px; font-weight: normal;">${turmasAgrupadas[t].length} Aluno(s) Filtrado(s)</span>
                     </div>
                     <table>
                         <thead>
                             <tr>
-                                <th style="width: 30%;">Nome</th>
-                                <th style="width: 15%;">Média Anual</th>
-                                <th style="width: 15%;">Tendência IA</th>
-                                <th style="width: 15%;">Frequência</th>
-                                <th style="width: 15%;">Situação</th>
-                                <th style="width: 10%;">Ações</th>
+                                <th>Nome</th>
+                                <th>Frequência</th>
+                                <th>Média Geral</th>
+                                <th>Tendência</th>
+                                <th>Status Diagnóstico</th>
+                                <th>Ações</th>
                             </tr>
                         </thead>
-                        <tbody>`;
+                        <tbody id="corpo-${t.replace(/ /g, '')}"></tbody>
+                    </table>`;
+                
+                container.appendChild(divGrupo);
+                let corpo = document.getElementById(`corpo-${t.replace(/ /g, '')}`);
 
-                alunosDaTurma.forEach(aluno => {
-                    let res = calcularResultadosAnuais(aluno);
-                    let badge = '<span class="status-badge status-bom">🟢 Estável</span>';
-                    if (aluno.frequencia < 75) badge = '<span class="status-badge status-critico">🔴 Risco Evasão</span>';
-                    else if (res.anual < 6.0) badge = '<span class="status-badge status-atencao">🟡 Risco Retenção</span>';
-
-                    let tendencia = '<span class="trend-stable">➔ Constante</span>';
-                    if (res.b2 > res.b1 && res.b1 > 0) tendencia = '<span class="trend-up">▲ Subindo</span>';
-                    else if (res.b2 < res.b1 && res.b1 > 0) tendencia = '<span class="trend-down">▼ Caindo</span>';
-
-                    blocoHTML += `
+                turmasAgrupadas[t].forEach(al => {
+                    let trendClass = al.tendencia === '↑' ? 'trend-up' : al.tendencia === '↓' ? 'trend-down' : 'trend-stable';
+                    corpo.innerHTML += `
                         <tr>
-                            <td><span class="nome-clicavel" onclick="abrirFichaAluno('${aluno.id}')">${aluno.nome}</span></td>
-                            <td><strong>${res.anual.toFixed(1)}</strong></td>
-                            <td>${tendencia}</td>
-                            <td>${aluno.frequencia}%</td>
-                            <td>${badge}</td>
+                            <td class="nome-clicavel" onclick="abrirModal(${al.index})">${al.nome}</td>
+                            <td>${al.frequencia}%</td>
+                            <td><strong>${al.media}</strong></td>
+                            <td class="${trendClass}">${al.tendencia}</td>
+                            <td><span class="status-badge ${al.info.classe}">${al.info.status}</span></td>
                             <td>
-                                <button class="action-btn" onclick="prepararEdicao('${aluno.id}')" title="Editar">✏️</button>
-                                <button class="action-btn" onclick="removerAluno('${aluno.id}')" title="Excluir">🗑️</button>
+                                <button class="action-btn" onclick="prepararEdicao(${al.index})" title="Editar Notas">✏️</button>
+                                <button class="action-btn" onclick="deletarAluno(${al.index})" title="Excluir Matrícula">🗑️</button>
                             </td>
                         </tr>`;
                 });
-
-                blocoHTML += `</tbody></table>`;
-                containerTabelas.innerHTML += blocoHTML;
-            });
-
-            if (containerTabelas.innerHTML === '') {
-                containerTabelas.innerHTML = '<p style="color:#777; padding:20px; text-align:center;">Nenhum registro encontrado para este filtro.</p>';
             }
-
-            const boxTurmas = document.getElementById('container-medias-turma');
-            boxTurmas.innerHTML = '';
-            Object.keys(mapaTurmas).forEach(t => {
-                let dados = mapaTurmas[t];
-                let medTurma = dados.qtd > 0 ? (dados.soma / dados.qtd) : 0;
-                let corMed = medTurma >= 6.0 ? '#2ecc71' : '#e74c3c';
-                let estiloCard = medTurma < 6.0 && dados.qtd > 0 ? 'background: #fdf2f2; border-radius:4px; padding: 2px 5px;' : '';
-                
-                boxTurmas.innerHTML += `
-                    <div class="turma-item-mini" style="${estiloCard}">
-                        <span>${t} ${medTurma < 6.0 && dados.qtd > 0 ? '⚠️' : ''}</span>
-                        <strong style="color: ${corMed}">${medTurma > 0 ? medTurma.toFixed(1) : '0.0'}</strong>
-                    </div>`;
-            });
-
-            let valorISE = Math.round(somaISE / listaAlunos.length);
-            document.getElementById('total-alunos').innerText = listaAlunos.length;
-            document.getElementById('casos-risco').innerText = riscos;
-            document.getElementById('ise-val').innerText = `${valorISE}/100`;
-            document.getElementById('ise-graph-bar').style.width = `${valorISE}%`;
-
-            gerarRadarInsights();
-            renderizarMapaEscola();
-            atualizarPainelDeImpacto();
         }
 
-        function gerarRadarInsights() {
-            const listaUl = document.getElementById('radar-insights-lista');
-            listaUl.innerHTML = "";
-            let insights = [];
-            let totalEvasaoRisco = 0;
-
-            listaAlunos.forEach(aluno => {
-                if (aluno.frequencia < 75) {
-                    totalEvasaoRisco++;
-                }
-            });
-
-            if (totalEvasaoRisco > 0) {
-                insights.push(`⚠️ <strong>Risco de Abandono Escolar:</strong> Há ${totalEvasaoRisco} estudante(s) com frequência crítica (abaixo de 75%). Historicamente, alunos nessa zona têm 3 vezes mais risco de evasão se não acolhidos em até 10 dias.`);
-            }
-
-            let turmasComMatBaixa = [];
-            turmasDisponiveis.forEach(t => {
-                let alunosDaTurma = listaAlunos.filter(a => a.turma === t);
-                if (alunosDaTurma.length > 0) {
-                    let somaMat = 0, qtdMat = 0;
-                    alunosDaTurma.forEach(a => {
-                        let nMat = a.historico.b2.mat || a.historico.b1.mat || 0;
-                        if (nMat > 0) {
-                            somaMat += nMat;
-                            qtdMat++;
-                        }
-                    });
-                    let mediaMat = qtdMat > 0 ? (somaMat / qtdMat) : 10;
-                    if (mediaMat < 6.0) {
-                        turmasComMatBaixa.push(`<strong>${t}</strong> (Média: ${mediaMat.toFixed(1)})`);
-                    }
-                }
-            });
-
-            if (turmasComMatBaixa.length > 0) {
-                insights.push(`📉 <strong>Desempenho Curricular:</strong> Alerta de retenção acadêmica em Matemática identificado nas turmas: ${turmasComMatBaixa.join(', ')} nas últimas semanas.`);
-            }
-
-            if (insights.length === 0) {
-                insights.push("🟢 <strong>Ambiente Saudável:</strong> A IA não detectou anomalias críticas de frequência ou rendimento coletivo nas últimas 24 horas.");
-            }
-
-            insights.forEach(ins => {
-                listaUl.innerHTML += `<li style="margin-bottom: 6px; border-bottom: 1px dashed #eee; padding-bottom: 4px;">${ins}</li>`;
-            });
+        function filtrarStatus(status, btn) {
+            filtroStatusAtual = status;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            atualizarTabela();
         }
 
-        function renderizarMapaEscola() {
-            const container = document.getElementById('mapa-salas-container');
-            container.innerHTML = "";
-
-            turmasDisponiveis.forEach(t => {
-                let alunos = listaAlunos.filter(a => a.turma === t);
-                let corDeCalor = "#2ecc71";
-                let contemCritico = alunos.some(a => a.frequencia < 75);
-                let contemAtencao = alunos.some(a => {
-                    let res = calcularResultadosAnuais(a);
-                    return res.anual < 6.0;
-                });
-
-                if (contemCritico) corDeCalor = "#e74c3c";
-                else if (contemAtencao) corDeCalor = "#f1c40f";
-
-                if (alunos.length === 0) corDeCalor = "#95a5a6";
-
-                container.innerHTML += `
-                    <div onclick="mostrarDetalhesSala('${t}')" style="background: ${corDeCalor}; color: ${corDeCalor === '#f1c40f' ? '#333' : 'white'}; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: bold; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s;">
-                        <div style="font-size: 16px;">Sala ${t.replace(" Ano ", "º ")}</div>
-                        <div style="font-size: 11px; opacity: 0.9; margin-top: 5px;">${alunos.length} Alunos</div>
-                    </div>
-                `;
-            });
-        }
-
-        function mostrarDetalhesSala(turmaNome) {
-            let alunos = listaAlunos.filter(a => a.turma === turmaNome);
-            if (alunos.length === 0) {
-                alert(`A sala ${turmaNome} não possui estudantes matriculados para diagnóstico.`);
-                return;
-            }
-
-            let somaFrequencia = alunos.reduce((acc, a) => acc + a.frequencia, 0) / alunos.length;
-            let somaMedias = 0;
-            alunos.forEach(a => {
-                let res = calcularResultadosAnuais(a);
-                somaMedias += res.anual;
-            });
-            let mediaGeral = somaMedias / alunos.length;
-
-            alert(`📊 DIAGNÓSTICO EXPRESSO DA IA - ${turmaNome}\n----------------------------------------\n• Média Geral da Sala: ${mediaGeral.toFixed(1)}\n• Frequência Média: ${somaFrequencia.toFixed(1)}%\n• Recomendação: ${mediaGeral < 6 ? 'Priorizar cronograma de recuperação paralela no contraturno.' : 'Turma saudável. Estimular projetos de extensão e liderança.'}`);
-        }
-
-        function atualizarPainelDeImpacto() {
-            let estaveis = 0;
-            listaAlunos.forEach(aluno => {
-                let res = calcularResultadosAnuais(aluno);
-                if (aluno.frequencia >= 75 && res.anual >= 6.0) {
-                    estaveis++;
-                }
-            });
-
-            let riscoCalculado = listaAlunos.length > 0 ? Math.round(((listaAlunos.length - estaveis) / listaAlunos.length) * 100) : 0;
-            document.getElementById('impacto-risco-atual').innerText = `${riscoCalculado}%`;
-            document.getElementById('impacto-resgatados').innerText = `${estaveis} Estudantes`;
-        }
-
-        function prepararEdicao(id) {
-            const aluno = listaAlunos.find(a => a.id === id);
-            if (!aluno) return;
-
-            const bimAtual = document.getElementById('bimestre-alvo').value;
+        function cadastrarAluno(e) {
+            e.preventDefault();
+            const indexEdit = parseInt(document.getElementById('edit-index').value);
+            const nome = document.getElementById('nome').value;
+            const turma = document.getElementById('turma').value;
+            const freq = parseInt(document.getElementById('frequencia').value);
             
-            document.getElementById('edit-index').value = id;
-            document.getElementById('nome').value = aluno.nome;
-            document.getElementById('turma').value = aluno.turma;
-            document.getElementById('frequencia').value = aluno.frequencia;
-            
+            const notas = {
+                port: parseFloat(document.getElementById('nota-port').value),
+                mat: parseFloat(document.getElementById('nota-mat').value),
+                hist: parseFloat(document.getElementById('nota-hist').value),
+                geo: parseFloat(document.getElementById('nota-geo').value),
+                bio: parseFloat(document.getElementById('nota-bio').value),
+                exatas: parseFloat(document.getElementById('nota-exatas').value),
+                tec1: parseFloat(document.getElementById('nota-tec1').value),
+                tec2: parseFloat(document.getElementById('nota-tec2').value)
+            };
+
+            if (indexEdit === -1) {
+                // Novo Cadastro
+                alunos.push({ nome, turma, frequencia: freq, notas, tendencia: "→" });
+            } else {
+                // Atualização / Edição
+                const mediaAntiga = calcularMediaAluno(alunos[indexEdit]);
+                alunos[indexEdit] = { ...alunos[indexEdit], nome, turma, frequencia: freq, notas };
+                const novaMedia = calcularMediaAluno(alunos[indexEdit]);
+                alunos[indexEdit].tendencia = novaMedia > mediaAntiga ? "↑" : novaMedia < mediaAntiga ? "↓" : "→";
+            }
+
+            limparFormulario();
+            atualizarCalculosERadar();
+            atualizarTabela();
+        }
+
+        function prepararEdicao(index) {
+            const al = alunos[index];
+            document.getElementById('edit-index').value = index;
+            document.getElementById('form-titulo').innerText = "✏️ Alterar Matriz de Registro";
+            document.getElementById('btn-salvar').innerText = "Atualizar Dados";
+            document.getElementById('btn-cancelar').style.display = "block";
+
+            document.getElementById('nome').value = al.nome;
+            document.getElementById('turma').value = al.turma;
             ajustarCamposDisciplinas();
 
-            let notasDoBim = aluno.historico[bimAtual] || {};
-            disciplinasPadrao.forEach(d => {
-                let campo = document.getElementById(`n-${d}`);
-                if (campo) campo.value = notasDoBim[d] !== undefined ? notasDoBim[d] : 0;
-            });
-
-            document.getElementById('form-titulo').innerText = `✏️ Editando: ${aluno.nome}`;
-            document.getElementById('btn-salvar').innerText = "Atualizar Histórico";
-            document.getElementById('nome').focus();
+            document.getElementById('frequencia').value = al.frequencia;
+            document.getElementById('nota-port').value = al.notas.port;
+            document.getElementById('nota-mat').value = al.notas.mat;
+            document.getElementById('nota-hist').value = al.notas.hist;
+            document.getElementById('nota-geo').value = al.notas.geo;
+            document.getElementById('nota-bio').value = al.notas.bio;
+            document.getElementById('nota-exatas').value = al.notas.exatas;
+            document.getElementById('nota-tec1').value = al.notas.tec1;
+            document.getElementById('nota-tec2').value = al.notas.tec2;
         }
 
-        function removerAluno(id) {
-            if (confirm("Tem certeza que deseja remover permanentemente este histórico escolar?")) {
-                listaAlunos = listaAlunos.filter(a => a.id !== id);
-                salvarBancoLocal();
-                atualizarTela();
+        function limparFormulario() {
+            document.getElementById('cadastro-form').reset();
+            document.getElementById('edit-index').value = "-1";
+            document.getElementById('form-titulo').innerText = "📝 Matrícula e Notas";
+            document.getElementById('btn-salvar').innerText = "Salvar na Matriz";
+            document.getElementById('btn-cancelar').style.display = "none";
+            ajustarCamposDisciplinas();
+        }
+
+        function deletarAluno(index) {
+            if (confirm(`Confirma a exclusão definitiva de ${alunos[index].nome} do sistema de monitoramento adaptativo?`)) {
+                alunos.splice(index, 1);
+                atualizarCalculosERadar();
+                atualizarTabela();
             }
         }
 
-        let alunoFocoId = null;
+        // MOTOR DE NEGÓCIO DA MODAL INTELIGENTE (IA)
+        function abrirModal(index) {
+            alunoSelecionadoIndex = index;
+            const al = alunos[index];
+            const media = calcularMediaAluno(al);
+            const ramificacao = obterRamificacaoTecnica(al.turma);
+            const info = obterStatusEClasse(media, al.frequencia);
 
-        function abrirFichaAluno(id) {
-            const aluno = listaAlunos.find(a => a.id === id);
-            if (!aluno) return;
+            document.getElementById('modal-aluno-nome').innerText = al.nome;
+            const badge = document.getElementById('modal-aluno-status');
+            badge.innerText = info.status;
+            badge.className = `status-badge ${info.classe}`;
 
-            alunoFocoId = id;
+            // Perfilamento Comportamental por Engenharia de Regras IA
+            let perfil = "Regular e Estável";
+            if (al.frequencia >= 90 && media >= 8.5) perfil = "Potencial Líder / Multiplicador";
+            else if (al.frequencia < 75) perfil = "Risco de Evasão Técnica Crítica";
+            else if (media < 5.5) perfil = "Necessidade Urgente Intervenção Pedagógica";
+            document.getElementById('modal-aluno-perfil').innerText = perfil;
 
-            document.querySelectorAll('.simulador-chk').forEach(c => c.checked = false);
+            // Inserção das variáveis no Simulador Volumetria
+            document.getElementById('sim-freq').value = al.frequencia;
+            document.getElementById('sim-media').value = media;
+            calcularSimulacao();
 
-            let res = calcularResultadosAnuais(aluno);
+            // Geração Inteligente de Predições e Insights Acadêmicos
+            let predicao = "", domina = [], aprimorar = [], etapasPAI = [], msgZap = "";
+            const discTecnicas = disciplinasTecnicas[ramificacao];
 
-            document.getElementById('modal-sem1').innerText = res.sem1.toFixed(1);
-            document.getElementById('modal-sem2').innerText = res.sem2.toFixed(1) + (obterMediaBimestre(aluno, 'b3') === 0 ? " (Proj.)" : "");
-            document.getElementById('modal-media-anual').innerText = res.anual.toFixed(1);
+            if (info.status === "Bom") {
+                predicao = `Alta probabilidade (>94%) de aprovação direta e aproveitamento em processos seletivos do mercado na área de ${ramificacao}. Recomendado direcionar para projetos de monitoria científica.`;
+                domina = ["Domínio estruturado em processos analíticos e interpretação de dados.", "Alta autonomia em rotinas complexas da base comum.", `Excelente rendimento nas disciplinas profissionais de ${ramificacao}.`];
+                aprimorar = ["Participação ativa em lideranças de grupos de trabalho interdisciplinares.", "Aprofundamento em metodologias de pesquisa avançadas."];
+                
+                etapasPAI = [
+                    "<strong>Etapa 1:</strong> Inclusão imediata em programas institucionais de monitoria interna para auxiliar alunos em recuperação.",
+                    "<strong>Etapa 2:</strong> Indicação para o banco de talentos para estágios técnicos avançados de fim de ciclo."
+                ];
+                msgZap = `Prezados responsáveis por ${al.nome}, parabéns! O rendimento escolar e técnico está excelente. Mantemos a orientação para que continue focado nas atividades de monitoria estendida. Abs, Coordenação.`;
+            } else if (info.status === "Atenção") {
+                predicao = "Risco moderado de dependência parcial ao término do semestre corrente. A perda de engajamento atual pode sobrecarregar o cronograma de estudos final.";
+                domina = ["Cumprimento regular de entregas mínimas.", "Rendimento estável em ramos humanísticos e sociais."];
+                aprimorar = [`Reforço focado nas avaliações do Componente Técnico (${discTecnicas[0].label} e ${discTecnicas[1].label}).`, "Construção de cronogramas para evitar acúmulo de atividades assíncronas."];
+                
+                etapasPAI = [
+                    "<strong>Etapa 1:</strong> Reunião de alinhamento com a equipe docente para acompanhamento de assiduidade em entregas.",
+                    "<strong>Etapa 2:</strong> Inserção em grupo de apoio pedagógico quinzenal no contra-turno."
+                ];
+                msgZap = `Olá! Notamos algumas oscilações nas notas e/ou presença de ${al.nome}. Solicitamos atenção especial ao acompanhamento dos estudos em casa para que possamos retomar o nível ideal. Contamos com vocês!`;
+            } else {
+                predicao = "⚠️ ALERTA MÁXIMO: Padrões históricos indicam retenção iminente ou abandono caso as intervenções multifatoriais não ocorram num ciclo máximo de 15 dias.";
+                domina = ["Participação esporádica e intermitente em dinâmicas práticas e dinâmicas de acolhimento escolar."];
+                aprimorar = ["Nivelamento estrutural urgente em competências matemáticas básicas.", "Aumento imediato do índice de presença física nas aulas regulamentares.", "Recuperação paralela emergencial de notas nas matérias técnicas."];
+                
+                etapasPAI = [
+                    "<strong>Etapa 1:</strong> Convocação urgente dos responsáveis legais para assinatura de Termo de Compromisso Pedagógico.",
+                    "<strong>Etapa 2:</strong> Adaptação Curricular Emergencial com flexibilização temporária de entregas sob supervisão direta.",
+                    "<strong>Etapa 3:</strong> Encaminhamento ao núcleo de apoio psicopedagógico institucional para averiguação de barreiras psicossociais."
+                ];
+                msgZap = `URGENTE: Prezado(a) responsável por ${al.nome}, precisamos agendar uma reunião presencial com a coordenação pedagógica esta semana para traçarmos um plano urgente de recuperação escolar. Favor responder este contato.`;
+            }
 
-            document.getElementById('modal-nome').innerText = aluno.nome;
-            document.getElementById('modal-turma').innerText = aluno.turma;
-            document.getElementById('modal-freq').innerText = aluno.frequencia;
-
-            const divBoletim = document.getElementById('modal-boletim-render');
-            divBoletim.innerHTML = '';
+            document.getElementById('ia-predicao').innerHTML = predicao;
+            document.getElementById('ia-domina').innerHTML = domina.map(li => `<li>${li}</li>`).join('');
+            document.getElementById('ia-aprimorar').innerHTML = aprimorar.map(li => `<li>${li}</li>`).join('');
             
-            let maiorNotaGlobal = -1, menorNotaGlobal = 11;
-            let matMaior = '', matMenor = '';
+            // População do Plano (PAI) e Textos Automáticos
+            document.getElementById('pai-cronograma-conteudo').innerHTML = etapasPAI.map(et => `<div class="plano-etapa">${et}</div>`).join('');
+            document.getElementById('comunicado-texto').innerText = msgZap;
 
-            disciplinasPadrao.forEach(d => {
-                if (aluno.turma.includes("Ano A") && (d === 'mkt' || d === 'agro')) return;
-                if (!aluno.turma.includes("Ano A") && d === 'emp') return;
-                if (aluno.turma !== "3º Ano A" && d === 'mkt') return;
+            // Histórico / Renderização do Boletim Interno Completo no Modal
+            document.getElementById('b1-val').innerText = (media * 0.95).toFixed(1);
+            document.getElementById('b2-val').innerText = media;
+            document.getElementById('b3-val').innerText = (media * 1.02).toFixed(1);
+            document.getElementById('b4-val').innerText = info.status === "Crítico" ? "4.5?" : "7.5?";
 
-                let n1 = aluno.historico.b1[d] || 0;
-                let n2 = aluno.historico.b2[d] || 0;
-                let n3 = aluno.historico.b3[d] || 0;
-                let n4 = aluno.historico.b4[d] || 0;
-                let mAcumulada = (n1 + n2 + (n3>0?n3:n2) + (n4>0?n4:n2)) / 4;
+            const containerBoletim = document.getElementById('boletim-linhas');
+            containerBoletim.innerHTML = '';
+            
+            // Renderização das matérias fixas + técnicas
+            const todasDisciplinasExibicao = [
+                { k: 'port', l: 'Língua Portuguesa' }, { k: 'mat', l: 'Matemática' },
+                { k: 'hist', l: 'História' }, { k: 'geo', l: 'Geografia' },
+                { k: 'bio', l: 'Biologia' }, { k: 'exatas', l: 'Física/Química' },
+                { k: 'tec1', l: discTecnicas[0].label }, { k: 'tec2', l: discTecnicas[1].label }
+            ];
 
-                if(mAcumulada > maiorNotaGlobal) { maiorNotaGlobal = mAcumulada; matMaior = dicionarioNomes[d]; }
-                if(mAcumulada < menorNotaGlobal) { menorNotaGlobal = mAcumulada; matMenor = dicionarioNomes[d]; }
-
-                let barraCor = mAcumulada >= 6 ? '#2ecc71' : '#e74c3c';
-
-                divBoletim.innerHTML += `
+            todasDisciplinasExibicao.forEach(item => {
+                let nVal = al.notas[item.k];
+                let corBarra = nVal >= 7 ? '#2ecc71' : nVal >= 5 ? '#f39c12' : '#e74c3c';
+                containerBoletim.innerHTML += `
                     <div class="boletim-row">
                         <div class="boletim-header-row">
-                            <span>${dicionarioNomes[d]}</span>
-                            <strong style="color:${mAcumulada >= 6 ? '#155724' : '#721c24'}">${mAcumulada.toFixed(1)}</strong>
-                        </div>
-                        <div class="boletim-sub-row">
-                            <span>B1: ${n1.toFixed(1)}</span>
-                            <span>B2: ${n2.toFixed(1)}</span>
-                            <span>B3: ${n3 > 0 ? n3.toFixed(1) : '-'}</span>
-                            <span>B4: ${n4 > 0 ? n4.toFixed(1) : '-'}</span>
+                            <span>${item.l}</span><strong>${nVal.toFixed(1)}</strong>
                         </div>
                         <div class="nota-meter-bg">
-                            <div class="nota-meter-fill" style="width: ${mAcumulada * 10}%; background-color: ${barraCor};"></div>
+                            <div class="nota-meter-fill" style="width: ${nVal * 10}%; background-color: ${corBarra};"></div>
                         </div>
                     </div>`;
             });
 
-            const boxDomina = document.getElementById('modal-ai-domina');
-            const boxAprimorar = document.getElementById('modal-ai-aprimorar');
-            
-            boxDomina.innerHTML = '';
-            boxAprimorar.innerHTML = '';
-
-            let perfil = "⚖️ Promovido por Projeção";
-            let desc = "O rendimento acumulado garante folga matemática para aprovação sem sobressaltos estruturais.";
-            
-            let txtComunicado = `Olá! Entramos em contato da Coordenação do EduVision para compartilhar uma excelente notícia: o(a) estudante *${aluno.nome}* apresenta desempenho estável com média geral de *${res.anual.toFixed(1)}*. Parabéns pelo empenho e parceria com a escola!`;
-
-            if (aluno.frequencia < 75) {
-                perfil = "❌ Reter por Inassiduidade (Faltas Críticas)";
-                desc = "O volume de ausências superou o limite legal permitido de 25%. Risco máximo de quebra de vínculo escolar.";
-                
-                boxDomina.innerHTML += `<li>Aptidão pontual conservada em <strong>${matMaior}</strong> (Média ${maiorNotaGlobal.toFixed(1)}).</li>`;
-                boxDomina.innerHTML += `<li>Potencial de retenção ativa de conteúdo quando presente em sala de aula.</li>`;
-                
-                boxAprimorar.innerHTML += `<li><strong>Convocação Imediata:</strong> Acionar responsáveis para reunião pedagógica de urgência.</li>`;
-                boxAprimorar.innerHTML += `<li><strong>Plano de Reposição:</strong> Aplicar cronograma emergencial de tarefas domiciliares para compensação de carga horária.</li>`;
-
-                txtComunicado = `Prezados responsáveis por *${aluno.nome}*,\n\nNotamos pelo sistema EduVision AI que a frequência escolar de seu(a) filho(a) caiu para *${aluno.frequencia}%*, patamar crítico. Convidamos vocês para uma conversa de acolhimento nesta semana. Podemos agendar?`;
-            } else if (res.anual < 6.0) {
-                perfil = "⚠️ Alerta de Retenção (Média Insuficiente)";
-                desc = "A projeção de rendimento anual está abaixo da média mínima 6.0. Apresenta lacunas de aprendizado em disciplinas chave.";
-                
-                boxDomina.innerHTML += `<li>Demonstra bom desempenho e engajamento na disciplina de <strong>${matMaior}</strong>.</li>`;
-                boxDomina.innerHTML += `<li>Frequência escolar adequada (${aluno.frequencia}%), garantindo base presencial para recuperação.</li>`;
-                
-                boxAprimorar.innerHTML += `<li><strong>Reforço Focal:</strong> Inclusão obrigatória em regime de recuperação pedagógica contraturno na disciplina de <strong>${matMenor}</strong>.</li>`;
-                boxAprimorar.innerHTML += `<li><strong>Matriz de Estudos:</strong> Reorganizar agenda semanal focando nas dificuldades de <strong>${matMenor}</strong>.</li>`;
-
-                      txtComunicado = `Prezados responsáveis por *${aluno.nome}*,\n\nAcompanhando o rendimento escolar através do EduVision AI, identificamos que a média projetada atual está em *${res.anual.toFixed(1)}*, com desafios acentuados em *${matMenor}*. Gostaríamos de complementar com um plano de reforço em parceria com a família!`;
-            } else {
-                boxDomina.innerHTML += `<li>Excelente nível de retenção de conhecimento, destacando-se fortemente em <strong>${matMaior}</strong>.</li>`;
-                boxDomina.innerHTML += `<li>Constância pedagógica e alto índice de assiduidade em todos os componentes curriculares.</li>`;
-                
-                boxAprimorar.innerHTML += `<li><strong>Nivelamento Avançado:</strong> Estimular a participação ativa em olimpíadas de conhecimento e projetos científicos da escola.</li>`;
-            }
-
-            document.getElementById('modal-perfil').innerText = perfil;
-            document.getElementById('modal-descricao-perfil').innerText = desc;
-            document.getElementById('modal-comunicado').innerText = txtComunicado;
-
-            const timeline = document.getElementById('timeline-cronograma');
-            timeline.innerHTML = "";
-
-            if (aluno.frequencia < 75) {
-                timeline.innerHTML = `
-                    <p style="margin-bottom: 12px;"><strong>Semana 1:</strong> Convocação oficial dos pais e assinatura do termo de compromisso de assiduidade.</p>
-                    <p style="margin-bottom: 12px;"><strong>Semana 2:</strong> Monitoria focada de presença ativa diária na entrada e saída do turno.</p>
-                    <p style="margin-bottom: 12px;"><strong>Semana 3:</strong> Entrega de tarefas de base complementares para reposição de conteúdo.</p>
-                    <p style="margin-bottom: 12px;"><strong>Semana 4:</strong> Reavaliação de frequência e atualização de status no painel.</p>
-                `;
-            } else if (res.anual < 6.0) {
-                timeline.innerHTML = `
-                    <p style="margin-bottom: 12px;"><strong>Semana 1:</strong> Encontro diagnóstico de alinhamento com professores das matérias de maior risco.</p>
-                    <p style="margin-bottom: 12px;"><strong>Semana 2:</strong> Alocação do estudante nas aulas estruturadas de reforço escolar paralelos.</p>
-                    <p style="margin-bottom: 12px;"><strong>Semana 3:</strong> Simulado formativo direcionado às lacunas curriculares de <strong>${matMenor}</strong>.</p>
-                    <p style="margin-bottom: 12px;"><strong>Semana 4:</strong> Fechamento da nota de recuperação e análise de evolução.</p>
-                `;
-            } else {
-                timeline.innerHTML = `
-                    <p style="margin-bottom: 12px;"><strong>Semana 1:</strong> Inscrição opcional em Olimpíadas Científicas de <strong>${matMaior}</strong>.</p>
-                    <p style="margin-bottom: 12px;"><strong>Semana 2:</strong> Participação no programa voluntário de tutoria de pares.</p>
-                    <p style="margin-bottom: 12px;"><strong>Semana 3:</strong> Apoio ativo no laboratório de projetos adaptativos da escola.</p>
-                    <p style="margin-bottom: 12px;"><strong>Semana 4:</strong> Concessão de certificado de excelência acadêmica.</p>
-                `;
-            }
-
-            simularImpacto();
-            mudarAba('diagnostico');
-            document.getElementById('modal-aluno').style.display = 'flex';
+            // Reseta a tab padrão e exibe a modal
+            mudarTab('diagnostico', document.querySelector('.modal-tabs .tab-btn'));
+            document.getElementById('student-modal').style.display = 'flex';
         }
 
-        function simularImpacto() {
-            const aluno = listaAlunos.find(a => a.id === alunoFocoId);
-            if (!aluno) return;
+        function fecharModal() {
+            document.getElementById('student-modal').style.display = 'none';
+        }
 
-            let res = calcularResultadosAnuais(aluno);
-            let riscoBase = 15;
+        function mudarTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(tb => tb.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            btn.classList.add('active');
+        }
 
-            if (aluno.frequencia < 75) riscoBase = 85;
-            else if (res.anual < 6.0) riscoBase = 55;
-
-            let abatimento = 0;
-            let acoesMarcadas = [];
-
-            document.querySelectorAll('.simulador-chk').forEach(chk => {
-                if (chk.checked) {
-                    if (chk.value === 'reforco') { abatimento += 30; acoesMarcadas.push("Reforço Escolar"); }
-                    if (chk.value === 'familia') { abatimento += 20; acoesMarcadas.push("Alinhamento Familiar"); }
-                    if (chk.value === 'monitoria') { abatimento += 15; acoesMarcadas.push("Monitoria de Pares"); }
-                    if (chk.value === 'psico') { abatimento += 10; acoesMarcadas.push("Apoio Psicológico"); }
-                }
-            });
-
-            let riscoFinal = Math.max(5, riscoBase - abatimento);
-            document.getElementById('simulador-resultado').innerText = `${riscoFinal}% Risco`;
-
-            const justificativa = document.getElementById('simulador-justificativa');
-            if (acoesMarcadas.length === 0) {
-                justificativa.innerText = "Selecione uma ou mais intervenções para que a IA processe a mitigação do risco escolar.";
-            } else {
-                justificativa.innerText = `A ação combinada de ${acoesMarcadas.join(', ')} resgata o vínculo ativo do aluno, estabilizando as bases de retenção escolar.`;
-            }
+        function calcularSimulacao() {
+            const f = parseInt(document.getElementById('sim-freq').value) || 0;
+            const m = parseFloat(document.getElementById('sim-media').value) || 0;
+            const resIse = Math.min(Math.round((m * 7) + (f * 0.3)), 100);
+            
+            const output = document.getElementById('sim-ise-resultado');
+            output.innerText = resIse + "%";
+            output.style.color = resIse >= 75 ? '#2ecc71' : resIse >= 55 ? '#f39c12' : '#e74c3c';
         }
 
         function copiarComunicado() {
-            const texto = document.getElementById('modal-comunicado').innerText;
-            navigator.clipboard.writeText(texto);
-            alert("Mensagem copiada para a área de transferência! Pronta para colar no WhatsApp ou E-mail.");
+            const texto = document.getElementById('comunicado-texto').innerText;
+            navigator.clipboard.writeText(texto).then(() => {
+                alert("Texto de comunicação copiado com sucesso para a área de transferência!");
+            });
         }
 
-        function exportarCSV() {
-            let csv = '\ufeffNome;Turma;Frequencia;Media Anual\n';
-            listaAlunos.forEach(a => {
-                let res = calcularResultadosAnuais(a);
-                csv += `"${a.nome}";"${a.turma}";"${a.frequencia}%";"${res.anual.toFixed(1)}"\n`;
+        function exportarExcel() {
+            let csvContent = "data:text/csv;charset=utf-8,Nome,Turma,Frequencia,Media Geral,Tendencia\n";
+            alunos.forEach(al => {
+                let m = calcularMediaAluno(al);
+                csvContent += `"${al.nome}","${al.turma}",${al.frequencia}%,${m},"${al.tendencia}"\n`;
             });
-            
-            let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            let link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.setAttribute("download", "Relatorio_Alunos_EduVision.csv");
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "matriz_adaptativa_eduvision.csv");
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         }
 
-        function mudarAba(aba) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            
-            if (aba === 'diagnostico') {
-                document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
-                document.getElementById('tab-diagnostico').classList.add('active');
-            } else if (aba === 'boletim') {
-                document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
-                document.getElementById('tab-boletim').classList.add('active');
-            } else {
-                document.querySelector('.tab-btn:nth-child(3)').classList.add('active');
-                document.getElementById('tab-intervencao').classList.add('active');
-            }
-        }
-
-        function fecharModal() { 
-            document.getElementById('modal-aluno').style.display = 'none'; 
+        // Fechar modal ao clicar fora da janela de conteúdo
+        window.onclick = function(event) {
+            const modal = document.getElementById('student-modal');
+            if (event.target == modal) modal.style.display = "none";
         }
     </script>
 </body>
