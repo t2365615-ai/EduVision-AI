@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduVision AI - Matriz Adaptativa OBNE</title>
+    <title>EduVision AI Pro - Matriz Adaptativa Avançada</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             margin: 0;
@@ -162,6 +163,15 @@
             color: #555;
             border-bottom: 1px dashed #f4f6f9;
             padding-bottom: 2px;
+        }
+
+        /* Seção do Gráfico de Turmas */
+        .chart-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
         }
 
         .content-grid {
@@ -578,68 +588,6 @@
             margin-bottom: 15px;
         }
 
-        /* ESTILOS NOVOS DOS RECURSOS SELECIONADOS */
-        .simulador-container {
-            background: #fdfefe;
-            border: 1px solid #d4e6f1;
-            border-radius: 6px;
-            padding: 15px;
-            margin-top: 15px;
-        }
-
-        .simulador-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 10px;
-            margin: 10px 0;
-        }
-
-        .simulador-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            background: #f4f6f9;
-            padding: 8px;
-            border-radius: 4px;
-        }
-
-        .radar-box {
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            padding: 20px;
-            margin-bottom: 25px;
-            border-top: 4px solid #e74c3c;
-        }
-
-        .radar-list {
-            list-style: none;
-            padding: 0;
-            font-size: 13px;
-        }
-
-        .radar-list li {
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
-            line-height: 1.4;
-        }
-
-        .plano-cronograma {
-            margin-top: 15px;
-            padding-left: 15px;
-            border-left: 3px solid #1e3c72;
-        }
-
-        .plano-etapa {
-            margin-bottom: 12px;
-            font-size: 13px;
-        }
-
-        .plano-etapa strong {
-            color: #1e3c72;
-        }
-
         @media print {
             body * { visibility: hidden; }
             .modal-content, .modal-content * { visibility: visible; }
@@ -653,8 +601,8 @@
 
     <div id="login-screen">
         <div class="login-container">
-            <h1>EduVision AI</h1>
-            <p>Painel de Controle da Coordenação</p>
+            <h1>EduVision AI Pro</h1>
+            <p>Painel de Controle e Matriz Analítica da Coordenação</p>
             <form id="login-form" onsubmit="fazerLogin(event)">
                 <div class="input-group">
                     <label>E-mail institucional</label>
@@ -671,21 +619,14 @@
 
     <div id="dashboard-screen">
         <header>
-            <h2>🎓 EduVision AI</h2>
-            <span>Coordenador Conectado</span>
+            <h2>🎓 EduVision AI Pro</h2>
+            <span>Módulo de Gestão Preditiva Conectado</span>
         </header>
 
         <div class="container">
-            <div class="radar-box" id="radar-section">
-                <h3 style="color: #e74c3c; display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">🚨 Radar de Riscos Ativo (IA)</h3>
-                <ul class="radar-list" id="radar-insights-lista">
-                    <li>🟢 Carregando diagnóstico preditivo em tempo real...</li>
-                </ul>
-            </div>
-
             <div class="metrics-grid">
                 <div class="card ise">
-                    <h3>❤️ Saúde Escolar (ISE)</h3>
+                    <h3>❤️ Saúde Escolar Geral (ISE)</h3>
                     <div class="value" id="ise-val">--</div>
                     <div class="ise-bar-container">
                         <div id="ise-graph-bar" class="ise-bar"></div>
@@ -696,13 +637,20 @@
                     <div class="value" id="total-alunos">--</div>
                 </div>
                 <div class="card alerta">
-                    <h3>⚠️ Casos de Risco</h3>
+                    <h3>⚠️ Casos de Risco Ativos</h3>
                     <div class="value" id="casos-risco">--</div>
                 </div>
                 
                 <div class="card turmas-card">
-                    <h3>📊 Médias por Turma</h3>
+                    <h3>📊 Médias por Segmento</h3>
                     <div id="container-medias-turma" style="margin-top: 5px;"></div>
+                </div>
+            </div>
+
+            <div class="chart-section">
+                <h3 style="font-size: 14px; color: #1e3c72; margin-bottom: 12px; text-transform: uppercase;">📊 Comparativo de Performance por Turma</h3>
+                <div style="height: 220px; position: relative;">
+                    <canvas id="chartTurmas"></canvas>
                 </div>
             </div>
 
@@ -723,66 +671,75 @@
                                     <option value="1º Ano B">1º Ano B (Téc. Agropecuária)</option>
                                     <option value="2º Ano A">2º Ano A (Téc. Administração)</option>
                                     <option value="2º Ano B">2º Ano B (Téc. Agropecuária)</option>
-                                    <optio                                    <option value="3º Ano A">3º Ano A (Téc. Administração)</option>
+                                    <option value="3º Ano A">3º Ano A (Téc. Marketing)</option>
                                     <option value="3º Ano B">3º Ano B (Téc. Agropecuária)</option>
                                 </select>
                             </div>
                             <div class="input-group">
                                 <label>Frequência (%)</label>
-                                <input type="number" id="frequencia" min="0" max="100" placeholder="Ex: 85" required>
+                                <input type="number" id="frequencia" min="0" max="100" placeholder="Ex: 92" required>
+                            </div>
+                            
+                            <div class="input-group" style="background: #e8f4fd; padding: 10px; border-radius: 5px;">
+                                <label style="color:#1e3c72; font-weight: bold;">Lançar Notas do:</label>
+                                <select id="bimestre-alvo" style="border: 1px solid #1e3c72;">
+                                    <option value="b1">1º Bimestre</option>
+                                    <option value="b2" selected>2º Bimestre</option>
+                                    <option value="b3">3º Bimestre</option>
+                                    <option value="b4">4º Bimes                                    <option value="b3">3º Bimestre</option>
+                                    <option value="b4">4º Bimestre</option>
+                                </select>
                             </div>
 
-                            <div class="form-category">Componentes da Base Nacional Comum (BNC)</div>
+                            <div class="form-category">Componentes Base (Gerais)</div>
                             <div class="notas-grid">
                                 <div class="input-group">
-                                    <label>Português</label>
-                                    <input type="number" step="0.1" min="0" max="10" id="nota-port" placeholder="0.0" required>
+                                    <label>Língua Portuguesa</label>
+                                    <input type="number" id="nota-portugues" min="0" max="10" step="0.1" placeholder="0.0" required>
                                 </div>
                                 <div class="input-group">
                                     <label>Matemática</label>
-                                    <input type="number" step="0.1" min="0" max="10" id="nota-mat" placeholder="0.0" required>
+                                    <input type="number" id="nota-matematica" min="0" max="10" step="0.1" placeholder="0.0" required>
                                 </div>
                                 <div class="input-group">
                                     <label>História</label>
-                                    <input type="number" step="0.1" min="0" max="10" id="nota-hist" placeholder="0.0" required>
+                                    <input type="number" id="nota-historia" min="0" max="10" step="0.1" placeholder="0.0" required>
                                 </div>
                                 <div class="input-group">
                                     <label>Geografia</label>
-                                    <input type="number" step="0.1" min="0" max="10" id="nota-geo" placeholder="0.0" required>
-                                </div>
-                                <div class="input-group">
-                                    <label>Biologia</label>
-                                    <input type="number" step="0.1" min="0" max="10" id="nota-bio" placeholder="0.0" required>
-                                </div>
-                                <div class="input-group">
-                                    <label>Física/Química</label>
-                                    <input type="number" step="0.1" min="0" max="10" id="nota-exatas" placeholder="0.0" required>
+                                    <input type="number" id="nota-geografia" min="0" max="10" step="0.1" placeholder="0.0" required>
                                 </div>
                             </div>
 
-                            <div class="form-category" id="categoria-tecnica-titulo">Componente Técnico Profissional</div>
-                            <div class="notas-grid" id="campos-tecnicos">
+                            <div class="form-category" id="label-disciplina-tecnica">Componentes Técnicos (Administração)</div>
+                            <div class="notas-grid">
+                                <div class="input-group">
+                                    <label id="label-tec-1">Gestão de Processos</label>
+                                    <input type="number" id="nota-tec1" min="0" max="10" step="0.1" placeholder="0.0" required>
                                 </div>
+                                <div class="input-group">
+                                    <label id="label-tec-2">Economia Aplicada</label>
+                                    <input type="number" id="nota-tec2" min="0" max="10" step="0.1" placeholder="0.0" required>
+                                </div>
+                            </div>
                         </div>
-                        <button type="submit" class="btn" id="btn-salvar">Salvar na Matriz</button>
-                        <button type="button" class="btn" id="btn-cancelar" style="background-color: #7f8c8d; margin-top: 8px; display: none;" onclick="limparFormulario()">Cancelar Edição</button>
+                        <div style="display: flex; gap: 10px;">
+                            <button type="submit" class="btn" style="flex: 2;">Gravar Dados</button>
+                            <button type="button" class="btn" id="btn-cancelar" onclick="limparFormulario()" style="background-color: #7f8c8d; display: none; flex: 1;">Cancelar</button>
+                        </div>
                     </form>
                 </div>
 
                 <div class="table-section">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <h2>📊 Matriz Adaptativa de Desempenho</h2>
+                        <h2>📋 Matriz de Alunos e Desempenho</h2>
                         <button class="btn-excel" onclick="exportarExcel()">📥 Exportar XLS</button>
                     </div>
 
                     <div class="filter-container">
-                        <button class="filter-btn active" onclick="filtrarStatus('todos', this)">Todos</button>
-                        <button class="filter-btn" onclick="filtrarStatus('bom', this)">🟢 Bom Desempenho</button>
-                        <button class="filter-btn" onclick="filtrarStatus('atencao', this)">🟡 Atenção</button>
-                        <button class="filter-btn" onclick="filtrarStatus('critico', this)">🔴 Crítico</button>
-                        
-                        <select class="filter-select" id="filtro-turma-select" onchange="atualizarTabela()">
-                            <option value="todas">Todas as Turmas</option>
+                        <input type="text" id="busca-nome" class="filter-select" placeholder="🔍 Buscar aluno..." style="width: 200px; border-radius: 5px; padding: 6px 12px;" oninput="filtrarEAtualizar()">
+                        <select id="filtro-turma" class="filter-select" onchange="filtrarEAtualizar()">
+                            <option value="Todos">Todas as Turmas</option>
                             <option value="1º Ano A">1º Ano A</option>
                             <option value="1º Ano B">1º Ano B</option>
                             <option value="2º Ano A">2º Ano A</option>
@@ -790,117 +747,146 @@
                             <option value="3º Ano A">3º Ano A</option>
                             <option value="3º Ano B">3º Ano B</option>
                         </select>
+                        <button class="filter-btn active" id="btn-filtro-todos" onclick="definirFiltroStatus('Todos')">Todos</button>
+                        <button class="filter-btn" id="btn-filtro-atencao" onclick="definirFiltroStatus('Atenção')">⚠️ Atenção</button>
+                        <button class="filter-btn" id="btn-filtro-critico" onclick="definirFiltroStatus('Crítico')">🚨 Crítico</button>
                     </div>
 
-                    <div id="tabela-agrupada-container">
-                        </div>
+                    <div id="tabela-conteudo-agrupado"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="student-modal" class="modal">
+    <div id="detalhe-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="fecharModal()">&times;</span>
-            <h2 id="modal-aluno-nome" style="color: #1e3c72; margin-bottom: 5px;">Nome do Aluno</h2>
-            <div id="modal-aluno-sub" style="margin-bottom: 15px;">
-                <span class="status-badge status-bom" id="modal-aluno-status">Bom</span>
-                <span class="perfil-badge" id="modal-aluno-perfil">Perfil</span>
-            </div>
+            <div id="modal-header-info" style="margin-bottom: 20px;">
+                </div>
 
             <div class="modal-tabs">
-                <button class="tab-btn active" onclick="mudarTab('diagnostico', this)">🧠 Diagnóstico IA</button>
-                <button class="tab-btn" onclick="mudarTab('historico', this)">📅 Histórico & Boletim</button>
-                <button class="tab-btn" onclick="mudarTab('plano', this)">🛠️ Plano de Ação (PAI)</button>
+                <button class="tab-btn active" onclick="mudarTab(event, 'tab-desempenho')">Gráfico & Notas</button>
+                <button class="tab-btn" onclick="mudarTab(event, 'tab-plano')">Plano de Intervenção (PAI)</button>
+                <button class="tab-btn" onclick="mudarTab(event, 'tab-comunicado')">Comunicado Automatizado</button>
             </div>
 
-            <div id="tab-diagnostico" class="tab-content active">
-                <div class="info-box">
-                    <strong>Análise Preditiva do Algoritmo:</strong>
-                    <p id="ia-predicao" style="margin-top: 5px; font-size: 13.5px;"></p>
+            <div id="tab-desempenho" class="tab-content active">
+                <div class="dashboard-semestres-grid" id="modal-semestres"></div>
+                <div style="height: 250px; position: relative; margin-bottom: 20px;">
+                    <canvas id="chartAlunoModal"></canvas>
                 </div>
-                <div class="ai-section-title">Habilidades Dominadas</div>
-                <ul class="ai-list domina" id="ia-domina"></ul>
-                <div class="ai-section-title">Habilidades a Aprimorar</div>
-                <ul class="ai-list aprimorar" id="ia-aprimorar"></ul>
-
-                <div class="simulador-container">
-                    <strong style="color: #1e3c72; font-size: 13px;">📊 Simulador Volumetria de Notas (Impacto no ISE)</strong>
-                    <div class="simulador-grid">
-                        <div class="simulador-item">
-                            <label>Frequência Alvo:</label>
-                            <input type="number" id="sim-freq" style="width: 50px; padding: 2px;" oninput="calcularSimulacao()">%
-                        </div>
-                        <div class="simulador-item">
-                            <label>Média Geral Alvo:</label>
-                            <input type="number" step="0.1" id="sim-media" style="width: 50px; padding: 2px;" oninput="calcularSimulacao()">
-                        </div>
-                        <div class="simulador-item" style="background: #eef9ff; font-weight: bold; color: #1e3c72;">
-                            ISE Estimado: <span id="sim-ise-resultado">--</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="tab-historico" class="tab-content">
-                <div class="dashboard-semestres-grid">
-                    <div class="semestre-card-mini"><h5>1º Bim</h5><div class="semestre-value" id="b1-val">--</div></div>
-                    <div class="semestre-card-mini"><h5>2º Bim</h5><div class="semestre-value" id="b2-val">--</div></div>
-                    <div class="semestre-card-mini"><h5>3º Bim</h5><div class="semestre-value" id="b3-val">--</div></div>
-                    <div class="semestre-card-mini"><h5>4º Bim (Previsto)</h5><div class="semestre-value" id="b4-val">--</div></div>
-                </div>
-                <div class="boletim-grid" id="boletim-linhas"></div>
+                <div class="boletim-grid" id="modal-boletim-rows"></div>
             </div>
 
             <div id="tab-plano" class="tab-content">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <strong style="color: #1e3c72;">Plano de Acompanhamento Individual (PAI) personalizado por IA</strong>
-                    <button class="btn-print" onclick="window.print()">🖨️ Imprimir PAI</button>
+                <div class="btn-panel">
+                    <button class="btn-print" onclick="window.print()">🖨️ Imprimir Plano (PAI)</button>
                 </div>
-                
                 <div class="pai-template">
                     <div class="pai-header">
-                        <h3>PLANO DE ACOMPANHAMENTO INDIVIDUAL (PAI)</h3>
-                        <p style="font-size: 12px; color: #555;">Gerado automaticamente via EduVision AI em tempo real</p>
+                        <h2>PLANO DE ATENDIMENTO INDIVIDUALIZADO (PAI)</h2>
+                        <p style="font-size: 12px; color: #555; margin-top: 5px;">EduVision AI • Relatório de Análise Preditiva e Pedagógica</p>
                     </div>
-                    <p style="font-size: 13px;"><strong>Responsável Pedagógico:</strong> Coordenação de Curso / Orientação Educacional</p>
-                    <p style="font-size: 13px; margin-bottom: 15px;"><strong>Objetivo:</strong> Reverter cenários de risco acadêmico e potencializar competências técnicas.</p>
+                    <div id="pai-dados-aluno" class="info-box"></div>
                     
-                    <div class="plano-cronograma" id="pai-cronograma-conteudo"></div>
+                    <div class="ai-section-title">🎯 Objetivos de Curto Prazo</div>
+                    <div id="pai-objetivos"></div>
 
-                    <div style="margin-top: 20px;">
-                        <button class="btn-copy" onclick="copiarComunicado()">Copiar Comunicado</button>
-                        <strong style="color: #1e3c72; font-size: 12px; display: block; margin-bottom: 5px;">📱 Sugestão de Comunicado Responsáveis (WhatsApp/E-mail):</strong>
-                        <div class="comunicado-box" id="comunicado-texto"></div>
-                    </div>
+                    <div class="ai-section-title">🛠️ Plano de Ação & Intervenções Práticas</div>
+                    <div id="pai-acoes"></div>
+                </div>
+            </div>
+
+            <div id="tab-comunicado" class="tab-content">
+                <h3>Comunicados Gerados de Forma Autônoma</h3>
+                <p style="font-size: 13px; color:#666; margin-bottom: 15px;">Modelos de mensagens gerados pela IA de acordo com os dados do estudante.</p>
+                
+                <div class="ai-section-title">✉️ Canal de Envio: WhatsApp (Curto e direto)</div>
+                <div class="comunicado-box">
+                    <button class="btn-copy" onclick="copiarComunicado('comunicado-whatsapp')">Copiar</button>
+                    <div id="comunicado-whatsapp"></div>
+                </div>
+
+                <div class="ai-section-title" style="margin-top: 25px;">✉️ Canal de Envio: E-mail (Institucional e detalhado)</div>
+                <div class="comunicado-box">
+                    <button class="btn-copy" onclick="copiarComunicado('comunicado-email')">Copiar</button>
+                    <div id="comunicado-email"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Banco de dados em memória inicial (Mock estruturado para OBNE)
+        // BASE DE DADOS INICIAL DO SISTEMA
         let alunos = [
-            { nome: "Lucas Sousa", turma: "1º Ano A", frequencia: 92, notas: { port: 8.5, mat: 7.2, hist: 8.0, geo: 7.8, bio: 8.2, exatas: 7.0, tec1: 9.0, tec2: 8.5 }, tendencia: "↑" },
-            { nome: "Ana Julia Costa", turma: "1º Ano A", frequencia: 72, notas: { port: 5.5, mat: 4.2, hist: 6.0, geo: 5.0, bio: 4.8, exatas: 4.0, tec1: 5.8, tec2: 5.0 }, tendencia: "↓" },
-            { nome: "Carlos Eduardo", turma: "1º Ano B", frequencia: 84, notas: { port: 6.8, mat: 6.0, hist: 7.2, geo: 6.5, bio: 7.0, exatas: 6.2, tec1: 7.5, tec2: 6.8 }, tendencia: "→" },
-            { nome: "Mariana Silva", turma: "2º Ano B", frequencia: 64, notas: { port: 4.0, mat: 3.5, hist: 5.0, geo: 4.5, bio: 3.8, exatas: 3.0, tec1: 4.2, tec2: 4.0 }, tendencia: "↓" },
-            { nome: "Beatriz Ribeiro", turma: "3º Ano A", frequencia: 96, notas: { port: 9.5, mat: 9.8, hist: 9.2, geo: 9.4, bio: 9.6, exatas: 9.8, tec1: 10, tec2: 9.5 }, tendencia: "↑" }
+            {
+                nome: "Lucas Sousa",
+                turma: "1º Ano A",
+                frequencia: 92,
+                notas: {
+                    b1: { portugues: 8.5, matematica: 7.2, historia: 8.0, geografia: 7.5, tec1: 9.0, tec2: 8.0 },
+                    b2: { portugues: 8.0, matematica: 6.8, historia: 8.5, geografia: 7.0, tec1: 8.5, tec2: 7.5 }
+                }
+            },
+            {
+                nome: "Beatriz Oliveira",
+                turma: "1º Ano B",
+                frequencia: 72,
+                notas: {
+                    b1: { portugues: 5.5, matematica: 4.8, historia: 6.0, geografia: 5.0, tec1: 5.0, tec2: 4.5 },
+                    b2: { portugues: 5.0, matematica: 4.2, historia: 5.5, geografia: 4.8, tec1: 4.8, tec2: 4.0 }
+                }
+            },
+            {
+                nome: "Carlos Eduardo Silva",
+                turma: "2º Ano A",
+                frequencia: 88,
+                notas: {
+                    b1: { portugues: 7.0, matematica: 6.5, historia: 7.2, geografia: 8.0, tec1: 7.5, tec2: 7.0 },
+                    b2: { portugues: 7.2, matematica: 6.8, historia: 7.5, geografia: 8.2, tec1: 8.0, tec2: 7.5 }
+                }
+            },
+            {
+                nome: "Mariana Costa",
+                turma: "2º Ano B",
+                frequencia: 96,
+                notas: {
+                    b1: { portugues: 9.5, matematica: 9.8, historia: 9.0, geografia: 9.5, tec1: 9.8, tec2: 9.2 },
+                    b2: { portugues: 9.8, matematica: 10.0, historia: 9.5, geografia: 9.8, tec1: 10.0, tec2: 9.5 }
+                }
+            },
+            {
+                nome: "João Pedro Santos",
+                turma: "3º Ano A",
+                frequencia: 68,
+                notas: {
+                    b1: { portugues: 5.2, matematica: 4.0, historia: 5.0, geografia: 4.5, tec1: 4.5, tec2: 5.0 },
+                    b2: { portugues: 4.8, matematica: 3.5, historia: 4.5, geografia: 4.0, tec1: 4.0, tec2: 4.2 }
+                }
+            }
         ];
 
-        let filtroStatusAtual = 'todos';
-        let alunoSelecionadoIndex = null;
+        let chartTurmasInstance = null;
+        let chartAlunoInstance = null;
+        let statusFiltroAtual = "Todos";
 
-        // Estruturas de disciplinas técnicas por ramificação do Ensino Médio Técnico
-        const disciplinasTecnicas = {
-            "Administração": [
-                { id: "tec1", label: "Gestão Organizacional" },
-                { id: "tec2", label: "Contabilidade Geral" }
-            ],
-            "Agropecuária": [
-                { id: "tec1", label: "Zootecnia Aplicada" },
-                { id: "tec2", label: "Fitotecnia e Solo" }
-            ]
+        // CONFIGURAÇÕES DE DISCIPLINAS TÉCNICAS POR SEGMENTO
+        const configDisciplinas = {
+            "Admin": {
+                label: "Componentes Técnicos (Administração)",
+                tec1: "Gestão de Processos",
+                tec2: "Economia Aplicada"
+            },
+            "Agro": {
+                label: "Componentes Técnicos (Agropecuária)",
+                tec1: "Zootecnia Geral",
+                tec2: "Solos e Irrigação"
+            },
+            "Mkt": {
+                label: "Componentes Técnicos (Marketing)",
+                tec1: "Comportamento de Consumo",
+                tec2: "Marketing Digital"
+            }
         };
 
         function fazerLogin(e) {
@@ -910,407 +896,638 @@
             inicializarDashboard();
         }
 
-        function inicializarDashboard() {
-            ajustarCamposDisciplinas();
-            atualizarCalculosERadar();
-            atualizarTabela();
-        }
-
-        function obterRamificacaoTecnica(turma) {
-            return turma.includes('Ano A') ? 'Administração' : 'Agropecuária';
+        function obterDadosSegmento(turma) {
+            if (turma.includes("Administração") || turma.includes("A")) {
+                return configDisciplinas.Admin;
+            } else if (turma.includes("Agropecuária") || turma.includes("B")) {
+                return configDisciplinas.Agro;
+            } else {
+                return configDisciplinas.Mkt;
+            }
         }
 
         function ajustarCamposDisciplinas() {
-            const turmaSelect = document.getElementById('turma').value;
-            const ramificacao = obterRamificacaoTecnica(turmaSelect);
-            const container = document.getElementById('campos-tecnicos');
-            document.getElementById('categoria-tecnica-titulo').innerText = `Componente Técnico Profissional (${ramificacao})`;
+            const turmaSelecionada = document.getElementById('turma').value;
+            const config = obterDadosSegmento(turmaSelecionada);
             
-            container.innerHTML = '';
-            disciplinasTecnicas[ramificacao].forEach(disc => {
-                container.innerHTML += `
-                    <div class="input-group">
-                        <label>${disc.label}</label>
-                        <input type="number" step="0.1" min="0" max="10" id="nota-${disc.id}" placeholder="0.0" required>
-                    </div>`;
-            });
+            document.getElementById('label-disciplina-tecnica').innerText = config.label;
+            document.getElementById('label-tec-1').innerText = config.tec1;
+            document.getElementById('label-tec-2').innerText = config.tec2;
         }
 
-        function calcularMediaAluno(aluno) {
-            const n = aluno.notas;
-            const soma = n.port + n.mat + n.hist + n.geo + n.bio + n.exatas + n.tec1 + n.tec2;
-            return parseFloat((soma / 8).toFixed(1));
-        }
-
-        function obterStatusEClasse(media, freq) {
-            if (freq < 75 || media < 5.0) return { status: "Crítico", classe: "status-critico" };
-            if (freq < 80 || media < 7.0) return { status: "Atenção", classe: "status-atencao" };
-            return { status: "Bom", classe: "status-bom" };
-        }
-
-        function atualizarCalculosERadar() {
-            let totalISE = 0;
-            let totalAlunos = alunos.length;
-            let casosRisco = 0;
-            let somaTurmas = {};
-            let contTurmas = {};
-            let radarInsights = [];
-
-            alunos.forEach(aluno => {
-                const media = calcularMediaAluno(aluno);
-                const info = obterStatusEClasse(media, aluno.frequencia);
-                
-                // Cálculo de Saúde Escolar Individualizada
-                let iseIndividual = (media * 7) + (aluno.frequencia * 0.3);
-                totalISE += iseIndividual;
-
-                if (info.status === "Crítico") casosRisco++;
-
-                // Agrupando Médias por Turma
-                if (!somaTurmas[aluno.turma]) {
-                    somaTurmas[aluno.turma] = 0;
-                    contTurmas[aluno.turma] = 0;
+        function calcularMediaGeralAluno(aluno) {
+            let soma = 0;
+            let total = 0;
+            for (let b in aluno.notas) {
+                for (let disc in aluno.notas[b]) {
+                    soma += aluno.notas[b][disc];
+                    total++;
                 }
-                somaTurmas[aluno.turma] += media;
-                contTurmas[aluno.turma]++;
-
-                // Motor de Regras IA do Radar de Alertas Preditivos
-                if (aluno.frequencia < 75 && media < 5.5) {
-                    radarInsights.push(`⚠️ <strong>${aluno.nome} (${aluno.turma})</strong>: Alto risco de evasão e retenção combinados. Ação imediata recomendada.`);
-                } else if (aluno.frequencia < 75) {
-                    radarInsights.push(`⚠️ <strong>${aluno.nome} (${aluno.turma})</strong>: Queda severa na frequência (${aluno.frequencia}%), risco iminente de quebra de vínculo.`);
-                } else if (media < 5.0) {
-                    radarInsights.push(`📉 <strong>${aluno.nome} (${aluno.turma})</strong>: Desfasagem conceitual severa (Média: ${media}). Necessita de nivelamento imediato.`);
-                }
-            });
-
-            // Interface do Painel Principal
-            const iseFinal = totalAlunos > 0 ? Math.min(Math.round(totalISE / totalAlunos), 100) : 0;
-            document.getElementById('ise-val').innerText = iseFinal + "%";
-            document.getElementById('ise-graph-bar').style.width = iseFinal + "%";
-            document.getElementById('total-alunos').innerText = totalAlunos;
-            document.getElementById('casos-risco').innerText = casosRisco;
-
-            // Renderizar Médias por Turma
-            const containerMedias = document.getElementById('container-medias-turma');
-            containerMedias.innerHTML = '';
-            for (let t in somaTurmas) {
-                let med = (somaTurmas[t] / contTurmas[t]).toFixed(1);
-                containerMedias.innerHTML += `
-                    <div class="turma-item-mini">
-                        <span>${t}</span><strong>${med}</strong>
-                    </div>`;
             }
+            return total > 0 ? (soma / total) : 0;
+        }
 
-            // Alimentação do Box de IA Ativo
-            const radarLista = document.getElementById('radar-insights-lista');
-            if (radarInsights.length === 0) {
-                radarLista.innerHTML = `<li>🟢 <strong>Estabilidade Sistêmica:</strong> Nenhum padrão crítico ou anomalia preditiva detectada nas últimas 24 horas.</li>`;
+        function determinarStatusFrequenciaMedia(aluno) {
+            const media = calcularMediaGeralAluno(aluno);
+            const freq = aluno.frequencia;
+
+            if (media < 5.5 || freq < 75) {
+                return { label: "Crítico", class: "status-critico" };
+            } else if (media < 7.0 || freq < 85) {
+                return { label: "Atenção", class: "status-atencao" };
             } else {
-                radarLista.innerHTML = radarInsights.map(ins => `<li>${ins}</li>`).join('');
+                return { label: "Bom", class: "status-bom" };
             }
         }
 
-        function atualizarTabela() {
-            const container = document.getElementById('tabela-agrupada-container');
-            const filtroTurma = document.getElementById('filtro-turma-select').value;
-            container.innerHTML = '';
+        function inicializarDashboard() {
+            ajustarCamposDisciplinas();
+            renderizarMétricas();
+            filtrarEAtualizar();
+            gerarGraficoComparativo();
+        }
 
-            // Agrupar alunos por turmas vigentes
-            let turmasAgrupadas = {};
-            alunos.forEach((aluno, index) => {
-                if (filtroTurma !== 'todas' && aluno.turma !== filtroTurma) return;
+        function renderizarMétricas() {
+            let totalISE = 0;
+            let somaMediaGeral = 0;
+            let criticos = 0;
+
+            alunos.forEach(a => {
+                const media = calcularMediaGeralAluno(a);
+                somaMediaGeral += media;
                 
-                const media = calcularMediaAluno(aluno);
-                const info = obterStatusEClasse(media, aluno.frequencia);
+                const status = determinarStatusFrequenciaMedia(a);
+                if (status.label === "Crítico") criticos++;
 
-                // Aplicar filtro de status superior
-                if (filtroStatusAtual !== 'todos') {
-                    if (filtroStatusAtual === 'bom' && info.status !== 'Bom') return;
-                    if (filtroStatusAtual === 'atencao' && info.status !== 'Atenção') return;
-                    if (filtroStatusAtual === 'critico' && info.status !== 'Crítico') return;
-                }
-
-                if (!turmasAgrupadas[aluno.turma]) turmasAgrupadas[aluno.turma] = [];
-                turmasAgrupadas[aluno.turma].push({ ...aluno, index, media, info });
+                // Fórmula ISE: ponderação entre a Média Acadêmica e a Presença Escolar
+                const iseIndividual = (media * 10) * 0.4 + a.frequencia * 0.6;
+                totalISE += iseIndividual;
             });
 
-            // Renderizar tabelas segregadas por turma
-            for (let t in turmasAgrupadas) {
-                let divGrupo = document.createElement('div');
-                divGrupo.innerHTML = `
-                    <div class="turma-group-header">
-                        <span>${t}</span>
-                        <span style="font-size:11px; font-weight: normal;">${turmasAgrupadas[t].length} Aluno(s) Filtrado(s)</span>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th>Frequência</th>
-                                <th>Média Geral</th>
-                                <th>Tendência</th>
-                                <th>Status Diagnóstico</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="corpo-${t.replace(/ /g, '')}"></tbody>
-                    </table>`;
-                
-                container.appendChild(divGrupo);
-                let corpo = document.getElementById(`corpo-${t.replace(/ /g, '')}`);
+            const iseMedio = alunos.length > 0 ? (totalISE / alunos.length).toFixed(1) : 0;
+            
+            document.getElementById('ise-val').innerText = `${iseMedio}%`;
+            const iseBar = document.getElementById('ise-graph-bar');
+            iseBar.style.width = `${iseMedio}%`;
+            
+            if (iseMedio >= 80) iseBar.style.backgroundColor = '#2ecc71';
+            else if (iseMedio >= 65) iseBar.style.backgroundColor = '#f39c12';
+            else iseBar.style.backgroundColor = '#e74c3c';
 
-                turmasAgrupadas[t].forEach(al => {
-                    let trendClass = al.tendencia === '↑' ? 'trend-up' : al.tendencia === '↓' ? 'trend-down' : 'trend-stable';
-                    corpo.innerHTML += `
-                        <tr>
-                            <td class="nome-clicavel" onclick="abrirModal(${al.index})">${al.nome}</td>
-                            <td>${al.frequencia}%</td>
-                            <td><strong>${al.media}</strong></td>
-                            <td class="${trendClass}">${al.tendencia}</td>
-                            <td><span class="status-badge ${al.info.classe}">${al.info.status}</span></td>
-                            <td>
-                                <button class="action-btn" onclick="prepararEdicao(${al.index})" title="Editar Notas">✏️</button>
-                                <button class="action-btn" onclick="deletarAluno(${al.index})" title="Excluir Matrícula">🗑️</button>
-                            </td>
-                        </tr>`;
-                });
+            document.getElementById('total-alunos').innerText = alunos.length;
+            document.getElementById('casos-risco').innerText = criticos;
+
+            // Médias Gerais por Turma
+            const mediasTurmas = calcularMediasPorTurma();
+            let htmlMedias = '';
+            for (let turma in mediasTurmas) {
+                htmlMedias += `
+                    <div class="turma-item-mini">
+                        <strong>${turma}:</strong>
+                        <span>Nota ${mediasTurmas[turma].toFixed(1)}</span>
+                    </div>
+                `;
             }
+            document.getElementById('container-medias-turma').innerHTML = htmlMedias;
         }
 
-        function filtrarStatus(status, btn) {
-            filtroStatusAtual = status;
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            atualizarTabela();
+        function calcularMediasPorTurma() {
+            let agrupado = {};
+            alunos.forEach(a => {
+                const m = calcularMediaGeralAluno(a);
+                if (!agrupado[a.turma]) {
+                    agrupado[a.turma] = { soma: 0, count: 0 };
+                }
+                agrupado[a.turma].soma += m;
+                agrupado[a.turma].count++;
+            });
+
+            let medias = {};
+            for (let t in agrupado) {
+                medias[t] = agrupado[t].soma / agrupado[t].count;
+            }
+            return medias;
         }
 
         function cadastrarAluno(e) {
             e.preventDefault();
-            const indexEdit = parseInt(document.getElementById('edit-index').value);
+            const editIndex = parseInt(document.getElementById('edit-index').value);
             const nome = document.getElementById('nome').value;
             const turma = document.getElementById('turma').value;
-            const freq = parseInt(document.getElementById('frequencia').value);
-            
-            const notas = {
-                port: parseFloat(document.getElementById('nota-port').value),
-                mat: parseFloat(document.getElementById('nota-mat').value),
-                hist: parseFloat(document.getElementById('nota-hist').value),
-                geo: parseFloat(document.getElementById('nota-geo').value),
-                bio: parseFloat(document.getElementById('nota-bio').value),
-                exatas: parseFloat(document.getElementById('nota-exatas').value),
-                tec1: parseFloat(document.getElementById('nota-tec1').value),
-                tec2: parseFloat(document.getElementById('nota-tec2').value)
+            const frequencia = parseInt(document.getElementById('frequencia').value);
+            const bAlvo = document.getElementById('bimestre-alvo').value;
+
+            const nPort = parseFloat(document.getElementById('nota-portugues').value);
+            const nMat = parseFloat(document.getElementById('nota-matematica').value);
+            const nHist = parseFloat(document.getElementById('nota-historia').value);
+            const nGeo = parseFloat(document.getElementById('nota-geografia').value);
+            const nTec1 = parseFloat(document.getElementById('nota-tec1').value);
+            const nTec2 = parseFloat(document.getElementById('nota-tec2').value);
+
+            const blocoNotas = {
+                portugues: nPort,
+                matematica: nMat,
+                historia: nHist,
+                geografia: nGeo,
+                tec1: nTec1,
+                tec2: nTec2
             };
 
-            if (indexEdit === -1) {
-                // Novo Cadastro
-                alunos.push({ nome, turma, frequencia: freq, notas, tendencia: "→" });
+            if (editIndex >= 0) {
+                alunos[editIndex].nome = nome;
+                alunos[editIndex].turma = turma;
+                alunos[editIndex].frequencia = frequencia;
+                alunos[editIndex].notas[bAlvo] = blocoNotas;
             } else {
-                // Atualização / Edição
-                const mediaAntiga = calcularMediaAluno(alunos[indexEdit]);
-                alunos[indexEdit] = { ...alunos[indexEdit], nome, turma, frequencia: freq, notas };
-                const novaMedia = calcularMediaAluno(alunos[indexEdit]);
-                alunos[indexEdit].tendencia = novaMedia > mediaAntiga ? "↑" : novaMedia < mediaAntiga ? "↓" : "→";
+                const alunoExistente = alunos.find(a => a.nome.toLowerCase() === nome.toLowerCase() && a.turma === turma);
+                if (alunoExistente) {
+                    alunoExistente.frequencia = frequencia;
+                    alunoExistente.notas[bAlvo] = blocoNotas;
+                } else {
+                    let novoAluno = {
+                        nome: nome,
+                        turma: turma,
+                        frequencia: frequencia,
+                        notas: {}
+                    };
+                    novoAluno.notas[bAlvo] = blocoNotas;
+                    alunos.push(novoAluno);
+                }
             }
 
             limparFormulario();
-            atualizarCalculosERadar();
-            atualizarTabela();
-        }
-
-        function prepararEdicao(index) {
-            const al = alunos[index];
-            document.getElementById('edit-index').value = index;
-            document.getElementById('form-titulo').innerText = "✏️ Alterar Matriz de Registro";
-            document.getElementById('btn-salvar').innerText = "Atualizar Dados";
-            document.getElementById('btn-cancelar').style.display = "block";
-
-            document.getElementById('nome').value = al.nome;
-            document.getElementById('turma').value = al.turma;
-            ajustarCamposDisciplinas();
-
-            document.getElementById('frequencia').value = al.frequencia;
-            document.getElementById('nota-port').value = al.notas.port;
-            document.getElementById('nota-mat').value = al.notas.mat;
-            document.getElementById('nota-hist').value = al.notas.hist;
-            document.getElementById('nota-geo').value = al.notas.geo;
-            document.getElementById('nota-bio').value = al.notas.bio;
-            document.getElementById('nota-exatas').value = al.notas.exatas;
-            document.getElementById('nota-tec1').value = al.notas.tec1;
-            document.getElementById('nota-tec2').value = al.notas.tec2;
+            renderizarMétricas();
+            filtrarEAtualizar();
+            gerarGraficoComparativo();
         }
 
         function limparFormulario() {
             document.getElementById('cadastro-form').reset();
             document.getElementById('edit-index').value = "-1";
             document.getElementById('form-titulo').innerText = "📝 Matrícula e Notas";
-            document.getElementById('btn-salvar').innerText = "Salvar na Matriz";
             document.getElementById('btn-cancelar').style.display = "none";
             ajustarCamposDisciplinas();
         }
 
+        function definirFiltroStatus(status) {
+            statusFiltroAtual = status;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            if (status === 'Todos') document.getElementById('btn-filtro-todos').classList.add('active');
+            else if (status === 'Atenção') document.getElementById('btn-filtro-atencao').classList.add('active');
+            else if (status === 'Crítico') document.getElementById('btn-filtro-critico').classList.add('active');
+            
+            filtrarEAtualizar();
+        }
+
+        function filtrarEAtualizar() {
+            const busca = document.getElementById('busca-nome').value.toLowerCase();
+            const turmaSel = document.getElementById('filtro-turma').value;
+
+            let filtrados = alunos.filter((aluno, index) => {
+                aluno.indexOriginal = index; // Armazena index original
+                const atendeBusca = aluno.nome.toLowerCase().includes(busca);
+                const atendeTurma = (turmaSel === "Todos" || aluno.turma === turmaSel);
+                const statusInfo = determinarStatusFrequenciaMedia(aluno);
+                const atendeStatus = (statusFiltroAtual === "Todos" || statusInfo.label === statusFiltroAtual);
+
+                return atendeBusca && atendeTurma && atendeStatus;
+            });
+
+            // Agrupa Alunos por Turma
+            let turmasAgrupadas = {};
+            filtrados.forEach(a => {
+                if (!turmasAgrupadas[a.turma]) {
+                    turmasAgrupadas[a.turma] = [];
+                }
+                turmasAgrupadas[a.turma].push(a);
+            });
+
+            let htmlCompleto = "";
+            for (let turma in turmasAgrupadas) {
+                let somaTurma = 0;
+                turmasAgrupadas[turma].forEach(a => { somaTurma += calcularMediaGeralAluno(a); });
+                const mediaTurma = (somaTurma / turmasAgrupadas[turma].length).toFixed(1);
+
+                htmlCompleto += `
+                    <div class="turma-group                    <div class="turma-group-header">
+                        <span>🏫 ${turma}</span>
+                        <span>Média da Turma: ${mediaTurma}</span>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Estudante</th>
+                                <th>Presença</th>
+                                <th>Média Geral</th>
+                                <th>Bimestres</th>
+                                <th>Status</th>
+                                <th style="text-align: right;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                turmasAgrupadas[turma].forEach(aluno => {
+                    const status = determinarStatusFrequenciaMedia(aluno);
+                    const media = calcularMediaGeralAluno(aluno).toFixed(1);
+                    const bimestresAtivos = Object.keys(aluno.notas).map(b => b.toUpperCase()).join(', ');
+
+                    htmlCompleto += `
+                        <tr>
+                            <td><span class="nome-clicavel" onclick="abrirModal(${aluno.indexOriginal})">${aluno.nome}</span></td>
+                            <td>${aluno.frequencia}%</td>
+                            <td>${media}</td>
+                            <td>${bimestresAtivos}</td>
+                            <td><span class="status-badge ${status.class}">${status.label}</span></td>
+                            <td style="text-align: right;">
+                                <button class="action-btn" title="Editar Registro" onclick="editarAluno(${aluno.indexOriginal})">✏️</button>
+                                <button class="action-btn" title="Remover" onclick="deletarAluno(${aluno.indexOriginal})">🗑️</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                htmlCompleto += `</tbody></table>`;
+            }
+
+            if (htmlCompleto === "") {
+                htmlCompleto = "<p style='text-align:center; padding: 20px; color:#666;'>Nenhum aluno encontrado para os filtros selecionados.</p>";
+            }
+
+            document.getElementById('tabela-conteudo-agrupado').innerHTML = htmlCompleto;
+        }
+
+        function editarAluno(index) {
+            const aluno = alunos[index];
+            document.getElementById('edit-index').value = index;
+            document.getElementById('nome').value = aluno.nome;
+            document.getElementById('turma').value = aluno.turma;
+            document.getElementById('frequencia').value = aluno.frequencia;
+            
+            ajustarCamposDisciplinas();
+
+            const bimestresDisponiveis = Object.keys(aluno.notas);
+            const bAlvo = bimestresDisponiveis.includes('b2') ? 'b2' : bimestresDisponiveis[0] || 'b1';
+            document.getElementById('bimestre-alvo').value = bAlvo;
+
+            if (aluno.notas[bAlvo]) {
+                document.getElementById('nota-portugues').value = aluno.notas[bAlvo].portugues || '';
+                document.getElementById('nota-matematica').value = aluno.notas[bAlvo].matematica || '';
+                document.getElementById('nota-historia').value = aluno.notas[bAlvo].historia || '';
+                document.getElementById('nota-geografia').value = aluno.notas[bAlvo].geografia || '';
+                document.getElementById('nota-tec1').value = aluno.notas[bAlvo].tec1 || '';
+                document.getElementById('nota-tec2').value = aluno.notas[bAlvo].tec2 || '';
+            }
+
+            document.getElementById('form-titulo').innerText = "✏️ Editando Notas de " + aluno.nome;
+            document.getElementById('btn-cancelar').style.display = "inline-block";
+        }
+
         function deletarAluno(index) {
-            if (confirm(`Confirma a exclusão definitiva de ${alunos[index].nome} do sistema de monitoramento adaptativo?`)) {
+            if (confirm("Deseja realmente remover os dados pedagógicos deste aluno?")) {
                 alunos.splice(index, 1);
-                atualizarCalculosERadar();
-                atualizarTabela();
+                renderizarMétricas();
+                filtrarEAtualizar();
+                gerarGraficoComparativo();
             }
         }
 
-        // MOTOR DE NEGÓCIO DA MODAL INTELIGENTE (IA)
-        function abrirModal(index) {
-            alunoSelecionadoIndex = index;
-            const al = alunos[index];
-            const media = calcularMediaAluno(al);
-            const ramificacao = obterRamificacaoTecnica(al.turma);
-            const info = obterStatusEClasse(media, al.frequencia);
+        // COMPORTAMENTO GRÁFICO GLOBAL (Performance por Turma)
+        function gerarGraficoComparativo() {
+            const ctx = document.getElementById('chartTurmas').getContext('2d');
+            const turmasNomes = ["1º Ano A", "1º Ano B", "2º Ano A", "2º Ano B", "3º Ano A", "3º Ano B"];
+            
+            let mediasVal = [];
+            let presencasVal = [];
 
-            document.getElementById('modal-aluno-nome').innerText = al.nome;
-            const badge = document.getElementById('modal-aluno-status');
-            badge.innerText = info.status;
-            badge.className = `status-badge ${info.classe}`;
+            turmasNomes.forEach(turma => {
+                const alunosTurma = alunos.filter(a => a.turma === turma);
+                if (alunosTurma.length > 0) {
+                    let somaNotas = 0;
+                    let somaFreq = 0;
+                    alunosTurma.forEach(a => {
+                        somaNotas += calcularMediaGeralAluno(a);
+                        somaFreq += a.frequencia;
+                    });
+                    mediasVal.push((somaNotas / alunosTurma.length).toFixed(1));
+                    presencasVal.push((somaFreq / alunosTurma.length).toFixed(0));
+                } else {
+                    mediasVal.push(0);
+                    presencasVal.push(0);
+                }
+            });
 
-            // Perfilamento Comportamental por Engenharia de Regras IA
-            let perfil = "Regular e Estável";
-            if (al.frequencia >= 90 && media >= 8.5) perfil = "Potencial Líder / Multiplicador";
-            else if (al.frequencia < 75) perfil = "Risco de Evasão Técnica Crítica";
-            else if (media < 5.5) perfil = "Necessidade Urgente Intervenção Pedagógica";
-            document.getElementById('modal-aluno-perfil').innerText = perfil;
-
-            // Inserção das variáveis no Simulador Volumetria
-            document.getElementById('sim-freq').value = al.frequencia;
-            document.getElementById('sim-media').value = media;
-            calcularSimulacao();
-
-            // Geração Inteligente de Predições e Insights Acadêmicos
-            let predicao = "", domina = [], aprimorar = [], etapasPAI = [], msgZap = "";
-            const discTecnicas = disciplinasTecnicas[ramificacao];
-
-            if (info.status === "Bom") {
-                predicao = `Alta probabilidade (>94%) de aprovação direta e aproveitamento em processos seletivos do mercado na área de ${ramificacao}. Recomendado direcionar para projetos de monitoria científica.`;
-                domina = ["Domínio estruturado em processos analíticos e interpretação de dados.", "Alta autonomia em rotinas complexas da base comum.", `Excelente rendimento nas disciplinas profissionais de ${ramificacao}.`];
-                aprimorar = ["Participação ativa em lideranças de grupos de trabalho interdisciplinares.", "Aprofundamento em metodologias de pesquisa avançadas."];
-                
-                etapasPAI = [
-                    "<strong>Etapa 1:</strong> Inclusão imediata em programas institucionais de monitoria interna para auxiliar alunos em recuperação.",
-                    "<strong>Etapa 2:</strong> Indicação para o banco de talentos para estágios técnicos avançados de fim de ciclo."
-                ];
-                msgZap = `Prezados responsáveis por ${al.nome}, parabéns! O rendimento escolar e técnico está excelente. Mantemos a orientação para que continue focado nas atividades de monitoria estendida. Abs, Coordenação.`;
-            } else if (info.status === "Atenção") {
-                predicao = "Risco moderado de dependência parcial ao término do semestre corrente. A perda de engajamento atual pode sobrecarregar o cronograma de estudos final.";
-                domina = ["Cumprimento regular de entregas mínimas.", "Rendimento estável em ramos humanísticos e sociais."];
-                aprimorar = [`Reforço focado nas avaliações do Componente Técnico (${discTecnicas[0].label} e ${discTecnicas[1].label}).`, "Construção de cronogramas para evitar acúmulo de atividades assíncronas."];
-                
-                etapasPAI = [
-                    "<strong>Etapa 1:</strong> Reunião de alinhamento com a equipe docente para acompanhamento de assiduidade em entregas.",
-                    "<strong>Etapa 2:</strong> Inserção em grupo de apoio pedagógico quinzenal no contra-turno."
-                ];
-                msgZap = `Olá! Notamos algumas oscilações nas notas e/ou presença de ${al.nome}. Solicitamos atenção especial ao acompanhamento dos estudos em casa para que possamos retomar o nível ideal. Contamos com vocês!`;
-            } else {
-                predicao = "⚠️ ALERTA MÁXIMO: Padrões históricos indicam retenção iminente ou abandono caso as intervenções multifatoriais não ocorram num ciclo máximo de 15 dias.";
-                domina = ["Participação esporádica e intermitente em dinâmicas práticas e dinâmicas de acolhimento escolar."];
-                aprimorar = ["Nivelamento estrutural urgente em competências matemáticas básicas.", "Aumento imediato do índice de presença física nas aulas regulamentares.", "Recuperação paralela emergencial de notas nas matérias técnicas."];
-                
-                etapasPAI = [
-                    "<strong>Etapa 1:</strong> Convocação urgente dos responsáveis legais para assinatura de Termo de Compromisso Pedagógico.",
-                    "<strong>Etapa 2:</strong> Adaptação Curricular Emergencial com flexibilização temporária de entregas sob supervisão direta.",
-                    "<strong>Etapa 3:</strong> Encaminhamento ao núcleo de apoio psicopedagógico institucional para averiguação de barreiras psicossociais."
-                ];
-                msgZap = `URGENTE: Prezado(a) responsável por ${al.nome}, precisamos agendar uma reunião presencial com a coordenação pedagógica esta semana para traçarmos um plano urgente de recuperação escolar. Favor responder este contato.`;
+            if (chartTurmasInstance) {
+                chartTurmasInstance.destroy();
             }
 
-            document.getElementById('ia-predicao').innerHTML = predicao;
-            document.getElementById('ia-domina').innerHTML = domina.map(li => `<li>${li}</li>`).join('');
-            document.getElementById('ia-aprimorar').innerHTML = aprimorar.map(li => `<li>${li}</li>`).join('');
-            
-            // População do Plano (PAI) e Textos Automáticos
-            document.getElementById('pai-cronograma-conteudo').innerHTML = etapasPAI.map(et => `<div class="plano-etapa">${et}</div>`).join('');
-            document.getElementById('comunicado-texto').innerText = msgZap;
-
-            // Histórico / Renderização do Boletim Interno Completo no Modal
-            document.getElementById('b1-val').innerText = (media * 0.95).toFixed(1);
-            document.getElementById('b2-val').innerText = media;
-            document.getElementById('b3-val').innerText = (media * 1.02).toFixed(1);
-            document.getElementById('b4-val').innerText = info.status === "Crítico" ? "4.5?" : "7.5?";
-
-            const containerBoletim = document.getElementById('boletim-linhas');
-            containerBoletim.innerHTML = '';
-            
-            // Renderização das matérias fixas + técnicas
-            const todasDisciplinasExibicao = [
-                { k: 'port', l: 'Língua Portuguesa' }, { k: 'mat', l: 'Matemática' },
-                { k: 'hist', l: 'História' }, { k: 'geo', l: 'Geografia' },
-                { k: 'bio', l: 'Biologia' }, { k: 'exatas', l: 'Física/Química' },
-                { k: 'tec1', l: discTecnicas[0].label }, { k: 'tec2', l: discTecnicas[1].label }
-            ];
-
-            todasDisciplinasExibicao.forEach(item => {
-                let nVal = al.notas[item.k];
-                let corBarra = nVal >= 7 ? '#2ecc71' : nVal >= 5 ? '#f39c12' : '#e74c3c';
-                containerBoletim.innerHTML += `
-                    <div class="boletim-row">
-                        <div class="boletim-header-row">
-                            <span>${item.l}</span><strong>${nVal.toFixed(1)}</strong>
-                        </div>
-                        <div class="nota-meter-bg">
-                            <div class="nota-meter-fill" style="width: ${nVal * 10}%; background-color: ${corBarra};"></div>
-                        </div>
-                    </div>`;
-            });
-
-            // Reseta a tab padrão e exibe a modal
-            mudarTab('diagnostico', document.querySelector('.modal-tabs .tab-btn'));
-            document.getElementById('student-modal').style.display = 'flex';
-        }
-
-        function fecharModal() {
-            document.getElementById('student-modal').style.display = 'none';
-        }
-
-        function mudarTab(tabId, btn) {
-            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(tb => tb.classList.remove('active'));
-            document.getElementById(`tab-${tabId}`).classList.add('active');
-            btn.classList.add('active');
-        }
-
-        function calcularSimulacao() {
-            const f = parseInt(document.getElementById('sim-freq').value) || 0;
-            const m = parseFloat(document.getElementById('sim-media').value) || 0;
-            const resIse = Math.min(Math.round((m * 7) + (f * 0.3)), 100);
-            
-            const output = document.getElementById('sim-ise-resultado');
-            output.innerText = resIse + "%";
-            output.style.color = resIse >= 75 ? '#2ecc71' : resIse >= 55 ? '#f39c12' : '#e74c3c';
-        }
-
-        function copiarComunicado() {
-            const texto = document.getElementById('comunicado-texto').innerText;
-            navigator.clipboard.writeText(texto).then(() => {
-                alert("Texto de comunicação copiado com sucesso para a área de transferência!");
+            chartTurmasInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: turmasNomes,
+                    datasets: [
+                        {
+                            label: 'Média Acadêmica (Base 10)',
+                            data: mediasVal,
+                            backgroundColor: '#2a5298',
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Frequência Média (%)',
+                            data: presencasVal,
+                            backgroundColor: '#2ecc71',
+                            yAxisID: 'y1',
+                            type: 'line',
+                            borderColor: '#2ecc71',
+                            borderWidth: 3,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            position: 'left',
+                            min: 0,
+                            max: 10,
+                            title: { display: true, text: 'Notas' }
+                        },
+                        y1: {
+                            type: 'linear',
+                            position: 'right',
+                            min: 0,
+                            max: 100,
+                            grid: { drawOnChartArea: false },
+                            title: { display: true, text: 'Frequência (%)' }
+                        }
+                    }
+                }
             });
         }
 
+        // EXPORTAÇÃO XLS ADAPTADA
         function exportarExcel() {
-            let csvContent = "data:text/csv;charset=utf-8,Nome,Turma,Frequencia,Media Geral,Tendencia\n";
-            alunos.forEach(al => {
-                let m = calcularMediaAluno(al);
-                csvContent += `"${al.nome}","${al.turma}",${al.frequencia}%,${m},"${al.tendencia}"\n`;
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Estudante;Turma;Presenca;Media Geral;Status\n";
+
+            alunos.forEach(a => {
+                const status = determinarStatusFrequenciaMedia(a).label;
+                const media = calcularMediaGeralAluno(a).toFixed(2);
+                csvContent += `"${a.nome}";"${a.turma}";"${a.frequencia}%";"${media}";"${status}"\n`;
             });
+
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "matriz_adaptativa_eduvision.csv");
+            link.setAttribute("download", "EduVision_Matriz_Alunos.csv");
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         }
 
-        // Fechar modal ao clicar fora da janela de conteúdo
+        // SISTEMA DE MODAL DETALHADO DO ESTUDANTE
+        function abrirModal(index) {
+            const aluno = alunos[index];
+            const status = determinarStatusFrequenciaMedia(aluno);
+            const config = obterDadosSegmento(aluno.turma);
+
+            // Perfil IA Estimado de Aprendizado
+            let perfilIA = "Teórico-Prático (Equilibrado)";
+            if (aluno.frequencia < 75) perfilIA = "Risco de Evasão / Suporte Ativo";
+            else if (calcularMediaGeralAluno(aluno) >= 8.5) perfilIA = "Proativo Autônomo (Alta Performance)";
+            else if (calcularMediaGeralAluno(aluno) < 5.5) perfilIA = "Necessidade de Recuperação Contínua";
+
+            document.getElementById('modal-header-info').innerHTML = `
+                <h1 style="color:#1e3c72;">${aluno.nome}</h1>
+                <p style="margin-top: 5px;"><strong>Turma:</strong> ${aluno.turma} | <strong>Frequência Acumulada:</strong> ${aluno.frequencia}%</p>
+                <div class="perfil-badge">Perfil Pedagógico: ${perfilIA}</div>
+                <span class="status-badge ${status.class}" style="margin-left:10px;">Status: ${status.label}</span>
+            `;
+
+            // Renderizar Semestres Mini-Painel
+            let somaB1 = 0, somaB2 = 0;
+            if (aluno.notas.b1) {
+                somaB1 = Object.values(aluno.notas.b1).reduce((a, b) => a + b, 0) / 6;
+            }
+            if (aluno.notas.b2) {
+                somaB2 = Object.values(aluno.notas.b2).reduce((a, b) => a + b, 0) / 6;
+            }
+
+            document.getElementById('modal-semestres').innerHTML = `
+                <div class="semestre-card-mini">
+                    <h5>Média 1º Bimestre</h5>
+                    <div class="semestre-value" style="color: ${somaB1 >= 6 ? '#2ecc71' : '#e74c3c'}">${somaB1 > 0 ? somaB1.toFixed(1) : '--'}</div>
+                </div>
+                <div class="semestre-card-mini">
+                    <h5>Média 2º Bimestre</h5>
+                    <div class="semestre-value" style="color: ${somaB2 >= 6 ? '#2ecc71' : '#e74c3c'}">${somaB2 > 0 ? somaB2.toFixed(1) : '--'}</div>
+                </div>
+                <div class="semestre-card-mini">
+                    <h5>Previsão de Média Final</h5>
+                    <div class="semestre-value" style="color: #1e3c72;">${((somaB1 + (somaB2 || somaB1)) / 2).toFixed(1)}</div>
+                </div>
+            `;
+
+            // Tabela de Boletim no Modal
+            let bAtivo = aluno.notas.b2 ? 'b2' : 'b1';
+            let notasAtuais = aluno.notas[bAtivo] || {};
+
+            let materiasMapeamento = [
+                { id: "Língua Portuguesa", val: notasAtuais.portugues },
+                { id: "Matemática", val: notasAtuais.matematica },
+                { id: "História", val: notasAtuais.historia },
+                { id: "Geografia", val: notasAtuais.geografia },
+                { id: config.tec1, val: notasAtuais.tec1 },
+                { id: config.tec2, val: notasAtuais.tec2 }
+            ];
+
+            let htmlBoletim = "";
+            materiasMapeamento.forEach(m => {
+                const corBarra = m.val >= 7 ? '#2ecc71' : m.val >= 5 ? '#f39c12' : '#e74c3c';
+                htmlBoletim += `
+                    <div class="boletim-row">
+                        <div class="boletim-header-row">
+                            <span>${m.id}</span>
+                            <strong>${m.val !== undefined ? m.val.toFixed(1) : '--'}</strong>
+                        </div>
+                        <div class="nota-meter-bg">
+                            <div class="nota-meter-fill" style="width: ${m.val * 10}%; background-color: ${corBarra};"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('modal-boletim-rows').innerHTML = htmlBoletim;
+
+            // Gerar Gráfico Radar Individual do Estudante
+            gerarGraficoModalAluno(aluno, config);
+
+            // Gerar Plano PAI Adaptativo
+            gerarPlanoPAI(aluno, config);
+
+            // Gerar Modelos de Mensagens
+            gerarComunicados(aluno);
+
+            document.getElementById('detalhe-modal').style.display = 'flex';
+        }
+
+        function gerarGraficoModalAluno(aluno, config) {
+            const ctxModal = document.getElementById('chartAlunoModal').getContext('2d');
+            const labelsMaterias = ["Português", "Matemática", "História", "Geografia", config.tec1, config.tec2];
+
+            let b1Data = aluno.notas.b1 ? [aluno.notas.b1.portugues, aluno.notas.b1.matematica, aluno.notas.b1.historia, aluno.notas.b1.geografia, aluno.notas.b1.tec1, aluno.notas.b1.tec2] : [];
+            let b2Data = aluno.notas.b2 ? [aluno.notas.b2.portugues, aluno.notas.b2.matematica, aluno.notas.b2.historia, aluno.notas.b2.geografia, aluno.notas.b2.tec1, aluno.notas.b2.tec2] : [];
+
+            if (chartAlunoInstance) {
+                chartAlunoInstance.destroy();
+            }
+
+            chartAlunoInstance = new Chart(ctxModal, {
+                type: 'radar',
+                data: {
+                    labels: labelsMaterias,
+                    datasets: [
+                        {
+                            label: '1º Bimestre',
+                            data: b1Data,
+                            fill: true,
+                            backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                            borderColor: 'rgba(52, 152, 219, 1)',
+                            pointBackgroundColor: 'rgba(52, 152, 219, 1)'
+                        },
+                        {
+                            label: '2º Bimestre',
+                            data: b2Data,
+                            fill: true,
+                            backgroundColor: 'rgba(46, 204, 113, 0.2)',
+                            borderColor: 'rgba(46, 204, 113, 1)',
+                            pointBackgroundColor: 'rgba(46, 204, 113, 1)'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { display: true },
+                            suggestedMin: 0,
+                            suggestedMax: 10
+                        }
+                    }
+                }
+            });
+        }
+
+        function gerarPlanoPAI(aluno, config) {
+            const media = calcularMediaGeralAluno(aluno);
+            let objetivosHtml = "";
+            let acoesHtml = "";
+
+            document.getElementById('pai-dados-aluno').innerHTML = `
+                <strong>Nome:</strong> ${aluno.nome} <br>
+                <strong>Turma:</strong> ${aluno.turma} <br>
+                <strong>Situação Acadêmica:</strong> Média ${media.toFixed(1)} | Frequência ${aluno.frequencia}%
+            `;
+
+            if (media < 5.5 || aluno.frequencia < 75) {
+                objetivosHtml = `
+                    <ul class="ai-list aprimorar">
+                        <li>Elevar a assiduidade escolar para o limite mínimo legal de 75% imediatamente.</li>
+                        <li>Recuperar conceitos fundamentais pendentes em Matemática e Componentes Técnicos.</li>
+                        <li>Construir um canal aberto de comunicação diária com a coordenação pedagógica.</li>
+                    </ul>
+                `;
+                acoesHtml = `
+                    <ul class="ai-list aprimorar">
+                        <li><strong>Monitoramento de Presença:</strong> Encontro presencial com a família e assinatura de termo de compromisso de assiduidade.</li>
+                        <li><strong>Nivelamento de Estudos:</strong> Inserção do aluno no programa de apoio pedagógico no contraturno para as disciplinas de base.</li>
+                        <li><strong>Portfólio de Evidências:</strong> Entrega semanal de caderno de exercícios monitorados para validação da recuperação de notas.</li>
+                    </ul>
+                `;
+            } else if (media < 7.0 || aluno.frequencia < 85) {
+                objetivosHtml = `
+                    <ul class="ai-list aprimorar">
+                        <li>Consolidar notas acima da média mínima de aprovação institucional.</li>
+                        <li>Organizar rotina regular de estudos para mitigar flutuações de notas entre bimestres.</li>
+                    </ul>
+                `;
+                acoesHtml = `
+                    <ul class="ai-list aprimorar">
+                        <li><strong>Estudo Dirigido:</strong> Sugestão de cronograma de 4 horas semanais de estudo focado fora do ambiente escolar.</li>
+                        <li><strong>Grupos de Ajuda:</strong> Inclusão do estudante em mentorias de estudo colaborativo coordenadas pela turma.</li>
+                    </ul>
+                `;
+            } else {
+                objetivosHtml = `
+                    <ul class="ai-list domina">
+                        <li>Manter a excelência e robustez no desempenho acadêmico e dedicação presencial.</li>
+                        <li>Desenvolver habilidades voltadas à liderança de times e cooperação em projetos integradores.</li>
+                    </ul>
+                `;
+                acoesHtml = `
+                    <ul class="ai-list domina">
+                        <li><strong>Mentoria entre Pares:</strong> Atuação do estudante como facilitador de aprendizado voluntário para colegas com dificuldades.</li>
+                        <li><strong>Iniciação e Projetos:</strong> Direcionamento para liderança de grupos nos projetos integradores da área técnica de ${config.tec1}.</li>
+                    </ul>
+                `;
+            }
+
+            document.getElementById('pai-objetivos').innerHTML = objetivosHtml;
+            document.getElementById('pai-acoes').innerHTML = acoesHtml;
+        }
+
+        function gerarComunicados(aluno) {
+            const media = calcularMediaGeralAluno(aluno).toFixed(1);
+            let whatsappText = "";
+            let emailText = "";
+
+            if (aluno.frequencia < 75 || media < 5.5) {
+                whatsappText = `Olá, responsável por ${aluno.nome}. Notamos oscilações na frequência (${aluno.frequencia}%) e desempenho recente de seu(sua) filho(a). Solicitamos o comparecimento à escola para alinharmos estratégias pedagógicas conjuntas.`;
+                emailText = `Prezados Senhores Responsáveis por ${aluno.nome},\n\nIdentificamos através do sistema EduVision que o estudante apresenta frequência atual de ${aluno.frequencia}% e média acadêmica consolidada de ${media}.\n\nPara garantir seu avanço escolar saudável, estabelecemos o Plano de Atendimento Individualizado (PAI). Solicitamos seu agendamento junto à secretaria para atendimento presencial.\n\nAtenciosamente,\nCoordenação Pedagógica.`;
+            } else {
+                whatsappText = `Olá! Parabenizamos ${aluno.nome} pela assiduidade escolar de ${aluno.frequencia}% e dedicação aos estudos neste bimestre. Continuem apoiando esta jornada de sucesso!`;
+                emailText = `Prezados Senhores Responsáveis por ${aluno.nome},\n\nEntramos em contato para reportar a excelente evolução pedagógica do estudante neste semestre. Com assiduidade de ${aluno.frequencia}% e rendimento escolar positivo (Média Geral ${media}), ele(a) tem se destacado ativamente em sala.\n\nAgradecemos a parceria constante e o apoio ao desenvolvimento acadêmico.\n\nAtenciosamente,\nCoordenação Pedagógica.`;
+            }
+
+            document.getElementById('comunicado-whatsapp').innerText = whatsappText;
+            document.getElementById('comunicado-email').innerText = emailText;
+        }
+
+        function copiarComunicado(idElemento) {
+            const text = document.getElementById(idElemento).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Comunicado copiado com sucesso para a área de transferência!");
+            });
+        }
+
+        function fecharModal() {
+                    document.getElementById('detalhe-modal').style.display = 'none';
+        }
+
+        function mudarTab(event, tabId) {
+            const contentList = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < contentList.length; i++) {
+                contentList[i].classList.remove("active");
+            }
+
+            const tabBtnList = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < tabBtnList.length; i++) {
+                tabBtnList[i].classList.remove("active");
+            }
+
+            document.getElementById(tabId).classList.add("active");
+            event.currentTarget.classList.add("active");
+        }
+
+        // Fechar modal ao clicar fora da área de conteúdo dinâmico
         window.onclick = function(event) {
-            const modal = document.getElementById('student-modal');
-            if (event.target == modal) modal.style.display = "none";
+            const modal = document.getElementById('detalhe-modal');
+            if (event.target == modal) {
+                fecharModal();
+            }
         }
     </script>
 </body>
