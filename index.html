@@ -3,757 +3,288 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduVision AI Pro - Matriz Adaptativa Avançada</title>
+    <title>EduVision AI - Painel Pedagógico Preditivo</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root {
+            --primary-color: #1e3c72;
+            --secondary-color: #2a5298;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --bg-color: #f4f6f9;
+            --text-color: #333;
         }
 
-        body {
-            background-color: #f4f6f9;
-            color: #333;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); }
 
-        /* TELA DE LOGIN */
+        /* Tela de Login Simulado */
         #login-screen {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            display: flex; justify-content: center; align-items: center; height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+        .login-box {
+            background: white; padding: 40px; border-radius: 10px; box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            width: 100%; max-width: 400px; text-align: center;
         }
 
-        .login-container {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
+        /* Dashboard Principal */
+        #dashboard-screen { display: none; padding: 20px; }
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;
+            display: flex; justify-content: space-between; align-items: center;
         }
 
-        .login-container h1 {
-            color: #1e3c72;
-            margin-bottom: 10px;
-        }
+        .grid-layout { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 1024px) { .grid-layout { grid-template-columns: 350px 1fr; } }
 
-        .login-container p {
-            color: #666;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
+        /* Painéis e Cards */
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        h2, h3 { margin-bottom: 15px; color: var(--primary-color); }
 
-        .input-group {
-            margin-bottom: 15px;
-            text-align: left;
-        }
+        /* Métricas */
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .metric-card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 5px solid var(--primary-color); }
+        .metric-card.danger { border-left-color: var(--danger-color); }
+        .metric-val { font-size: 24px; font-weight: bold; color: #222; margin-top: 5px; }
 
-        .input-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            font-size: 13px;
-        }
+        .ise-container { margin-top: 10px; background: #eee; border-radius: 4px; overflow: hidden; height: 10px; }
+        .ise-bar { height: 100%; width: 0%; transition: width 0.5s ease, background-color 0.5s ease; }
 
-        .input-group input, .input-group select {
-            width: 100%;
-            padding: 8px 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 14px;
-            background-color: white;
-        }
+        /* Formulário Expandido */
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; color: #555; }
+        .form-control { width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; }
+        .form-category { background: #eef2f7; padding: 6px 10px; font-weight: bold; font-size: 13px; color: var(--secondary-color); border-radius: 4px; margin: 15px 0 10px 0; }
+        
+        /* Grid de Notas de 3 colunas para compactar a FGB */
+        .notas-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .input-group label { font-size: 11px; color: #666; display: block; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+        .input-group input { width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; text-align: center; }
 
-        .btn {
-            width: 100%;
-            padding: 12px;
-            background-color: #1e3c72;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
+        .btn { background: var(--primary-color); color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.2s; }
+        .btn:hover { background: var(--secondary-color); }
+        .btn-excel { background: var(--success-color); border: none; padding: 8px 12px; color: white; border-radius: 5px; font-weight: bold; cursor: pointer; }
 
-        .btn:hover {
-            background-color: #2a5298;
-        }
+        /* Tabelas */
+        .table-section { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .filter-container { display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap; }
+        .filter-select { padding: 6px 12px; border: 1px solid #ccc; border-radius: 5px; background: white; }
+        .filter-btn { padding: 6px 12px; border: 1px solid #ccc; border-radius: 5px; background: white; cursor: pointer; font-weight: 600; }
+        .filter-btn.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
 
-        /* PAINEL PRINCIPAL */
-        #dashboard-screen {
-            display: none;
-        }
-
-        header {
-            background-color: #1e3c72;
-            color: white;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .container {
-            max-width: 1450px;
-            margin: 25px auto;
-            padding: 0 20px;
-        }
-
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-            margin-bottom: 25px;
-        }
-
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            border-left: 5px solid #1e3c72;
-        }
-
-        .card.ise { border-left-color: #2ecc71; }
-        .card.alerta { border-left-color: #e74c3c; }
-        .card.turmas-card { border-left-color: #9b59b6; }
-
-        .card h3 {
-            font-size: 13px;
-            color: #777;
-            text-transform: uppercase;
-            margin-bottom: 5px;
-        }
-
-        .card .value {
-            font-size: 26px;
-            font-weight: bold;
-            color: #222;
-            margin-bottom: 5px;
-        }
-
-        .ise-bar-container {
-            width: 100%;
-            background-color: #e9ecef;
-            border-radius: 10px;
-            height: 8px;
-            overflow: hidden;
-            margin-top: 8px;
-        }
-
-        .ise-bar {
-            height: 100%;
-            width: 0%;
-            background-color: #2ecc71;
-            transition: width 0.5s ease, background-color 0.5s ease;
-        }
-
-        .turma-item-mini {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            margin-top: 4px;
-            color: #555;
-            border-bottom: 1px dashed #f4f6f9;
-            padding-bottom: 2px;
-        }
-
-        /* Seção do Gráfico de Turmas */
-        .chart-section {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            margin-bottom: 25px;
-        }
-
-        .content-grid {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 25px;
-        }
-
-        @media (max-width: 1200px) {
-            .content-grid { grid-template-columns: 1fr; }
-        }
-
-        .form-section, .table-section {
-            background: white;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .form-section h2, .table-section h2 {
-            margin-bottom: 15px;
-            color: #1e3c72;
-            font-size: 18px;
-            border-bottom: 2px solid #f4f6f9;
-            padding-bottom: 10px;
-        }
-
-        .scroll-form {
-            max-height: 480px;
-            overflow-y: auto;
-            padding-right: 10px;
-            margin-bottom: 15px;
-        }
-
-        .form-category {
-            font-weight: bold;
-            font-size: 13px;
-            color: #1e3c72;
-            margin: 15px 0 8px 0;
-            border-bottom: 1px dashed #ddd;
-            padding-bottom: 3px;
-        }
-
-        .notas-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        /* Filtros da Tabela */
-        .filter-container {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            align-items: center;
-            background: #f8f9fa;
-            padding: 12px;
-            border-radius: 8px;
-        }
-
-        .filter-btn {
-            padding: 6px 14px;
-            border: 1px solid #ddd;
-            background: #fff;
-            border-radius: 20px;
-            font-size: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-
-        .filter-btn.active {
-            background-color: #1e3c72;
-            color: white;
-            border-color: #1e3c72;
-        }
-
-        .filter-select {
-            padding: 6px 12px;
-            border-radius: 20px;
-            border: 1px solid #ddd;
-            font-size: 12px;
-            font-weight: 600;
-            color: #333;
-            outline: none;
-            cursor: pointer;
-            background-color: #fff;
-        }
-
-        /* Agrupamento por Turmas */
-        .turma-group-header {
-            background-color: #eef2f7;
-            color: #1e3c72;
-            padding: 10px 15px;
-            font-weight: bold;
-            font-size: 14px;
-            margin-top: 20px;
-            border-radius: 6px;
-            border-left: 4px solid #1e3c72;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 10px;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-            font-size: 13px;
-        }
-
-        th {
-            background-color: #f8f9fa;
-            color: #555;
-            font-weight: 600;
-        }
-
-        .nome-clicavel {
-            color: #1e3c72;
-            text-decoration: underline;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .status-badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 11px;
-            display: inline-block;
-        }
-
+        .turma-group-header { background: #34495e; color: white; padding: 8px 15px; font-weight: bold; border-radius: 5px 5px 0 0; margin-top: 15px; display: flex; justify-content: space-between; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 14px; }
+        th, td { padding: 10px 15px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background-color: #f8f9fa; color: #666; font-weight: 600; }
+        .nome-clicavel { color: var(--secondary-color); font-weight: bold; cursor: pointer; text-decoration: underline; }
+        
+        /* Badges de Status */
+        .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; display: inline-block; }
         .status-bom { background-color: #d4edda; color: #155724; }
         .status-atencao { background-color: #fff3cd; color: #856404; }
         .status-critico { background-color: #f8d7da; color: #721c24; }
+        .action-btn { background: none; border: none; cursor: pointer; font-size: 16px; margin-left: 5px; }
 
-        .trend-up { color: #2ecc71; font-weight: bold; }
-        .trend-down { color: #e74c3c; font-weight: bold; }
-        .trend-stable { color: #f39c12; font-weight: bold; }
+        /* Modal Estrutural */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+        .modal-content { background: white; width: 100%; max-width: 850px; border-radius: 10px; max-height: 90vh; overflow-y: auto; padding: 25px; position: relative; }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; color: #aaa; }
+        .close-modal:hover { color: #333; }
 
-        .action-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            margin-left: 5px;
-        }
-
-        /* MODAL */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            width: 95%;
-            max-width: 850px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            position: relative;
-        }
-
-        .close-modal {
-            position: absolute;
-            right: 20px;
-            top: 15px;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            color: #aaa;
-        }
-
-        .info-box {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-            border-left: 4px solid #1e3c72;
-        }
-
-        .perfil-badge {
-            background-color: #e8f4fd;
-            color: #1d8cf8;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 13px;
-            display: inline-block;
-            margin-top: 5px;
-        }
-
-        /* Estrutura de IA no Modal */
-        .ai-section-title {
-            font-size: 14px;
-            font-weight: bold;
-            color: #1e3c72;
-            margin-top: 12px;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .ai-list {
-            list-style: none;
-            padding-left: 0;
-        }
-
-        .ai-list li {
-            font-size: 13.5px;
-            margin-bottom: 6px;
-            position: relative;
-            padding-left: 20px;
-            line-height: 1.4;
-        }
-
-        .ai-list.domina li::before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: #2ecc71;
-            font-weight: bold;
-        }
-
-        .ai-list.aprimorar li::before {
-            content: "➔";
-            position: absolute;
-            left: 0;
-            color: #e67e22;
-            font-weight: bold;
-        }
-
-        .modal-tabs {
-            display: flex;
-            border-bottom: 2px solid #ddd;
-            margin-bottom: 15px;
-        }
-
-        .tab-btn {
-            padding: 10px 20px;
-            cursor: pointer;
-            border: none;
-            background: none;
-            font-size: 14px;
-            font-weight: bold;
-            color: #666;
-        }
-
-        .tab-btn.active {
-            color: #1e3c72;
-            border-bottom: 3px solid #1e3c72;
-        }
-
+        /* Tabs do Modal */
+        .modal-tabs { display: flex; border-bottom: 2px solid #eee; margin-bottom: 20px; gap: 5px; }
+        .tab-btn { padding: 10px 15px; border: none; background: none; cursor: pointer; font-weight: bold; color: #666; border-bottom: 3px solid transparent; }
+        .tab-btn.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        .dashboard-semestres-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 12px;
-            margin-bottom: 20px;
-        }
+        .dashboard-semestres-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+        .semestre-card-mini { background: #f8f9fa; padding: 10px; border-radius: 6px; text-align: center; border: 1px solid #eee; }
+        .semestre-value { font-size: 18px; font-weight: bold; margin-top: 5px; }
 
-        .semestre-card-mini {
-            background: #f8f9fa;
-            border: 1px solid #e3e6f0;
-            padding: 12px;
-            border-radius: 6px;
-            text-align: center;
-        }
+        /* Grid de Boletim interno do Modal (Duas colunas de barras de progresso) */
+        .boletim-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 12px; }
+        .boletim-row { background: #fdfdfd; padding: 8px 12px; border: 1px solid #f0f0f0; border-radius: 5px; }
+        .boletim-header-row { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 13px; }
+        .nota-meter-bg { background: #e9ecef; border-radius: 4px; height: 6px; overflow: hidden; }
+        .nota-meter-fill { height: 100%; border-radius: 4px; transition: width 0.3s; }
 
-        .semestre-card-mini h5 {
-            font-size: 11px;
-            text-transform: uppercase;
-            color: #777;
-            margin-bottom: 4px;
-        }
-
-        .semestre-card-mini .semestre-value {
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .boletim-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-        }
-
-        .boletim-row {
-            background: #fff;
-            padding: 12px;
-            border: 1px solid #eee;
-            border-radius: 6px;
-            font-size: 13px;
-        }
-
-        .boletim-header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .boletim-sub-row {
-            display: flex;
-            gap: 15px;
-            font-size: 11px;
-            color: #666;
-            margin-bottom: 6px;
-        }
-
-        .nota-meter-bg {
-            width: 100%;
-            background-color: #e9ecef;
-            height: 6px;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .nota-meter-fill {
-            height: 100%;
-            width: 0%;
-            border-radius: 3px;
-            transition: width 0.5s ease;
-        }
-
-        .btn-panel {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .btn-print {
-            background-color: #34495e;
-            color: white;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
-            font-size: 13px;
-            cursor: pointer;
-            font-weight: bold;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .btn-excel {
-            background-color: #27ae60;
-            color: white;
-            padding: 6px 12px;
-            border: none;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        /* COMUNICADOS INTELIGENTES */
-        .comunicado-box {
-            background: #eef9ff;
-            border: 1px dashed #1d8cf8;
-            padding: 15px;
-            border-radius: 6px;
-            font-family: Courier, monospace;
-            font-size: 13px;
-            white-space: pre-wrap;
-            margin-top: 10px;
-            color: #2c3e50;
-        }
-
-        .btn-copy {
-            background-color: #1d8cf8;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: bold;
-            cursor: pointer;
-            float: right;
-            margin-top: -5px;
-        }
-
-        .pai-template {
-            border: 2px double #ccc;
-            padding: 20px;
-            background: #fff;
-            margin-top: 10px;
-        }
-
-        .pai-header {
-            text-align: center;
-            border-bottom: 2px solid #333;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-
-        @media print {
-            body * { visibility: hidden; }
-            .modal-content, .modal-content * { visibility: visible; }
-            .modal-content { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; padding: 0; }
-            .close-modal, .modal-tabs, .btn-panel, .btn-copy { display: none !important; }
-            .tab-content { display: block !important; margin-bottom: 30px; }
-        }
+        /* PAI Template e Comunicados */
+        .pai-template { background: #fff; border: 1px solid #ddd; padding: 25px; border-radius: 5px; }
+        .pai-header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 15px; }
+        .info-box { background: #f8f9fa; padding: 12px; border-radius: 5px; margin-bottom: 15px; font-size: 13px; line-height: 1.5; }
+        .ai-section-title { font-weight: bold; margin-top: 15px; margin-bottom: 8px; color: var(--secondary-color); font-size: 14px; text-transform: uppercase; }
+        .ai-list { padding-left: 20px; font-size: 13px; line-height: 1.6; }
+        .comunicado-box { background: #f1f3f5; padding: 15px; border-radius: 5px; position: relative; font-size: 13px; line-height: 1.5; white-space: pre-wrap; margin-bottom: 15px; }
+        .btn-copy { position: absolute; top: 10px; right: 10px; background: #6c757d; color: white; border: none; padding: 3px 8px; font-size: 11px; border-radius: 3px; cursor: pointer; }
+        .btn-print { background: #34495e; color: white; border: none; padding: 8px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
     <div id="login-screen">
-        <div class="login-container">
-            <h1>EduVision AI Pro</h1>
-            <p>Painel de Controle e Matriz Analítica da Coordenação</p>
-            <form id="login-form" onsubmit="fazerLogin(event)">
-                <div class="input-group">
-                    <label>E-mail institucional</label>
-                    <input type="email" value="coordenacao@escola.com" required>
+        <div class="login-box">
+            <h1 style="color: var(--primary-color); margin-bottom: 5px;">EduVision AI</h1>
+            <p style="color: #666; font-size: 14px; margin-bottom: 25px;">Plataforma Integrada de Gestão de Aprendizagem</p>
+            <form onsubmit="fazerLogin(event)">
+                <div class="form-group" style="text-align: left;">
+                    <label>E-mail Institucional</label>
+                    <input type="email" class="form-control" value="coordenacao@escola.edu.br" required>
                 </div>
-                <div class="input-group">
-                    <label>Senha</label>
-                    <input type="password" value="123456" required>
+                <div class="form-group" style="text-align: left; margin-bottom: 25px;">
+                    <label>Senha de Acesso</label>
+                    <input type="password" class="form-control" value="******" required>
                 </div>
-                <button type="submit" class="btn">Entrar no Sistema</button>
+                <button type="submit" class="btn">Entrar no Painel</button>
             </form>
         </div>
     </div>
 
     <div id="dashboard-screen">
-        <header>
-            <h2>🎓 EduVision AI Pro</h2>
-            <span>Módulo de Gestão Preditiva Conectado</span>
-        </header>
+        <div class="header">
+            <div>
+                <h1>EduVision AI — Hub de Análise Preditiva</h1>
+                <p style="font-size: 14px; opacity: 0.9;">Gestão de Desempenho e Intervenção Pedagógica Ativa</p>
+            </div>
+            <div style="text-align: right;">
+                <span style="font-weight: bold;">Prof. Gestor Administrador</span><br>
+                <span style="font-size: 12px; opacity: 0.8;">Nível: Coordenação Geral</span>
+            </div>
+        </div>
 
-        <div class="container">
-            <div class="metrics-grid">
-                <div class="card ise">
-                    <h3>❤️ Saúde Escolar Geral (ISE)</h3>
-                    <div class="value" id="ise-val">--</div>
-                    <div class="ise-bar-container">
-                        <div id="ise-graph-bar" class="ise-bar"></div>
-                    </div>
-                </div>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <h3>Índice de Sucesso Escolar (ISE Média)</h3>
+                <div class="metric-val" id="ise-val">0%</div>
+                <div class="ise-container"><div id="ise-graph-bar" class="ise-bar"></div></div>
+            </div>
+            <div class="metric-card">
+                <h3>Total de Alunos Monitorados</h3>
+                <div class="metric-val" id="total-alunos">0</div>
+            </div>
+            <div class="metric-card danger">
+                <h3>Casos Críticos Alerta IA</h3>
+                <div class="metric-val" id="casos-risco" style="color: var(--danger-color);">0</div>
+            </div>
+            <div class="metric-card">
+                <h3>Médias Gerais Atuais</h3>
+                <div id="container-medias-turma" style="margin-top: 5px; font-size: 12px;"></div>
+            </div>
+        </div>
+
+        <div class="grid-layout">
+            <div>
                 <div class="card">
-                    <h3>👥 Alunos Monitorados</h3>
-                    <div class="value" id="total-alunos">--</div>
-                </div>
-                <div class="card alerta">
-                    <h3>⚠️ Casos de Risco Ativos</h3>
-                    <div class="value" id="casos-risco">--</div>
-                </div>
-                
-                <div class="card turmas-card">
-                    <h3>📊 Médias por Segmento</h3>
-                    <div id="container-medias-turma" style="margin-top: 5px;"></div>
-                </div>
-            </div>
-
-            <div class="chart-section">
-                <h3 style="font-size: 14px; color: #1e3c72; margin-bottom: 12px; text-transform: uppercase;">📊 Comparativo de Performance por Turma</h3>
-                <div style="height: 220px; position: relative;">
-                    <canvas id="chartTurmas"></canvas>
-                </div>
-            </div>
-
-            <div class="content-grid">
-                <div class="form-section">
                     <h2 id="form-titulo">📝 Matrícula e Notas</h2>
                     <form id="cadastro-form" onsubmit="cadastrarAluno(event)">
                         <input type="hidden" id="edit-index" value="-1">
-                        <div class="scroll-form">
-                            <div class="input-group">
-                                <label>Nome Completo</label>
-                                <input type="text" id="nome" placeholder="Ex: Lucas Sousa" required>
-                            </div>
-                            <div class="input-group">
-                                <label>Turma</label>
-                                <select id="turma" onchange="ajustarCamposDisciplinas()" required>
-                                    <option value="1º Ano A">1º Ano A (Téc. Administração)</option>
-                                    <option value="1º Ano B">1º Ano B (Téc. Agropecuária)</option>
-                                    <option value="2º Ano A">2º Ano A (Téc. Administração)</option>
-                                    <option value="2º Ano B">2º Ano B (Téc. Agropecuária)</option>
-                                    <option value="3º Ano A">3º Ano A (Téc. Marketing)</option>
-                                    <option value="3º Ano B">3º Ano B (Téc. Agropecuária)</option>
+                        
+                        <div class="form-group">
+                            <label>Nome Completo do Estudante</label>
+                            <input type="text" id="nome" class="form-control" placeholder="Ex: Nome do Aluno" required>
+                        </div>
+
+                        <div style="display: flex; gap: 10px;">
+                            <div class="form-group" style="flex: 1;">
+                                <label>Turma do Segmento</label>
+                                <select id="turma" class="form-control" onchange="ajustarCamposDisciplinas()" required>
+                                    <option value="1º Ano A">1º Ano A (Administração)</option>
+                                    <option value="1º Ano B">1º Ano B (Agropecuária)</option>
+                                    <option value="2º Ano A">2º Ano A (Administração)</option>
+                                    <option value="2º Ano B">2º Ano B (Agropecuária)</option>
+                                    <option value="3º Ano A">3º Ano A (Administração)</option>
+                                    <option value="3º Ano B">3º Ano B (Agropecuária)</option>
                                 </select>
                             </div>
-                            <div class="input-group">
+                            <div class="form-group" style="flex: 1;">
                                 <label>Frequência (%)</label>
-                                <input type="number" id="frequencia" min="0" max="100" placeholder="Ex: 92" required>
-                            </div>
-                            
-                            <div class="input-group" style="background: #e8f4fd; padding: 10px; border-radius: 5px;">
-                                <label style="color:#1e3c72; font-weight: bold;">Lançar Notas do:</label>
-                                <select id="bimestre-alvo" style="border: 1px solid #1e3c72;">
-                                    <option value="b1">1º Bimestre</option>
-                                    <option value="b2" selected>2º Bimestre</option>
-                                    <option value="b3">3º Bimestre</option>
-                                    <option value="b4">4º Bimes                                    <option value="b3">3º Bimestre</option>
-                                    <option value="b4">4º Bimestre</option>
-                                </select>
-                            </div>
-
-                            <div class="form-category">Componentes Base (Gerais)</div>
-                            <div class="notas-grid">
-                                <div class="input-group">
-                                    <label>Língua Portuguesa</label>
-                                    <input type="number" id="nota-portugues" min="0" max="10" step="0.1" placeholder="0.0" required>
-                                </div>
-                                <div class="input-group">
-                                    <label>Matemática</label>
-                                    <input type="number" id="nota-matematica" min="0" max="10" step="0.1" placeholder="0.0" required>
-                                </div>
-                                <div class="input-group">
-                                    <label>História</label>
-                                    <input type="number" id="nota-historia" min="0" max="10" step="0.1" placeholder="0.0" required>
-                                </div>
-                                <div class="input-group">
-                                    <label>Geografia</label>
-                                    <input type="number" id="nota-geografia" min="0" max="10" step="0.1" placeholder="0.0" required>
-                                </div>
-                            </div>
-
-                            <div class="form-category" id="label-disciplina-tecnica">Componentes Técnicos (Administração)</div>
-                            <div class="notas-grid">
-                                <div class="input-group">
-                                    <label id="label-tec-1">Gestão de Processos</label>
-                                    <input type="number" id="nota-tec1" min="0" max="10" step="0.1" placeholder="0.0" required>
-                                </div>
-                                <div class="input-group">
-                                    <label id="label-tec-2">Economia Aplicada</label>
-                                    <input type="number" id="nota-tec2" min="0" max="10" step="0.1" placeholder="0.0" required>
-                                </div>
+                                <input type="number" id="frequencia" class="form-control" min="0" max="100" placeholder="%" required>
                             </div>
                         </div>
-                        <div style="display: flex; gap: 10px;">
+
+                        <div class="form-group">
+                            <label>Bimestre de Lançamento</label>
+                            <select id="bimestre-alvo" class="form-control">
+                                <option value="b1">1º Bimestre</option>
+                                <option value="b2" selected>2º Bimestre</option>
+                                <option value="b3">3º Bimestre</option>
+                                <option value="b4">4º Bimestre</option>
+                            </select>
+                        </div>
+
+                        <div class="form-category">Componentes Base (Gerais)</div>
+                        <div class="notas-grid">
+                            <div class="input-group"><label>L. Portuguesa</label><input type="number" id="nota-portugues" min="0" max="10" step="0.1" placeholder="0.0" required></div>
+                            <div class="input-group"><label>Literatura</label><input type="number" id="nota-literatura" min="0" max="10" step="0.1" placeholder="0.0" required></div>
+                            <div class="input-group"><label>Redação</label><input type="number" id="nota-redacao" min="0" max="10" step="0.1" placeholder="0.0" required></div>
+                            <div class="input-group"><label>Matemática</label><input type="number" id="nota-matematica" min="0" max="10" step="0.1" placeholder="0.0" required></div>
+                            <div class="input-group"><label>Física</label><input type="number" id="nota-fisica" min="0" max="10" step="0.1" placeholder="0.0" required></div>
+                            <div class="input-group"><label>Química</label><input type="number" id="nota-quimica" min="0" max="10" step="0.1" placeholder="0.0" required></div>
+                            <div class="input-group"><label>Biologia</label><input type="number" id="nota-biologia" min="0" max="10" step="0.1" placeholder="0.0" required></div>
+                            <div class="input-group"><label>História</label><input type="number" id="nota-historia" min="0" max="10" step="0.1" placeholder="0.0" required></div>
+                            <div class="input-group"><label>Geografia</label><input type="number" id="nota-geografia" min="0" max="10" step="0.1" placeholder="0.0" required></div>
+                            <div class="input-group"><label>Filosofia</label><input type="number" id="nota-filosofia" min="0" max="10" step="0.1" placeholder="0.0" required></div>
+                            <div class="input-group"><label>Sociologia</label><input type="number" id="nota-sociologia" min="0" max="10" step="0.1" placeholder="0.0" required></div>
+                            <div class="input-group"><label>Arte</label><input type="number" id="nota-arte" min="0" max="10" step="0.1" placeholder="0.0" required></div>
+                            <div class="input-group"><label>Ed. Física</label><input type="number" id="nota-educacao-fisica" min="0" max="10" step="0.1" placeholder="0.0" required></div>
+                            <div class="input-group"><label>Inglês</label><input type="number" id="nota-ingles" min="0" max="10" step="0.1" placeholder="0.0" required></div>
+                            <div class="input-group"><label>Ed. Financeira</label><input type="number" id="nota-financeira" min="0" max="10" step="0.1" placeholder="0.0" required></div>
+                            <div class="input-group"><label>Proj. de Vida</label><input type="number" id="nota-projeto-vida" min="0" max="10" step="0.1" placeholder="0.0" required></div>
+                        </div>
+
+                        <div class="form-category" id="label-disciplina-tecnica">Componentes Técnicos (Administração)</div>
+                        <div class="notas-grid">
+                            <div class="input-group">
+                                <label id="label-tec-1">Gestão de Processos</label>
+                                <input type="number" id="nota-tec1" min="0" max="10" step="0.1" placeholder="0.0" required>
+                            </div>
+                            <div class="input-group">
+                                <label id="label-tec-2">Economia Aplicada</label>
+                                <input type="number" id="nota-tec2" min="0" max="10" step="0.1" placeholder="0.0" required>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 10px; margin-top: 15px;">
                             <button type="submit" class="btn" style="flex: 2;">Gravar Dados</button>
                             <button type="button" class="btn" id="btn-cancelar" onclick="limparFormulario()" style="background-color: #7f8c8d; display: none; flex: 1;">Cancelar</button>
                         </div>
                     </form>
                 </div>
 
-                <div class="table-section">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <h2>📋 Matriz de Alunos e Desempenho</h2>
-                        <button class="btn-excel" onclick="exportarExcel()">📥 Exportar XLS</button>
+                <div class="card" style="height: 320px;">
+                    <h3>📊 Distribuição de Médias e Frequência</h3>
+                    <div style="height: 250px; position: relative;">
+                        <canvas id="chartTurmas"></canvas>
                     </div>
-
-                    <div class="filter-container">
-                        <input type="text" id="busca-nome" class="filter-select" placeholder="🔍 Buscar aluno..." style="width: 200px; border-radius: 5px; padding: 6px 12px;" oninput="filtrarEAtualizar()">
-                        <select id="filtro-turma" class="filter-select" onchange="filtrarEAtualizar()">
-                            <option value="Todos">Todas as Turmas</option>
-                            <option value="1º Ano A">1º Ano A</option>
-                            <option value="1º Ano B">1º Ano B</option>
-                            <option value="2º Ano A">2º Ano A</option>
-                            <option value="2º Ano B">2º Ano B</option>
-                            <option value="3º Ano A">3º Ano A</option>
-                            <option value="3º Ano B">3º Ano B</option>
-                        </select>
-                        <button class="filter-btn active" id="btn-filtro-todos" onclick="definirFiltroStatus('Todos')">Todos</button>
-                        <button class="filter-btn" id="btn-filtro-atencao" onclick="definirFiltroStatus('Atenção')">⚠️ Atenção</button>
-                        <button class="filter-btn" id="btn-filtro-critico" onclick="definirFiltroStatus('Crítico')">🚨 Crítico</button>
-                    </div>
-
-                    <div id="tabela-conteudo-agrupado"></div>
                 </div>
+            </div>
+
+            <div class="table-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h2>📋 Matriz de Alunos e Desempenho</h2>
+                    <button class="btn-excel" onclick="exportarExcel()">📥 Exportar XLS</button>
+                </div>
+
+                <div class="filter-container">
+                    <input type="text" id="busca-nome" class="filter-select" placeholder="🔍 Buscar aluno..." style="width: 200px;" oninput="filtrarEAtualizar()">
+                    <select id="filtro-turma" class="filter-select" onchange="filtrarEAtualizar()">
+                        <option value="Todos">Todas as Turmas</option>
+                        <option value="1º Ano A">1º Ano A</option>
+                        <option value="1º Ano B">1º Ano B</option>
+                        <option value="2º Ano A">2º Ano A</option>
+                        <option value="2º Ano B">2º Ano B</option>
+                        <option value="3º Ano A">3º Ano A</option>
+                        <option value="3º Ano B">3º Ano B</option>
+                    </select>
+                    <button class="filter-btn active" id="btn-filtro-todos" onclick="definirFiltroStatus('Todos')">Todos</button>
+                    <button class="filter-btn" id="btn-filtro-atencao" onclick="definirFiltroStatus('Atenção')">⚠️ Atenção</button>
+                    <button class="filter-btn" id="btn-filtro-critico" onclick="definirFiltroStatus('Crítico')">🚨 Crítico</button>
+                </div>
+
+                <div id="tabela-conteudo-agrupado"></div>
             </div>
         </div>
     </div>
@@ -761,8 +292,7 @@
     <div id="detalhe-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="fecharModal()">&times;</span>
-            <div id="modal-header-info" style="margin-bottom: 20px;">
-                </div>
+            <div id="modal-header-info" style="margin-bottom: 20px;"></div>
 
             <div class="modal-tabs">
                 <button class="tab-btn active" onclick="mudarTab(event, 'tab-desempenho')">Gráfico & Notas</button>
@@ -785,7 +315,7 @@
                 <div class="pai-template">
                     <div class="pai-header">
                         <h2>PLANO DE ATENDIMENTO INDIVIDUALIZADO (PAI)</h2>
-                        <p style="font-size: 12px; color: #555; margin-top: 5px;">EduVision AI • Relatório de Análise Preditiva e Pedagógica</p>
+                        <p style="font-size: 12px; color: #555; margin-top: 5px;">EduVision AI • Análise Preditiva Estrutural</p>
                     </div>
                     <div id="pai-dados-aluno" class="info-box"></div>
                     
@@ -799,7 +329,7 @@
 
             <div id="tab-comunicado" class="tab-content">
                 <h3>Comunicados Gerados de Forma Autônoma</h3>
-                <p style="font-size: 13px; color:#666; margin-bottom: 15px;">Modelos de mensagens gerados pela IA de acordo com os dados do estudante.</p>
+                <p style="font-size: 13px; color:#666; margin-bottom: 15px;">Modelos prontos baseados na frequência e médias computadas no perfil do estudante.</p>
                 
                 <div class="ai-section-title">✉️ Canal de Envio: WhatsApp (Curto e direto)</div>
                 <div class="comunicado-box">
@@ -807,7 +337,7 @@
                     <div id="comunicado-whatsapp"></div>
                 </div>
 
-                <div class="ai-section-title" style="margin-top: 25px;">✉️ Canal de Envio: E-mail (Institucional e detalhado)</div>
+                <div class="ai-section-title" style="margin-top: 25px;">✉️ Canal de Envio: E-mail (Institucional)</div>
                 <div class="comunicado-box">
                     <button class="btn-copy" onclick="copiarComunicado('comunicado-email')">Copiar</button>
                     <div id="comunicado-email"></div>
@@ -817,15 +347,15 @@
     </div>
 
     <script>
-        // BASE DE DADOS INICIAL DO SISTEMA
+        // BASE DE DADOS INTEGRADA COM OS NOVOS LANÇAMENTOS DE 18 DISCIPLINAS
         let alunos = [
             {
                 nome: "Lucas Sousa",
                 turma: "1º Ano A",
                 frequencia: 92,
                 notas: {
-                    b1: { portugues: 8.5, matematica: 7.2, historia: 8.0, geografia: 7.5, tec1: 9.0, tec2: 8.0 },
-                    b2: { portugues: 8.0, matematica: 6.8, historia: 8.5, geografia: 7.0, tec1: 8.5, tec2: 7.5 }
+                    b1: { portugues: 8.5, literatura: 8.0, redacao: 8.5, matematica: 7.2, fisica: 7.0, quimica: 7.5, biologia: 8.0, historia: 8.0, geografia: 7.5, filosofia: 8.0, sociologia: 8.5, arte: 9.0, educacaoFisica: 9.5, ingles: 8.0, financeira: 8.5, projetoVida: 9.0, tec1: 9.0, tec2: 8.0 },
+                    b2: { portugues: 8.0, literatura: 7.5, redacao: 8.0, matematica: 6.8, fisica: 7.2, quimica: 7.0, biologia: 7.8, historia: 8.5, geography: 7.0, filosofia: 8.5, sociologia: 8.0, arte: 8.5, educacaoFisica: 9.0, ingles: 8.5, financeira: 8.0, projetoVida: 9.5, tec1: 8.5, tec2: 7.5 }
                 }
             },
             {
@@ -833,8 +363,8 @@
                 turma: "1º Ano B",
                 frequencia: 72,
                 notas: {
-                    b1: { portugues: 5.5, matematica: 4.8, historia: 6.0, geografia: 5.0, tec1: 5.0, tec2: 4.5 },
-                    b2: { portugues: 5.0, matematica: 4.2, historia: 5.5, geografia: 4.8, tec1: 4.8, tec2: 4.0 }
+                    b1: { portugues: 5.5, literatura: 5.0, redacao: 5.5, matematica: 4.8, fisica: 4.0, quimica: 4.5, biologia: 5.0, historia: 6.0, geografia: 5.0, filosofia: 5.5, sociologia: 5.0, arte: 7.0, educacaoFisica: 8.0, ingles: 5.0, financeira: 4.5, projetoVida: 6.0, tec1: 5.0, tec2: 4.5 },
+                    b2: { portugues: 5.0, literatura: 4.5, redacao: 5.0, matematica: 4.2, fisica: 4.5, quimica: 4.0, biologia: 4.8, historia: 5.5, geografia: 4.8, filosofia: 5.0, sociologia: 5.5, arte: 6.5, educacaoFisica: 7.5, ingles: 5.5, financeira: 4.0, projetoVida: 5.5, tec1: 4.8, tec2: 4.0 }
                 }
             },
             {
@@ -842,26 +372,7 @@
                 turma: "2º Ano A",
                 frequencia: 88,
                 notas: {
-                    b1: { portugues: 7.0, matematica: 6.5, historia: 7.2, geografia: 8.0, tec1: 7.5, tec2: 7.0 },
-                    b2: { portugues: 7.2, matematica: 6.8, historia: 7.5, geografia: 8.2, tec1: 8.0, tec2: 7.5 }
-                }
-            },
-            {
-                nome: "Mariana Costa",
-                turma: "2º Ano B",
-                frequencia: 96,
-                notas: {
-                    b1: { portugues: 9.5, matematica: 9.8, historia: 9.0, geografia: 9.5, tec1: 9.8, tec2: 9.2 },
-                    b2: { portugues: 9.8, matematica: 10.0, historia: 9.5, geografia: 9.8, tec1: 10.0, tec2: 9.5 }
-                }
-            },
-            {
-                nome: "João Pedro Santos",
-                turma: "3º Ano A",
-                frequencia: 68,
-                notas: {
-                    b1: { portugues: 5.2, matematica: 4.0, historia: 5.0, geografia: 4.5, tec1: 4.5, tec2: 5.0 },
-                    b2: { portugues: 4.8, matematica: 3.5, historia: 4.5, geografia: 4.0, tec1: 4.0, tec2: 4.2 }
+                    b1: { portugues: 7.0, literatura: 7.5, redacao: 7.0, matematica: 6.5, fisica: 6.0, quimica: 6.8, biologia: 7.0, historia: 7.2, geografia: 8.0, filosofia: 7.0, sociologia: 7.5, arte: 8.0, educacaoFisica: 8.5, ingles: 7.0, financeira: 7.5, projetoVida: 8.0, tec1: 7.5, tec2: 7.0 }
                 }
             }
         ];
@@ -870,23 +381,10 @@
         let chartAlunoInstance = null;
         let statusFiltroAtual = "Todos";
 
-        // CONFIGURAÇÕES DE DISCIPLINAS TÉCNICAS POR SEGMENTO
         const configDisciplinas = {
-            "Admin": {
-                label: "Componentes Técnicos (Administração)",
-                tec1: "Gestão de Processos",
-                tec2: "Economia Aplicada"
-            },
-            "Agro": {
-                label: "Componentes Técnicos (Agropecuária)",
-                tec1: "Zootecnia Geral",
-                tec2: "Solos e Irrigação"
-            },
-            "Mkt": {
-                label: "Componentes Técnicos (Marketing)",
-                tec1: "Comportamento de Consumo",
-                tec2: "Marketing Digital"
-            }
+            "Admin": { label: "Componentes Técnicos (Administração)", tec1: "Gestão de Processos", tec2: "Economia Aplicada" },
+            "Agro": { label: "Componentes Técnicos (Agropecuária)", tec1: "Zootecnia Geral", tec2: "Solos e Irrigação" },
+            "Mkt": { label: "Componentes Técnicos (Marketing)", tec1: "Comportamento de Consumo", tec2: "Marketing Digital" }
         };
 
         function fazerLogin(e) {
@@ -897,27 +395,21 @@
         }
 
         function obterDadosSegmento(turma) {
-            if (turma.includes("Administração") || turma.includes("A")) {
-                return configDisciplinas.Admin;
-            } else if (turma.includes("Agropecuária") || turma.includes("B")) {
-                return configDisciplinas.Agro;
-            } else {
-                return configDisciplinas.Mkt;
-            }
+            if (turma.includes("Administração") || turma.includes("A")) return configDisciplinas.Admin;
+            if (turma.includes("Agropecuária") || turma.includes("B")) return configDisciplinas.Agro;
+            return configDisciplinas.Mkt;
         }
 
         function ajustarCamposDisciplinas() {
             const turmaSelecionada = document.getElementById('turma').value;
             const config = obterDadosSegmento(turmaSelecionada);
-            
             document.getElementById('label-disciplina-tecnica').innerText = config.label;
             document.getElementById('label-tec-1').innerText = config.tec1;
             document.getElementById('label-tec-2').innerText = config.tec2;
         }
 
         function calcularMediaGeralAluno(aluno) {
-            let soma = 0;
-            let total = 0;
+            let soma = 0; let total = 0;
             for (let b in aluno.notas) {
                 for (let disc in aluno.notas[b]) {
                     soma += aluno.notas[b][disc];
@@ -930,14 +422,9 @@
         function determinarStatusFrequenciaMedia(aluno) {
             const media = calcularMediaGeralAluno(aluno);
             const freq = aluno.frequencia;
-
-            if (media < 5.5 || freq < 75) {
-                return { label: "Crítico", class: "status-critico" };
-            } else if (media < 7.0 || freq < 85) {
-                return { label: "Atenção", class: "status-atencao" };
-            } else {
-                return { label: "Bom", class: "status-bom" };
-            }
+            if (media < 5.5 || freq < 75) return { label: "Crítico", class: "status-critico" };
+            if (media < 7.0 || freq < 85) return { label: "Atenção", class: "status-atencao" };
+            return { label: "Bom", class: "status-bom" };
         }
 
         function inicializarDashboard() {
@@ -948,45 +435,26 @@
         }
 
         function renderizarMétricas() {
-            let totalISE = 0;
-            let somaMediaGeral = 0;
-            let criticos = 0;
-
+            let totalISE = 0; let criticos = 0;
             alunos.forEach(a => {
                 const media = calcularMediaGeralAluno(a);
-                somaMediaGeral += media;
-                
-                const status = determinarStatusFrequenciaMedia(a);
-                if (status.label === "Crítico") criticos++;
-
-                // Fórmula ISE: ponderação entre a Média Acadêmica e a Presença Escolar
-                const iseIndividual = (media * 10) * 0.4 + a.frequencia * 0.6;
-                totalISE += iseIndividual;
+                if (determinarStatusFrequenciaMedia(a).label === "Crítico") criticos++;
+                totalISE += (media * 10) * 0.4 + a.frequencia * 0.6;
             });
 
             const iseMedio = alunos.length > 0 ? (totalISE / alunos.length).toFixed(1) : 0;
-            
             document.getElementById('ise-val').innerText = `${iseMedio}%`;
             const iseBar = document.getElementById('ise-graph-bar');
             iseBar.style.width = `${iseMedio}%`;
-            
-            if (iseMedio >= 80) iseBar.style.backgroundColor = '#2ecc71';
-            else if (iseMedio >= 65) iseBar.style.backgroundColor = '#f39c12';
-            else iseBar.style.backgroundColor = '#e74c3c';
+            iseBar.style.backgroundColor = iseMedio >= 80 ? '#2ecc71' : iseMedio >= 65 ? '#f39c12' : '#e74c3c';
 
             document.getElementById('total-alunos').innerText = alunos.length;
             document.getElementById('casos-risco').innerText = criticos;
 
-            // Médias Gerais por Turma
             const mediasTurmas = calcularMediasPorTurma();
             let htmlMedias = '';
             for (let turma in mediasTurmas) {
-                htmlMedias += `
-                    <div class="turma-item-mini">
-                        <strong>${turma}:</strong>
-                        <span>Nota ${mediasTurmas[turma].toFixed(1)}</span>
-                    </div>
-                `;
+                htmlMedias += `<div class="turma-item-mini"><strong>${turma}:</strong> <span>Nota ${mediasTurmas[turma].toFixed(1)}</span></div>`;
             }
             document.getElementById('container-medias-turma').innerHTML = htmlMedias;
         }
@@ -995,17 +463,11 @@
             let agrupado = {};
             alunos.forEach(a => {
                 const m = calcularMediaGeralAluno(a);
-                if (!agrupado[a.turma]) {
-                    agrupado[a.turma] = { soma: 0, count: 0 };
-                }
-                agrupado[a.turma].soma += m;
-                agrupado[a.turma].count++;
+                if (!agrupado[a.turma]) agrupado[a.turma] = { soma: 0, count: 0 };
+                agrupado[a.turma].soma += m; agrupado[a.turma].count++;
             });
-
             let medias = {};
-            for (let t in agrupado) {
-                medias[t] = agrupado[t].soma / agrupado[t].count;
-            }
+            for (let t in agrupado) medias[t] = agrupado[t].soma / agrupado[t].count;
             return medias;
         }
 
@@ -1017,20 +479,25 @@
             const frequencia = parseInt(document.getElementById('frequencia').value);
             const bAlvo = document.getElementById('bimestre-alvo').value;
 
-            const nPort = parseFloat(document.getElementById('nota-portugues').value);
-            const nMat = parseFloat(document.getElementById('nota-matematica').value);
-            const nHist = parseFloat(document.getElementById('nota-historia').value);
-            const nGeo = parseFloat(document.getElementById('nota-geografia').value);
-            const nTec1 = parseFloat(document.getElementById('nota-tec1').value);
-            const nTec2 = parseFloat(document.getElementById('nota-tec2').value);
-
             const blocoNotas = {
-                portugues: nPort,
-                matematica: nMat,
-                historia: nHist,
-                geografia: nGeo,
-                tec1: nTec1,
-                tec2: nTec2
+                portugues: parseFloat(document.getElementById('nota-portugues').value) || 0,
+                literatura: parseFloat(document.getElementById('nota-literatura').value) || 0,
+                redacao: parseFloat(document.getElementById('nota-redacao').value) || 0,
+                matematica: parseFloat(document.getElementById('nota-matematica').value) || 0,
+                fisica: parseFloat(document.getElementById('nota-fisica').value) || 0,
+                quimica: parseFloat(document.getElementById('nota-quimica').value) || 0,
+                biologia: parseFloat(document.getElementById('nota-biologia').value) || 0,
+                historia: parseFloat(document.getElementById('nota-historia').value) || 0,
+                geografia: parseFloat(document.getElementById('nota-geografia').value) || 0,
+                filosofia: parseFloat(document.getElementById('nota-filosofia').value) || 0,
+                sociologia: parseFloat(document.getElementById('nota-sociologia').value) || 0,
+                arte: parseFloat(document.getElementById('nota-arte').value) || 0,
+                educacaoFisica: parseFloat(document.getElementById('nota-educacao-fisica').value) || 0,
+                ingles: parseFloat(document.getElementById('nota-ingles').value) || 0,
+                financeira: parseFloat(document.getElementById('nota-financeira').value) || 0,
+                projetoVida: parseFloat(document.getElementById('nota-projeto-vida').value) || 0,
+                tec1: parseFloat(document.getElementById('nota-tec1').value) || 0,
+                tec2: parseFloat(document.getElementById('nota-tec2').value) || 0
             };
 
             if (editIndex >= 0) {
@@ -1044,21 +511,12 @@
                     alunoExistente.frequencia = frequencia;
                     alunoExistente.notas[bAlvo] = blocoNotas;
                 } else {
-                    let novoAluno = {
-                        nome: nome,
-                        turma: turma,
-                        frequencia: frequencia,
-                        notas: {}
-                    };
+                    let novoAluno = { nome: nome, turma: turma, frequencia: frequencia, notas: {} };
                     novoAluno.notas[bAlvo] = blocoNotas;
                     alunos.push(novoAluno);
                 }
             }
-
-            limparFormulario();
-            renderizarMétricas();
-            filtrarEAtualizar();
-            gerarGraficoComparativo();
+            limparFormulario(); renderizarMétricas(); filtrarEAtualizar(); gerarGraficoComparativo();
         }
 
         function limparFormulario() {
@@ -1075,7 +533,6 @@
             if (status === 'Todos') document.getElementById('btn-filtro-todos').classList.add('active');
             else if (status === 'Atenção') document.getElementById('btn-filtro-atencao').classList.add('active');
             else if (status === 'Crítico') document.getElementById('btn-filtro-critico').classList.add('active');
-            
             filtrarEAtualizar();
         }
 
@@ -1084,21 +541,16 @@
             const turmaSel = document.getElementById('filtro-turma').value;
 
             let filtrados = alunos.filter((aluno, index) => {
-                aluno.indexOriginal = index; // Armazena index original
+                aluno.indexOriginal = index;
                 const atendeBusca = aluno.nome.toLowerCase().includes(busca);
                 const atendeTurma = (turmaSel === "Todos" || aluno.turma === turmaSel);
-                const statusInfo = determinarStatusFrequenciaMedia(aluno);
-                const atendeStatus = (statusFiltroAtual === "Todos" || statusInfo.label === statusFiltroAtual);
-
+                const atendeStatus = (statusFiltroAtual === "Todos" || determinarStatusFrequenciaMedia(aluno).label === statusFiltroAtual);
                 return atendeBusca && atendeTurma && atendeStatus;
             });
 
-            // Agrupa Alunos por Turma
             let turmasAgrupadas = {};
             filtrados.forEach(a => {
-                if (!turmasAgrupadas[a.turma]) {
-                    turmasAgrupadas[a.turma] = [];
-                }
+                if (!turmasAgrupadas[a.turma]) turmasAgrupadas[a.turma] = [];
                 turmasAgrupadas[a.turma].push(a);
             });
 
@@ -1109,52 +561,31 @@
                 const mediaTurma = (somaTurma / turmasAgrupadas[turma].length).toFixed(1);
 
                 htmlCompleto += `
-                    <div class="turma-group                    <div class="turma-group-header">
-                        <span>🏫 ${turma}</span>
-                        <span>Média da Turma: ${mediaTurma}</span>
-                    </div>
+                    <div class="turma-group-header"><span>🏫 ${turma}</span><span>Média: ${mediaTurma}</span></div>
                     <table>
                         <thead>
-                            <tr>
-                                <th>Estudante</th>
-                                <th>Presença</th>
-                                <th>Média Geral</th>
-                                <th>Bimestres</th>
-                                <th>Status</th>
-                                <th style="text-align: right;">Ações</th>
-                            </tr>
+                            <tr><th>Estudante</th><th>Presença</th><th>Média Geral</th><th>Bimestres</th><th>Status</th><th style="text-align: right;">Ações</th></tr>
                         </thead>
-                        <tbody>
-                `;
+                        <tbody>`;
 
                 turmasAgrupadas[turma].forEach(aluno => {
                     const status = determinarStatusFrequenciaMedia(aluno);
                     const media = calcularMediaGeralAluno(aluno).toFixed(1);
                     const bimestresAtivos = Object.keys(aluno.notas).map(b => b.toUpperCase()).join(', ');
-
                     htmlCompleto += `
                         <tr>
                             <td><span class="nome-clicavel" onclick="abrirModal(${aluno.indexOriginal})">${aluno.nome}</span></td>
-                            <td>${aluno.frequencia}%</td>
-                            <td>${media}</td>
-                            <td>${bimestresAtivos}</td>
+                            <td>${aluno.frequencia}%</td><td>${media}</td><td>${bimestresAtivos}</td>
                             <td><span class="status-badge ${status.class}">${status.label}</span></td>
                             <td style="text-align: right;">
-                                <button class="action-btn" title="Editar Registro" onclick="editarAluno(${aluno.indexOriginal})">✏️</button>
+                                <button class="action-btn" title="Editar" onclick="editarAluno(${aluno.indexOriginal})">✏️</button>
                                 <button class="action-btn" title="Remover" onclick="deletarAluno(${aluno.indexOriginal})">🗑️</button>
                             </td>
-                        </tr>
-                    `;
+                        </tr>`;
                 });
-
                 htmlCompleto += `</tbody></table>`;
             }
-
-            if (htmlCompleto === "") {
-                htmlCompleto = "<p style='text-align:center; padding: 20px; color:#666;'>Nenhum aluno encontrado para os filtros selecionados.</p>";
-            }
-
-            document.getElementById('tabela-conteudo-agrupado').innerHTML = htmlCompleto;
+            document.getElementById('tabela-conteudo-agrupado').innerHTML = htmlCompleto || "<p style='text-align:center; padding: 20px; color:#666;'>Nenhum aluno encontrado.</p>";
         }
 
         function editarAluno(index) {
@@ -1163,372 +594,182 @@
             document.getElementById('nome').value = aluno.nome;
             document.getElementById('turma').value = aluno.turma;
             document.getElementById('frequencia').value = aluno.frequencia;
-            
             ajustarCamposDisciplinas();
 
-            const bimestresDisponiveis = Object.keys(aluno.notas);
-            const bAlvo = bimestresDisponiveis.includes('b2') ? 'b2' : bimestresDisponiveis[0] || 'b1';
+            const bAlvo = Object.keys(aluno.notas).includes('b2') ? 'b2' : Object.keys(aluno.notas)[0] || 'b1';
             document.getElementById('bimestre-alvo').value = bAlvo;
 
             if (aluno.notas[bAlvo]) {
                 document.getElementById('nota-portugues').value = aluno.notas[bAlvo].portugues || '';
+                document.getElementById('nota-literatura').value = aluno.notas[bAlvo].literatura || '';
+                document.getElementById('nota-redacao').value = aluno.notas[bAlvo].redacao || '';
                 document.getElementById('nota-matematica').value = aluno.notas[bAlvo].matematica || '';
+                document.getElementById('nota-fisica').value = aluno.notas[bAlvo].fisica || '';
+                document.getElementById('nota-quimica').value = aluno.notas[bAlvo].quimica || '';
+                document.getElementById('nota-biologia').value = aluno.notas[bAlvo].biologia || '';
                 document.getElementById('nota-historia').value = aluno.notas[bAlvo].historia || '';
                 document.getElementById('nota-geografia').value = aluno.notas[bAlvo].geografia || '';
+                document.getElementById('nota-filosofia').value = aluno.notas[bAlvo].filosofia || '';
+                document.getElementById('nota-sociologia').value = aluno.notas[bAlvo].sociologia || '';
+                document.getElementById('nota-arte').value = aluno.notas[bAlvo].arte || '';
+                document.getElementById('nota-educacao-fisica').value = aluno.notas[bAlvo].educacaoFisica || '';
+                document.getElementById('nota-ingles').value = aluno.notas[bAlvo].ingles || '';
+                document.getElementById('nota-financeira').value = aluno.notas[bAlvo].financeira || '';
+                document.getElementById('nota-projeto-vida').value = aluno.notas[bAlvo].projetoVida || '';
                 document.getElementById('nota-tec1').value = aluno.notas[bAlvo].tec1 || '';
                 document.getElementById('nota-tec2').value = aluno.notas[bAlvo].tec2 || '';
             }
-
             document.getElementById('form-titulo').innerText = "✏️ Editando Notas de " + aluno.nome;
             document.getElementById('btn-cancelar').style.display = "inline-block";
         }
 
         function deletarAluno(index) {
             if (confirm("Deseja realmente remover os dados pedagógicos deste aluno?")) {
-                alunos.splice(index, 1);
-                renderizarMétricas();
-                filtrarEAtualizar();
-                gerarGraficoComparativo();
+                alunos.splice(index, 1); renderizarMétricas(); filtrarEAtualizar(); gerarGraficoComparativo();
             }
         }
 
-        // COMPORTAMENTO GRÁFICO GLOBAL (Performance por Turma)
         function gerarGraficoComparativo() {
             const ctx = document.getElementById('chartTurmas').getContext('2d');
             const turmasNomes = ["1º Ano A", "1º Ano B", "2º Ano A", "2º Ano B", "3º Ano A", "3º Ano B"];
-            
-            let mediasVal = [];
-            let presencasVal = [];
+            let mediasVal = []; let presencasVal = [];
 
             turmasNomes.forEach(turma => {
                 const alunosTurma = alunos.filter(a => a.turma === turma);
                 if (alunosTurma.length > 0) {
-                    let somaNotas = 0;
-                    let somaFreq = 0;
-                    alunosTurma.forEach(a => {
-                        somaNotas += calcularMediaGeralAluno(a);
-                        somaFreq += a.frequencia;
-                    });
+                    let somaNotas = 0; let somaFreq = 0;
+                    alunosTurma.forEach(a => { somaNotas += calcularMediaGeralAluno(a); somaFreq += a.frequencia; });
                     mediasVal.push((somaNotas / alunosTurma.length).toFixed(1));
                     presencasVal.push((somaFreq / alunosTurma.length).toFixed(0));
-                } else {
-                    mediasVal.push(0);
-                    presencasVal.push(0);
-                }
+                } else { mediasVal.push(0); presencasVal.push(0); }
             });
 
-            if (chartTurmasInstance) {
-                chartTurmasInstance.destroy();
-            }
+            if (chartTurmasInstance) chartTurmasInstance.destroy();
 
             chartTurmasInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: turmasNomes,
                     datasets: [
-                        {
-                            label: 'Média Acadêmica (Base 10)',
-                            data: mediasVal,
-                            backgroundColor: '#2a5298',
-                            yAxisID: 'y'
-                        },
-                        {
-                            label: 'Frequência Média (%)',
-                            data: presencasVal,
-                            backgroundColor: '#2ecc71',
-                            yAxisID: 'y1',
-                            type: 'line',
-                            borderColor: '#2ecc71',
-                            borderWidth: 3,
-                            fill: false
-                        }
+                        { label: 'Média Acadêmica (Base 10)', data: mediasVal, backgroundColor: '#2a5298', yAxisID: 'y' },
+                        { label: 'Frequência Média (%)', data: presencasVal, backgroundColor: '#2ecc71', yAxisID: 'y1', type: 'line', borderColor: '#2ecc71', borderWidth: 3, fill: false }
                     ]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
+                    responsive: true, maintainAspectRatio: false,
                     scales: {
-                        y: {
-                            type: 'linear',
-                            position: 'left',
-                            min: 0,
-                            max: 10,
-                            title: { display: true, text: 'Notas' }
-                        },
-                        y1: {
-                            type: 'linear',
-                            position: 'right',
-                            min: 0,
-                            max: 100,
-                            grid: { drawOnChartArea: false },
-                            title: { display: true, text: 'Frequência (%)' }
-                        }
+                        y: { type: 'linear', position: 'left', min: 0, max: 10 },
+                        y1: { type: 'linear', position: 'right', min: 0, max: 100, grid: { drawOnChartArea: false } }
                     }
                 }
             });
         }
 
-        // EXPORTAÇÃO XLS ADAPTADA
         function exportarExcel() {
-            let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += "Estudante;Turma;Presenca;Media Geral;Status\n";
-
+            let csvContent = "data:text/csv;charset=utf-8,Estudante;Turma;Presenca;Media Geral;Status\n";
             alunos.forEach(a => {
-                const status = determinarStatusFrequenciaMedia(a).label;
-                const media = calcularMediaGeralAluno(a).toFixed(2);
-                csvContent += `"${a.nome}";"${a.turma}";"${a.frequencia}%";"${media}";"${status}"\n`;
+                csvContent += `"${a.nome}";"${a.turma}";"${a.frequencia}%";"${calcularMediaGeralAluno(a).toFixed(2)}";"${determinarStatusFrequenciaMedia(a).label}"\n`;
             });
-
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "EduVision_Matriz_Alunos.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            const link = document.createElement("a"); link.setAttribute("href", encodeURI(csvContent));
+            link.setAttribute("download", "EduVision_Matriz_Alunos.csv"); document.body.appendChild(link); link.click(); document.body.removeChild(link);
         }
 
-        // SISTEMA DE MODAL DETALHADO DO ESTUDANTE
         function abrirModal(index) {
             const aluno = alunos[index];
             const status = determinarStatusFrequenciaMedia(aluno);
             const config = obterDadosSegmento(aluno.turma);
 
-            // Perfil IA Estimado de Aprendizado
-            let perfilIA = "Teórico-Prático (Equilibrado)";
-            if (aluno.frequencia < 75) perfilIA = "Risco de Evasão / Suporte Ativo";
-            else if (calcularMediaGeralAluno(aluno) >= 8.5) perfilIA = "Proativo Autônomo (Alta Performance)";
-            else if (calcularMediaGeralAluno(aluno) < 5.5) perfilIA = "Necessidade de Recuperação Contínua";
+            let perfilIA = aluno.frequencia < 75 ? "Risco de Evasão" : calcularMediaGeralAluno(aluno) >= 8.5 ? "Alta Performance" : "Recuperação Contínua";
+            document.getElementById('modal-header-info').innerHTML = `<h1>${aluno.nome}</h1><p>Turma: ${aluno.turma} | Presença: ${aluno.frequencia}%</p><div class="perfil-badge">${perfilIA}</div>`;
 
-            document.getElementById('modal-header-info').innerHTML = `
-                <h1 style="color:#1e3c72;">${aluno.nome}</h1>
-                <p style="margin-top: 5px;"><strong>Turma:</strong> ${aluno.turma} | <strong>Frequência Acumulada:</strong> ${aluno.frequencia}%</p>
-                <div class="perfil-badge">Perfil Pedagógico: ${perfilIA}</div>
-                <span class="status-badge ${status.class}" style="margin-left:10px;">Status: ${status.label}</span>
-            `;
-
-            // Renderizar Semestres Mini-Painel
-            let somaB1 = 0, somaB2 = 0;
-            if (aluno.notas.b1) {
-                somaB1 = Object.values(aluno.notas.b1).reduce((a, b) => a + b, 0) / 6;
-            }
-            if (aluno.notas.b2) {
-                somaB2 = Object.values(aluno.notas.b2).reduce((a, b) => a + b, 0) / 6;
-            }
+            let somaB1 = aluno.notas.b1 ? Object.values(aluno.notas.b1).reduce((a, b) => a + b, 0) / 18 : 0;
+            let somaB2 = aluno.notas.b2 ? Object.values(aluno.notas.b2).reduce((a, b) => a + b, 0) / 18 : 0;
 
             document.getElementById('modal-semestres').innerHTML = `
-                <div class="semestre-card-mini">
-                    <h5>Média 1º Bimestre</h5>
-                    <div class="semestre-value" style="color: ${somaB1 >= 6 ? '#2ecc71' : '#e74c3c'}">${somaB1 > 0 ? somaB1.toFixed(1) : '--'}</div>
-                </div>
-                <div class="semestre-card-mini">
-                    <h5>Média 2º Bimestre</h5>
-                    <div class="semestre-value" style="color: ${somaB2 >= 6 ? '#2ecc71' : '#e74c3c'}">${somaB2 > 0 ? somaB2.toFixed(1) : '--'}</div>
-                </div>
-                <div class="semestre-card-mini">
-                    <h5>Previsão de Média Final</h5>
-                    <div class="semestre-value" style="color: #1e3c72;">${((somaB1 + (somaB2 || somaB1)) / 2).toFixed(1)}</div>
-                </div>
-            `;
+                <div class="semestre-card-mini"><h5>Bimestre 1</h5><div>${somaB1 > 0 ? somaB1.toFixed(1) : '--'}</div></div>
+                <div class="semestre-card-mini"><h5>Bimestre 2</h5><div>${somaB2 > 0 ? somaB2.toFixed(1) : '--'}</div></div>
+                <div class="semestre-card-mini"><h5>Previsão Final</h5><div>${((somaB1 + (somaB2 || somaB1)) / 2).toFixed(1)}</div></div>`;
 
-            // Tabela de Boletim no Modal
             let bAtivo = aluno.notas.b2 ? 'b2' : 'b1';
-            let notasAtuais = aluno.notas[bAtivo] || {};
+            let n = aluno.notas[bAtivo] || {};
 
-            let materiasMapeamento = [
-                { id: "Língua Portuguesa", val: notasAtuais.portugues },
-                { id: "Matemática", val: notasAtuais.matematica },
-                { id: "História", val: notasAtuais.historia },
-                { id: "Geografia", val: notasAtuais.geografia },
-                { id: config.tec1, val: notasAtuais.tec1 },
-                { id: config.tec2, val: notasAtuais.tec2 }
+            let materias = [
+                { id: "Língua Portuguesa", val: n.portugues }, { id: "Literatura", val: n.literatura }, { id: "Redação", val: n.redacao },
+                { id: "Matemática", val: n.matematica }, { id: "Física", val: n.fisica }, { id: "Química", val: n.quimica },
+                { id: "Biologia", val: n.biologia }, { id: "História", val: n.historia }, { id: "Geografia", val: n.geografia },
+                { id: "Filosofia", val: n.filosofia }, { id: "Sociologia", val: n.sociologia }, { id: "Arte", val: n.arte },
+                { id: "Educação Física", val: n.educacaoFisica }, { id: "Língua Inglesa", val: n.ingles }, { id: "Educação Financeira", val: n.financeira },
+                { id: "Projeto de Vida", val: n.projetoVida }, { id: config.tec1, val: n.tec1 }, { id: config.tec2, val: n.tec2 }
             ];
 
             let htmlBoletim = "";
-            materiasMapeamento.forEach(m => {
-                const corBarra = m.val >= 7 ? '#2ecc71' : m.val >= 5 ? '#f39c12' : '#e74c3c';
+            materias.forEach(m => {
+                let val = m.val || 0;
                 htmlBoletim += `
                     <div class="boletim-row">
-                        <div class="boletim-header-row">
-                            <span>${m.id}</span>
-                            <strong>${m.val !== undefined ? m.val.toFixed(1) : '--'}</strong>
-                        </div>
-                        <div class="nota-meter-bg">
-                            <div class="nota-meter-fill" style="width: ${m.val * 10}%; background-color: ${corBarra};"></div>
-                        </div>
-                    </div>
-                `;
+                        <div class="boletim-header-row"><span>${m.id}</span><strong>${val.toFixed(1)}</strong></div>
+                        <div class="nota-meter-bg"><div class="nota-meter-fill" style="width: ${val * 10}%; background-color: ${val >= 7 ? '#2ecc71' : val >= 5 ? '#f39c12' : '#e74c3c'};"></div></div>
+                    </div>`;
             });
             document.getElementById('modal-boletim-rows').innerHTML = htmlBoletim;
 
-            // Gerar Gráfico Radar Individual do Estudante
-            gerarGraficoModalAluno(aluno, config);
-
-            // Gerar Plano PAI Adaptativo
-            gerarPlanoPAI(aluno, config);
-
-            // Gerar Modelos de Mensagens
-            gerarComunicados(aluno);
-
+            gerarGraficoModalAluno(aluno, config); gerarPlanoPAI(aluno, config); gerarComunicados(aluno);
             document.getElementById('detalhe-modal').style.display = 'flex';
         }
 
         function gerarGraficoModalAluno(aluno, config) {
             const ctxModal = document.getElementById('chartAlunoModal').getContext('2d');
-            const labelsMaterias = ["Português", "Matemática", "História", "Geografia", config.tec1, config.tec2];
+            const labelsMaterias = ["Port", "Lit", "Red", "Mat", "Fís", "Quím", "Biol", "Hist", "Geog", "Filo", "Socio", "Arte", "Ed.Fís", "Ingl", "Finan", "P.Vida", "Téc 1", "Téc 2"];
+            
+            const extrair = b => b ? [b.portugues, b.literatura, b.redacao, b.matematica, b.fisica, b.quimica, b.biologia, b.historia, b.geografia, b.filosofia, b.sociologia, b.arte, b.educacaoFisica, b.ingles, b.financeira, b.projetoVida, b.tec1, b.tec2] : [];
 
-            let b1Data = aluno.notas.b1 ? [aluno.notas.b1.portugues, aluno.notas.b1.matematica, aluno.notas.b1.historia, aluno.notas.b1.geografia, aluno.notas.b1.tec1, aluno.notas.b1.tec2] : [];
-            let b2Data = aluno.notas.b2 ? [aluno.notas.b2.portugues, aluno.notas.b2.matematica, aluno.notas.b2.historia, aluno.notas.b2.geografia, aluno.notas.b2.tec1, aluno.notas.b2.tec2] : [];
-
-            if (chartAlunoInstance) {
-                chartAlunoInstance.destroy();
-            }
+            if (chartAlunoInstance) chartAlunoInstance.destroy();
 
             chartAlunoInstance = new Chart(ctxModal, {
                 type: 'radar',
                 data: {
                     labels: labelsMaterias,
                     datasets: [
-                        {
-                            label: '1º Bimestre',
-                            data: b1Data,
-                            fill: true,
-                            backgroundColor: 'rgba(52, 152, 219, 0.2)',
-                            borderColor: 'rgba(52, 152, 219, 1)',
-                            pointBackgroundColor: 'rgba(52, 152, 219, 1)'
-                        },
-                        {
-                            label: '2º Bimestre',
-                            data: b2Data,
-                            fill: true,
-                            backgroundColor: 'rgba(46, 204, 113, 0.2)',
-                            borderColor: 'rgba(46, 204, 113, 1)',
-                            pointBackgroundColor: 'rgba(46, 204, 113, 1)'
-                        }
+                        { label: '1º Bim', data: extrair(aluno.notas.b1), fill: true, backgroundColor: 'rgba(52, 152, 219, 0.2)', borderColor: 'rgba(52, 152, 219, 1)' },
+                        { label: '2º Bim', data: extrair(aluno.notas.b2), fill: true, backgroundColor: 'rgba(46, 204, 113, 0.2)', borderColor: 'rgba(46, 204, 113, 1)' }
                     ]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            angleLines: { display: true },
-                            suggestedMin: 0,
-                            suggestedMax: 10
-                        }
-                    }
-                }
+                options: { responsive: true, maintainAspectRatio: false, scales: { r: { suggestedMin: 0, suggestedMax: 10 } } }
             });
         }
 
         function gerarPlanoPAI(aluno, config) {
             const media = calcularMediaGeralAluno(aluno);
-            let objetivosHtml = "";
-            let acoesHtml = "";
-
-            document.getElementById('pai-dados-aluno').innerHTML = `
-                <strong>Nome:</strong> ${aluno.nome} <br>
-                <strong>Turma:</strong> ${aluno.turma} <br>
-                <strong>Situação Acadêmica:</strong> Média ${media.toFixed(1)} | Frequência ${aluno.frequencia}%
-            `;
-
+            document.getElementById('pai-dados-aluno').innerHTML = `<strong>Nome:</strong> ${aluno.nome} | <strong>Média Geral:</strong> ${media.toFixed(1)} | <strong>Frequência:</strong> ${aluno.frequencia}%`;
+            
             if (media < 5.5 || aluno.frequencia < 75) {
-                objetivosHtml = `
-                    <ul class="ai-list aprimorar">
-                        <li>Elevar a assiduidade escolar para o limite mínimo legal de 75% imediatamente.</li>
-                        <li>Recuperar conceitos fundamentais pendentes em Matemática e Componentes Técnicos.</li>
-                        <li>Construir um canal aberto de comunicação diária com a coordenação pedagógica.</li>
-                    </ul>
-                `;
-                acoesHtml = `
-                    <ul class="ai-list aprimorar">
-                        <li><strong>Monitoramento de Presença:</strong> Encontro presencial com a família e assinatura de termo de compromisso de assiduidade.</li>
-                        <li><strong>Nivelamento de Estudos:</strong> Inserção do aluno no programa de apoio pedagógico no contraturno para as disciplinas de base.</li>
-                        <li><strong>Portfólio de Evidências:</strong> Entrega semanal de caderno de exercícios monitorados para validação da recuperação de notas.</li>
-                    </ul>
-                `;
-            } else if (media < 7.0 || aluno.frequencia < 85) {
-                objetivosHtml = `
-                    <ul class="ai-list aprimorar">
-                        <li>Consolidar notas acima da média mínima de aprovação institucional.</li>
-                        <li>Organizar rotina regular de estudos para mitigar flutuações de notas entre bimestres.</li>
-                    </ul>
-                `;
-                acoesHtml = `
-                    <ul class="ai-list aprimorar">
-                        <li><strong>Estudo Dirigido:</strong> Sugestão de cronograma de 4 horas semanais de estudo focado fora do ambiente escolar.</li>
-                        <li><strong>Grupos de Ajuda:</strong> Inclusão do estudante em mentorias de estudo colaborativo coordenadas pela turma.</li>
-                    </ul>
-                `;
+                document.getElementById('pai-objetivos').innerHTML = `<ul class="ai-list"><li>Elevar assiduidade para o patamar mínimo legal (75%).</li><li>Recuperar lacunas conceituais em matérias críticas da FGB e Técnicas.</li></ul>`;
+                document.getElementById('pai-acoes').innerHTML = `<ul class="ai-list"><li>Nivelamento obrigatório no contraturno.</li><li>Convocação imediata dos responsáveis legais para assinatura de termo.</li></ul>`;
             } else {
-                objetivosHtml = `
-                    <ul class="ai-list domina">
-                        <li>Manter a excelência e robustez no desempenho acadêmico e dedicação presencial.</li>
-                        <li>Desenvolver habilidades voltadas à liderança de times e cooperação em projetos integradores.</li>
-                    </ul>
-                `;
-                acoesHtml = `
-                    <ul class="ai-list domina">
-                        <li><strong>Mentoria entre Pares:</strong> Atuação do estudante como facilitador de aprendizado voluntário para colegas com dificuldades.</li>
-                        <li><strong>Iniciação e Projetos:</strong> Direcionamento para liderança de grupos nos projetos integradores da área técnica de ${config.tec1}.</li>
-                    </ul>
-                `;
+                document.getElementById('pai-objetivos').innerHTML = `<ul class="ai-list"><li>Manter o engajamento e a constância observada.</li></ul>`;
+                document.getElementById('pai-acoes').innerHTML = `<ul class="ai-list"><li>Inserção em dinâmicas de monitoria voluntária para apoio aos pares.</li></ul>`;
             }
-
-            document.getElementById('pai-objetivos').innerHTML = objetivosHtml;
-            document.getElementById('pai-acoes').innerHTML = acoesHtml;
         }
 
         function gerarComunicados(aluno) {
-            const media = calcularMediaGeralAluno(aluno).toFixed(1);
-            let whatsappText = "";
-            let emailText = "";
-
-            if (aluno.frequencia < 75 || media < 5.5) {
-                whatsappText = `Olá, responsável por ${aluno.nome}. Notamos oscilações na frequência (${aluno.frequencia}%) e desempenho recente de seu(sua) filho(a). Solicitamos o comparecimento à escola para alinharmos estratégias pedagógicas conjuntas.`;
-                emailText = `Prezados Senhores Responsáveis por ${aluno.nome},\n\nIdentificamos através do sistema EduVision que o estudante apresenta frequência atual de ${aluno.frequencia}% e média acadêmica consolidada de ${media}.\n\nPara garantir seu avanço escolar saudável, estabelecemos o Plano de Atendimento Individualizado (PAI). Solicitamos seu agendamento junto à secretaria para atendimento presencial.\n\nAtenciosamente,\nCoordenação Pedagógica.`;
-            } else {
-                whatsappText = `Olá! Parabenizamos ${aluno.nome} pela assiduidade escolar de ${aluno.frequencia}% e dedicação aos estudos neste bimestre. Continuem apoiando esta jornada de sucesso!`;
-                emailText = `Prezados Senhores Responsáveis por ${aluno.nome},\n\nEntramos em contato para reportar a excelente evolução pedagógica do estudante neste semestre. Com assiduidade de ${aluno.frequencia}% e rendimento escolar positivo (Média Geral ${media}), ele(a) tem se destacado ativamente em sala.\n\nAgradecemos a parceria constante e o apoio ao desenvolvimento acadêmico.\n\nAtenciosamente,\nCoordenação Pedagógica.`;
-            }
-
-            document.getElementById('comunicado-whatsapp').innerText = whatsappText;
-            document.getElementById('comunicado-email').innerText = emailText;
+            const msg = aluno.frequencia < 75 || calcularMediaGeralAluno(aluno) < 5.5 ? "Atenção: Necessitamos alinhar suporte acadêmico para o estudante." : "Parabéns pelo excelente desempenho e constância escolar!";
+            document.getElementById('comunicado-whatsapp').innerText = `EduVision Informa: Olá, responsável por ${aluno.nome}. ${msg}`;
+            document.getElementById('comunicado-email').innerText = `Prezados Responsáveis,\n\nEntramos em contato para reportar o panorama de ${aluno.nome}.\n\nStatus Atual: Frequência em ${aluno.frequencia}%.\nDiretriz: ${msg}\n\nAtenciosamente,\nCoordenação Pedagógica.`;
         }
 
-        function copiarComunicado(idElemento) {
-            const text = document.getElementById(idElemento).innerText;
-            navigator.clipboard.writeText(text).then(() => {
-                alert("Comunicado copiado com sucesso para a área de transferência!");
-            });
+        function copiarComunicado(id) {
+            navigator.clipboard.writeText(document.getElementById(id).innerText).then(() => alert("Copiado com sucesso!"));
         }
 
-        function fecharModal() {
-                    document.getElementById('detalhe-modal').style.display = 'none';
+        function fecharModal() { document.getElementById('detalhe-modal').style.display = 'none'; }
+        
+        function mudarTab(e, id) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active'); e.currentTarget.classList.add('active');
         }
-
-        function mudarTab(event, tabId) {
-            const contentList = document.getElementsByClassName("tab-content");
-            for (let i = 0; i < contentList.length; i++) {
-                contentList[i].classList.remove("active");
-            }
-
-            const tabBtnList = document.getElementsByClassName("tab-btn");
-            for (let i = 0; i < tabBtnList.length; i++) {
-                tabBtnList[i].classList.remove("active");
-            }
-
-            document.getElementById(tabId).classList.add("active");
-            event.currentTarget.classList.add("active");
-        }
-
-        // Fechar modal ao clicar fora da área de conteúdo dinâmico
-        window.onclick = function(event) {
-            const modal = document.getElementById('detalhe-modal');
-            if (event.target == modal) {
-                fecharModal();
-            }
-        }
+        
+        window.onclick = function(e) { if (e.target == document.getElementById('detalhe-modal')) fecharModal(); }
     </script>
 </body>
 </html>
