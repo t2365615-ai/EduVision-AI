@@ -2,8 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduVision AI - Painel Pedagógico Preventivo</title>
+    <title>EduVision - Gestão Pedagógica</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -12,26 +11,22 @@
             --success-color: #2ecc71;
             --warning-color: #f1c40f;
             --danger-color: #e74c3c;
-            --light-bg: #f4f6f9;
-            --dark-text: #333;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --light-bg: #f8f9fa;
+            --dark-text: #2c3e50;
         }
 
         body {
-            background-color: var(--light-bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
             color: var(--dark-text);
-            padding: 20px;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            padding: 20px;
         }
 
         header {
@@ -40,26 +35,29 @@
             padding: 20px;
             border-radius: 8px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .grid-layout {
+        .grid-dashboard {
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: 1fr 2fr;
             gap: 20px;
+            margin-bottom: 20px;
         }
 
-        @media (min-width: 768px) {
-            .grid-layout {
-                grid-template-columns: 1fr 2fr;
+        @media (max-width: 900px) {
+            .grid-dashboard {
+                grid-template-columns: 1fr;
             }
         }
 
         .card {
             background: white;
-            padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             margin-bottom: 20px;
         }
 
@@ -67,18 +65,19 @@
             margin-bottom: 15px;
         }
 
-        label {
+        .form-group label {
             display: block;
             margin-bottom: 5px;
             font-weight: 600;
+            font-size: 14px;
         }
 
-        input, select, textarea {
+        .form-group input, .form-group select {
             width: 100%;
-            padding: 10px;
+            padding: 8px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            font-size: 14px;
+            box-sizing: border-box;
         }
 
         .btn {
@@ -100,71 +99,74 @@
             background-color: var(--danger-color);
         }
 
-        .btn-secondary {
-            background-color: #6c757d;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #f8f9fa;
+        .btn-danger:hover {
+            background-color: #c0392b;
         }
 
         .status-badge {
-            padding: 5px 10px;
-            border-radius: 20px;
+            padding: 4px 8px;
+            border-radius: 12px;
             font-size: 12px;
             font-weight: bold;
             display: inline-block;
         }
 
-        .status-critico { background-color: #fadbd8; color: #e74c3c; }
-        .status-atencao { background-color: #fdebd0; color: #f39c12; }
-        .status-bom { background-color: #d4efdf; color: #2ecc71; }
+        .status-bom { background-color: #d4edda; color: #155724; }
+        .status-atencao { background-color: #fff3cd; color: #856404; }
+        .status-critico { background-color: #f8d7da; color: #721c24; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #f2f2f2;
+            font-weight: 600;
+        }
 
         .nome-clicavel {
             color: var(--primary-color);
             cursor: pointer;
-            text-decoration: underline;
             font-weight: bold;
+            text-decoration: underline;
         }
 
+        /* Estilos do Modal */
         .modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.5);
-            z-index: 1000;
             justify-content: center;
             align-items: center;
+            z-index: 1000;
         }
 
         .modal-content {
-            background-color: white;
+            background: white;
             width: 90%;
-            max-width: 900px;
-            max-height: 90vh;
+            max-width: 1000px;
+            height: 85vh;
             border-radius: 8px;
-            overflow-y: auto;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
         .modal-header {
-            background-color: #f8f9fa;
-            padding: 15px 20px;
+            padding: 20px;
+            background: #f8f9fa;
             border-bottom: 1px solid #ddd;
             display: flex;
             justify-content: space-between;
@@ -173,28 +175,38 @@
 
         .modal-body {
             padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
         }
 
-        .tabs-container {
+        @media (max-width: 800px) {
+            .modal-body {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .tab-menu {
             display: flex;
-            border-bottom: 2px solid #ddd;
-            margin-bottom: 15px;
-            overflow-x: auto;
+            background: #f1f1f1;
+            border-bottom: 1px solid #ddd;
         }
 
         .tab-btn {
-            padding: 10px 20px;
+            padding: 12px 20px;
             border: none;
             background: none;
             cursor: pointer;
             font-weight: bold;
-            color: #666;
-            white-space: nowrap;
+            color: #555;
         }
 
         .tab-btn.active {
+            background: white;
             color: var(--primary-color);
-            border-bottom: 3px solid var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
         }
 
         .tab-content {
@@ -205,21 +217,46 @@
             display: block;
         }
 
+        .boletim-row {
+            margin-bottom: 10px;
+        }
+
+        .boletim-header-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: 2px;
+        }
+
+        .nota-meter-bg {
+            background: #e9ecef;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .nota-meter-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+
         .comunicado-box {
-            background-color: #f8f9fa;
+            background: #f8f9fa;
             border: 1px solid #ddd;
             padding: 15px;
             border-radius: 4px;
-            margin-top: 10px;
-            white-space: pre-line;
             position: relative;
+            margin-top: 10px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            font-size: 13px;
         }
 
         .btn-copy {
             position: absolute;
             top: 10px;
             right: 10px;
-            background-color: #ddd;
+            background: #ddd;
             border: none;
             padding: 5px 10px;
             border-radius: 4px;
@@ -227,44 +264,13 @@
             font-size: 11px;
         }
 
-        .info-box {
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 15px;
-            background-color: #fdfefe;
-        }
-
-        .nota-meter-bg {
-            background-color: #e9ecef;
-            border-radius: 10px;
-            height: 8px;
-            width: 100%;
-            overflow: hidden;
-            margin-top: 5px;
-        }
-
-        .nota-meter-fill {
-            height: 100%;
-        }
-
-        .boletim-row {
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #f1f1f1;
-        }
-
-        .boletim-header-row {
-            display: flex;
-            justify-content: space-between;
-        }
-
         .custom-list {
-            margin-left: 20px;
-            margin-top: 5px;
+            padding-left: 20px;
+            margin: 5px 0;
         }
+
         .custom-list li {
-            margin-bottom: 8px;
-            line-height: 1.4;
+            margin-bottom: 5px;
         }
     </style>
 </head>
@@ -272,133 +278,131 @@
 
     <div class="container">
         <header>
-            <h1>EduVision AI</h1>
-            <p>Painel de Gestão e Acompanhamento Pedagógico Preventivo</p>
+            <div>
+                <h1 style="margin:0;">EduVision</h1>
+                <p style="margin:5px 0 0 0;">Painel Integrado de Gestão Pedagógica Preventiva</p>
+            </div>
+            <button class="btn" onclick="exportarExcel()">📥 Exportar Planilha</button>
         </header>
 
-        <div class="grid-layout">
+        <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+            <div class="card" style="flex: 1; min-width: 200px; margin-bottom: 0; padding: 15px;">
+                <h4 style="margin:0; color:#555;">Índice de Sucesso (ISE)</h4>
+                <h2 id="ise-val" style="margin: 10px 0 5px 0; color: var(--primary-color);">0%</h2>
+                <div style="background:#e9ecef; height:6px; border-radius:3px; overflow:hidden;">
+                    <div id="ise-graph-bar" style="height:100%; width:0%; transition: width 0.5s;"></div>
+                </div>
+            </div>
+            <div class="card" style="flex: 1; min-width: 200px; margin-bottom: 0; padding: 15px;">
+                <h4 style="margin:0; color:#555;">Alunos Cadastrados</h4>
+                <h2 id="total-alunos" style="margin: 10px 0 0 0;">0</h2>
+            </div>
+            <div class="card" style="flex: 1; min-width: 200px; margin-bottom: 0; padding: 15px;">
+                <h4 style="margin:0; color:#555;">Casos Críticos (Risco)</h4>
+                <h2 id="casos-risco" style="margin: 10px 0 0 0; color: var(--danger-color);">0</h2>
+            </div>
+            <div class="card" style="flex: 2; min-width: 300px; margin-bottom: 0; padding: 15px;">
+                <h4 style="margin:0 0 10px 0; color:#555;">Desempenho Médio por Turma</h4>
+                <div id="container-medias-turma" style="display: flex; flex-wrap: wrap; gap: 5px;"></div>
+            </div>
+        </div>
+
+        <div class="grid-dashboard">
             <div>
                 <div class="card">
                     <h3 id="form-titulo">📝 Matrícula e Notas</h3>
-                    <form id="cadastro-form" onsubmit="cadastrarAluno(event)" style="margin-top: 15px;">
+                    <form id="cadastro-form" onsubmit="cadastrarAluno(event)">
                         <input type="hidden" id="edit-index" value="-1">
                         
                         <div class="form-group">
-                            <label>Nome do Aluno</label>
-                            <input type="text" id="nome" required>
+                            <label for="nome">Nome Completo</label>
+                            <input type="text" id="nome" required placeholder="Ex: Maria Oliveira">
+                        </div>
+
+                        <div style="display: flex; gap: 10px;">
+                            <div class="form-group" style="flex: 1;">
+                                <label for="turma">Turma / Curso</label>
+                                <select id="turma" onchange="ajustarCamposDisciplinas()" required>
+                                    <option value="1º Ano A">1º Ano A (Admin)</option>
+                                    <option value="1º Ano B">1º Ano B (Agro)</option>
+                                    <option value="2º Ano A">2º Ano A (Admin)</option>
+                                    <option value="2º Ano B">2º Ano B (Agro)</option>
+                                    <option value="3º Ano A">3º Ano A (Marketing)</option>
+                                    <option value="3º Ano B">3º Ano B (Marketing)</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label for="frequencia">Frequência (%)</label>
+                                <input type="number" id="frequencia" min="0" max="100" required placeholder="95">
+                            </div>
                         </div>
 
                         <div class="form-group">
-                            <label>Turma</label>
-                            <select id="turma" onchange="ajustarCamposDisciplinas()" required>
-                                <option value="1º Ano A">1º Ano A (Administração)</option>
-                                <option value="1º Ano B">1º Ano B (Agropecuária)</option>
-                                <option value="2º Ano A">2º Ano A (Administração)</option>
-                                <option value="2º Ano B">2º Ano B (Agropecuária)</option>
-                                <option value="3º Ano A">3º Ano A (Marketing)</option>
-                                <option value="3º Ano B">3º Ano B (Marketing)</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Frequência (%)</label>
-                            <input type="number" id="frequencia" min="0" max="100" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Bimestre de Lançamento</label>
+                            <label for="bimestre-alvo">Bimestre de Registro</label>
                             <select id="bimestre-alvo">
                                 <option value="b1">1º Bimestre</option>
-                                <option value="b2">2º Bimestre</option>
+                                <option value="b2" selected>2º Bimestre</option>
                             </select>
                         </div>
 
-                        <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
-                        <h4>Notas dos Componentes Gerais</h4>
-                        <div id="container-disciplinas-gerais" style="max-height: 200px; overflow-y: auto; margin-top: 10px;"></div>
+                        <h4 style="border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-top:20px;">📚 Componentes Gerais</h4>
+                        <div id="container-disciplinas-gerais"></div>
 
-                        <h4 style="margin-top: 15px;" id="label-disciplina-tecnica">Componentes Técnicos</h4>
-                        <div id="container-disciplinas-tecnicas" style="margin-top: 10px;"></div>
+                        <h4 id="label-disciplina-tecnica" style="border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-top:20px;">⚙️ Componentes Técnicos</h4>
+                        <div id="container-disciplinas-tecnicas"></div>
 
-                        <button type="submit" class="btn" style="width: 100%; margin-top: 15px;">Salvar Lançamentos</button>
-                        <button type="button" id="btn-cancelar" class="btn btn-secondary" style="width: 100%; margin-top: 8px; display: none;" onclick="limparFormulario()">Cancelar Edição</button>
+                        <div style="margin-top: 20px; display: flex; gap: 10px;">
+                            <button type="submit" class="btn" style="flex: 1;">Salvar Registro</button>
+                            <button type="button" id="btn-cancelar" class="btn" style="display:none; background:#7f8c8d;" onclick="limparFormulario()">Cancelar</button>
+                        </div>
                     </form>
                 </div>
 
                 <div class="card">
-                    <h3>➕ Incluir Nova Disciplina</h3>
-                    <div class="form-group" style="margin-top: 15px;">
+                    <h3>➕ Adicionar Nova Disciplina</h3>
+                    <div class="form-group">
                         <label>Nome da Disciplina</label>
-                        <input type="text" id="nova-disc-nome" placeholder="Ex: Sociologia">
+                        <input type="text" id="nova-disc-nome" placeholder="Ex: Sociologia Aplicada">
                     </div>
                     <div class="form-group">
-                        <label>Categoria</label>
+                        <label>Tipo de Componente</label>
                         <select id="nova-disc-tipo">
                             <option value="geral">Geral (Comum a todos)</option>
-                            <option value="tecnica">Técnica (Especifica de Curso)</option>
+                            <option value="tecnico">Técnico (Depende da Turma)</option>
                         </select>
                     </div>
-                    <button type="button" class="btn" onclick="adicionarDisciplinaDinamicamente()" style="width: 100%;">Adicionar à Grade</button>
+                    <button class="btn" onclick="adicionarDisciplinaDinamicamente()" style="width: 100%;">Adicionar à Grade</button>
                 </div>
             </div>
 
             <div>
-                <div class="card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                    <div>
-                        <h2>📊 Métricas Gerais</h2>
-                        <p style="color: #666; font-size: 14px;">Visão geral e diagnósticos preventivos</p>
-                    </div>
-                    <button class="btn" onclick="exportarExcel()">📥 Exportar Relatório (CSV)</button>
-                </div>
-
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
-                    <div class="card" style="margin-bottom: 0;">
-                        <h4 style="color: #666;">Total de Alunos</h4>
-                        <h1 id="total-alunos">0</h1>
-                    </div>
-                    <div class="card" style="margin-bottom: 0;">
-                        <h4 style="color: var(--danger-color);">Casos Críticos</h4>
-                        <h1 id="casos-risco" style="color: var(--danger-color);">0</h1>
-                    </div>
-                    <div class="card" style="margin-bottom: 0;">
-                        <h4 style="color: var(--primary-color);">ISE Médio (IA)</h4>
-                        <h1 id="ise-val">0%</h1>
-                        <div class="nota-meter-bg"><div id="ise-graph-bar" class="nota-meter-fill" style="width: 0%;"></div></div>
+                <div class="card" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; padding: 15px;">
+                    <strong style="font-size:14px;">Filtros:</strong>
+                    <input type="text" id="busca-nome" placeholder="🔍 Buscar aluno por nome..." oninput="filtrarEAtualizar()" style="flex:1; padding:6px; border:1px solid #ccc; border-radius:4px;">
+                    <select id="filtro-turma" onchange="filtrarEAtualizar()" style="padding:6px; border:1px solid #ccc; border-radius:4px;">
+                        <option value="Todos">Todas as Turmas</option>
+                        <option value="1º Ano A">1º Ano A</option>
+                        <option value="1º Ano B">1º Ano B</option>
+                        <option value="2º Ano A">2º Ano A</option>
+                        <option value="2º Ano B">2º Ano B</option>
+                        <option value="3º Ano A">3º Ano A</option>
+                        <option value="3º Ano B">3º Ano B</option>
+                    </select>
+                    <div style="display:flex; gap:5px;">
+                        <button class="btn" style="padding:5px 10px; font-size:12px;" onclick="definirFiltroStatus('Todos')">Todos</button>
+                        <button class="btn" style="padding:5px 10px; font-size:12px; background:var(--success-color);" onclick="definirFiltroStatus('Bom')">Bom</button>
+                        <button class="btn" style="padding:5px 10px; font-size:12px; background:var(--warning-color); color:#333;" onclick="definirFiltroStatus('Atenção')">Atenção</button>
+                        <button class="btn" style="padding:5px 10px; font-size:12px; background:var(--danger-color);" onclick="definirFiltroStatus('Crítico')">Crítico</button>
                     </div>
                 </div>
 
-                <div class="card">
-                    <h3>Média por Segmento / Turma</h3>
-                    <div id="container-medias-turma" style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 15px;"></div>
-                </div>
-
-                <div class="card" style="height: 300px; position: relative;">
-                    <canvas id="chartTurmas"></canvas>
-                </div>
-
-                <div class="card">
-                    <h3>👥 Filtros e Listagem de Alunos</h3>
-                    <div style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
-                        <input type="text" id="busca-nome" placeholder="Buscar aluno por nome..." oninput="filtrarEAtualizar()" style="flex: 1; min-width: 200px;">
-                        <select id="filtro-turma" onchange="filtrarEAtualizar()" style="width: 180px;">
-                            <option value="Todos">Todas as Turmas</option>
-                            <option value="1º Ano A">1º Ano A</option>
-                            <option value="1º Ano B">1º Ano B</option>
-                            <option value="2º Ano A">2º Ano A</option>
-                            <option value="2º Ano B">2º Ano B</option>
-                            <option value="3º Ano A">3º Ano A</option>
-                            <option value="3º Ano B">3º Ano B</option>
-                        </select>
+                <div class="card" style="padding: 10px;">
+                    <div style="height: 250px; position: relative;">
+                        <canvas id="chartTurmas"></canvas>
                     </div>
-
-                    <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
-                        <button id="btn-filtro-todos" class="btn" onclick="definirFiltroStatus('Todos')">Todos</button>
-                        <button id="btn-filtro-atencao" class="btn btn-secondary" style="background-color: var(--warning-color); color: #333;" onclick="definirFiltroStatus('Atenção')">Atenção</button>
-                        <button id="btn-filtro-critico" class="btn btn-danger" onclick="definirFiltroStatus('Crítico')">Crítico</button>
-                    </div>
-
-                    <div id="tabela-conteudo-agrupado" style="margin-top: 15px; overflow-x: auto;"></div>
                 </div>
+
+                <div id="tabela-conteudo-agrupado"></div>
             </div>
         </div>
     </div>
@@ -407,94 +411,84 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div id="modal-header-info"></div>
-                <button onclick="fecharModal()" style="font-size: 24px; border: none; background: none; cursor: pointer; color: #888;">&times;</button>
+                <button class="btn btn-danger" style="padding:5px 10px;" onclick="fecharModal()">Fechar ✕</button>
             </div>
-            <div class="modal-body">
-                <div class="tabs-container">
-                    <button class="tab-btn active" onclick="mudarTab(event, 'tab-desempenho')">📊 Desempenho</button>
-                    <button class="tab-btn" onclick="mudarTab(event, 'tab-pai')">📋 Plano Preventivo (PAI)</button>
-                    <button class="tab-btn" onclick="mudarTab(event, 'tab-cronograma')">📅 Sincronização em Sala</button>
-                    <button class="tab-btn" onclick="mudarTab(event, 'tab-pronunciamento')">💬 Voz do Aluno & IA</button>
-                    <button class="tab-btn" onclick="mudarTab(event, 'tab-comunicado')">✉️ Comunicados (IA)</button>
-                </div>
+            
+            <div class="tab-menu">
+                <button class="tab-btn active" onclick="mudarTab(event, 'tab-desempenho')">📊 Desempenho e Gráfico</button>
+                <button class="tab-btn" onclick="mudarTab(event, 'tab-pai')">🎯 Plano Preventivo (PAI)</button>
+                <button class="tab-btn" onclick="mudarTab(event, 'tab-cronograma')">📅 Calendário de Estudos</button>
+                <button class="tab-btn" onclick="mudarTab(event, 'tab-ia-cronograma')">🤖 Tutor Inteligente IA</button>
+                <button class="tab-btn" onclick="mudarTab(event, 'tab-comunicado')">✉️ Comunicados Rápidos</button>
+            </div>
 
-                <div id="tab-desempenho" class="tab-content active">
-                    <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
-                        <div style="height: 250px; position: relative;" id="radar-container">
-                            <canvas id="chartAlunoModal"></canvas>
-                        </div>
-                        <div>
-                            <h4>Resultados e Notas</h4>
-                            <div id="modal-semestres" style="display: flex; gap: 10px; margin: 15px 0;"></div>
-                            <div id="modal-boletim-rows" style="max-height: 250px; overflow-y: auto; padding-right: 10px;"></div>
+            <div class="modal-body">
+                <div id="tab-desempenho" class="tab-content active" style="grid-column: span 2;">
+                    <div style="display: flex; gap:20px; height: 100%;">
+                        <div style="flex: 1; overflow-y:auto; max-height: 50vh;" id="modal-boletim-rows"></div>
+                        <div style="flex: 1; display:flex; flex-direction:column; gap:15px;">
+                            <div style="display:flex; gap:10px;" id="modal-semestres"></div>
+                            <div style="flex:1; position:relative; min-height: 250px;">
+                                <canvas id="chartAlunoModal"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div id="tab-pai" class="tab-content">
-                    <h3>📋 Plano de Atendimento Individualizado (PAI)</h3>
-                    <div class="info-box" id="pai-dados-aluno" style="background-color: #f8f9fa; border-left: 5px solid var(--primary-color);"></div>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
-                        <div>
-                            <h4 style="color: var(--primary-color);">🎯 Metas Cognitivas e Acadêmicas</h4>
+                <div id="tab-pai" class="tab-content" style="grid-column: span 2;">
+                    <div class="card" id="pai-dados-aluno" style="background: #eef2f7; border-left: 5px solid var(--primary-color);"></div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 15px;">
+                        <div class="card" style="margin:0;">
+                            <h4 style="color:var(--primary-color); border-bottom:1px solid #ddd; padding-bottom:5px; margin:0 0 10px 0;">🎯 Objetivos e Metas</h4>
                             <div id="pai-objetivos"></div>
                         </div>
-                        <div>
-                            <h4 style="color: var(--secondary-color);">⚙️ Medidas de Intervenção Pedagógica</h4>
+                        <div class="card" style="margin:0;">
+                            <h4 style="color:var(--primary-color); border-bottom:1px solid #ddd; padding-bottom:5px; margin:0 0 10px 0;">🛠️ Ações Pedagógicas</h4>
                             <div id="pai-acoes"></div>
                         </div>
-                    </div>
-                    <div style="margin-top: 15px;">
-                        <h4 style="color: #c0392b;">🌱 Ações de Engajamento & Apoio Socioemocional</h4>
-                        <div id="pai-socioemocional"></div>
+                        <div class="card" style="margin:0;">
+                            <h4 style="color:var(--primary-color); border-bottom:1px solid #ddd; padding-bottom:5px; margin:0 0 10px 0;">🧠 Dimensão Socioemocional</h4>
+                            <div id="pai-socioemocional"></div>
+                        </div>
                     </div>
                 </div>
 
-                <div id="tab-cronograma" class="tab-content">
-                    <h3>📅 Cronograma de Estudos - Sincronização com as Aulas</h3>
-                    <p style="font-size: 13px; color:#666; margin-bottom: 15px;">
-                        Compare o roteiro ministrado pelo professor em sala de aula com sugestões de revisão ativa e tarefas complementares para consolidação em casa.
-                    </p>
-                    
-                    <div class="info-box" id="cronograma-resumo" style="border-left: 5px solid var(--secondary-color); margin-top: 10px;"></div>
-
-                    <table>
+                <div id="tab-cronograma" class="tab-content" style="grid-column: span 2;">
+                    <p id="cronograma-resumo" style="background:#fff3cd; color:#856404; padding:10px; border-radius:4px; font-weight:bold;"></p>
+                    <table style="margin-top:15px;">
                         <thead>
-                            <tr>
-                                <th>Componente</th>
-                                <th>Ministrado em Aula (Foco Principal)</th>
-                                <th>Estratégia de Estudo Ativo (Revisão)</th>
-                                <th style="text-align: center;">Tempo Sugerido</th>
+                            <tr style="background-color: #f2f2f2;">
+                                <th style="width: 25%;">Componente</th>
+                                <th style="width: 30%;">Tópico Crítico em Aula</th>
+                                <th style="width: 35%;">Atividade Prática em Casa</th>
+                                <th style="width: 10%; text-align: center;">Tempo</th>
                             </tr>
                         </thead>
                         <tbody id="cronograma-tabela-corpo"></tbody>
                     </table>
                 </div>
 
-                <div id="tab-pronunciamento" class="tab-content">
-                    <h3>🗣️ Espaço de Autoavaliação do Estudante</h3>
-                    <p style="font-size: 13px; color:#666; margin-bottom: 15px;">
-                        O aluno relata o que já aprendeu bem e quais conceitos de fato não compreendeu. O algoritmo varre o dicionário pedagógico para montar um plano imediato focado em preencher essa lacuna.
-                    </p>
-                    
-                    <div class="form-group">
-                        <label style="color: var(--success-color);">O que eu compreendi muito bem?</label>
-                        <textarea id="aluno-entendeu" rows="2" placeholder="Ex: Entendi ligações iônicas, mas em história gosto de Brasil Colonial..."></textarea>
+                <div id="tab-ia-cronograma" class="tab-content" style="grid-column: span 2;">
+                    <div class="card" style="background:#eef2f7; padding:15px; margin-bottom:15px;">
+                        <h4 style="margin:0 0 10px 0; color: var(--primary-color);">💡 Autoavaliação Direcionada</h4>
+                        <p style="font-size: 13px; color:#555; margin-bottom:15px;">Peça ao aluno para descrever o que ele entendeu e onde estão as maiores travas de aprendizado.</p>
+                        
+                        <div style="display:flex; gap:15px;">
+                            <div style="flex:1;">
+                                <label style="font-size:12px; font-weight:bold; display:block; margin-bottom:5px;">O que eu compreendi bem?</label>
+                                <textarea id="aluno-entendeu" placeholder="Ex: Entendi como fazer o balanceamento de equações químicas..." style="width:100%; height:80px; padding:8px; border:1px solid #ccc; border-radius:4px; font-family:sans-serif; resize:none;"></textarea>
+                            </div>
+                            <div style="flex:1;">
+                                <label style="font-size:12px; font-weight:bold; display:block; margin-bottom:5px;">O que eu ainda não entendi?</label>
+                                <textarea id="aluno-dificuldade" placeholder="Ex: Tenho muita dificuldade em estequiometria e frações..." style="width:100%; height:80px; padding:8px; border:1px solid #ccc; border-radius:4px; font-family:sans-serif; resize:none;"></textarea>
+                            </div>
+                        </div>
+                        <button class="btn" onclick="gerarCronogramaAdaptativoPorFeedback()" style="margin-top:15px; width:100%;">⚡ Processar Autoavaliação com IA</button>
                     </div>
 
-                    <div class="form-group">
-                        <label style="color: var(--danger-color);">O que eu sinto mais dificuldade ou não compreendi de jeito nenhum?</label>
-                        <textarea id="aluno-dificuldade" rows="2" placeholder="Ex: Não entendi estequiometria, frações, cinemática, redação argumentativa..."></textarea>
-                    </div>
-
-                    <button class="btn" style="width: 100%; background-color: var(--secondary-color);" onclick="gerarCronogramaAdaptativoPorFeedback()">
-                        ✨ Gerar Plano de Estudo Emergencial Personalizado
-                    </button>
-
-                    <div id="retorno-cronograma-ia" style="margin-top: 20px; display: none;">
-                        <div class="info-box" style="border-left: 5px solid var(--primary-color); background: #f0f4f8;">
-                          <h4 style="color: var(--primary-color); margin-bottom: 5px;">🎯 Diagnóstico de Tutor Educacional AI</h4>
+                    <div id="retorno-cronograma-ia" style="display:none;">
+                        <div class="card" style="border-left:5px solid var(--success-color); padding: 15px; background: #f4fbf7; margin-bottom:15px;">
+                            <h4 style="color: var(--primary-color); margin-bottom: 5px;">🎯 Diagnóstico de Tutor Educacional AI</h4>
                             <div id="ia-diagnostico-texto" style="font-size: 13px; line-height: 1.5;"></div>
                         </div>
 
@@ -512,7 +506,7 @@
                     </div>
                 </div>
 
-                <div id="tab-comunicado" class="tab-content">
+                <div id="tab-comunicado" class="tab-content" style="grid-column: span 2;">
                     <h3>✉️ Comunicados Gerados de Forma Autônoma</h3>
                     <p style="font-size: 13px; color:#666; margin-bottom: 15px;">Modelos prontos baseados na frequência e médias computadas.</p>
                     
@@ -651,8 +645,8 @@
                 frequencia: 92,
                 notesCount: 2,
                 notas: {
-                    b1: { portugues: 8.5, literatura: 8.0, redacao: 8.5, matematica: 7.2, fisica: 7.0, quimica: 7.5, biologia: 8.0, historia: 8.0, geografia: 7.5, filosofia: 8.0, sociologia: 8.5, arte: 9.0, "educacao-fisica": 9.5, ingles: 8.0, financeira: 8.5, "projeto-vida": 9.0, tec1: 9.0, tec2: 8.0 },
-                    b2: { portugues: 8.0, literatura: 7.5, redacao: 8.0, matematica: 6.8, fisica: 7.2, quimica: 7.0, biologia: 7.8, historia: 8.5, geografia: 7.0, filosofia: 8.5, sociologia: 8.0, arte: 8.5, "educacao-fisica": 9.0, ingles: 8.5, financeira: 8.0, "projeto-vida": 9.5, tec1: 8.5, tec2: 7.5 }
+                    b1: { portugues: 8.5, literatura: 8.0, redacao: 8.5, matematica: 7.2, fisica: 7.0, quimica: 7.5, biologia: 8.0, historia: 8.0, geography: 7.5, filosofia: 8.0, sociologia: 8.5, arte: 9.0, "educacao-fisica": 9.5, ingles: 8.0, financeira: 8.5, "projeto-vida": 9.0, tec1: 9.0, tec2: 8.0 },
+                    b2: { portugues: 8.0, literatura: 7.5, redacao: 8.0, matematica: 6.8, fisica: 7.2, quimica: 7.0, biologia: 7.8, historia: 8.5, geography: 7.0, filosofia: 8.5, sociologia: 8.0, arte: 8.5, "educacao-fisica": 9.0, ingles: 8.5, financeira: 8.0, "projeto-vida": 9.5, tec1: 8.5, tec2: 7.5 }
                 }
             },
             {
@@ -662,7 +656,7 @@
                 notesCount: 2,
                 notas: {
                     b1: { portugues: 5.5, literatura: 5.0, redacao: 5.5, matematica: 4.8, fisica: 4.0, quimica: 4.5, biologia: 5.0, historia: 6.0, geography: 5.0, filosofia: 5.5, sociologia: 5.0, arte: 7.0, "educacao-fisica": 8.0, ingles: 5.0, financeira: 4.5, "projeto-vida": 6.0, tec1: 5.0, tec2: 4.5 },
-                    b2: { portugues: 5.0, literatura: 4.5, redacao: 5.0, matematica: 4.2, fisica: 4.5, quimica: 4.0, biologia: 4.8, historia: 5.5, geografia: 4.8, filosofia: 5.0, sociologia: 5.5, arte: 6.5, "educacao-fisica": 7.5, ingles: 5.5, financeira: 4.0, "projeto-vida": 5.5, tec1: 4.8, tec2: 4.0 }
+                    b2: { portugues: 5.0, literatura: 4.5, redacao: 5.0, matematica: 4.2, fisica: 4.5, quimica: 4.0, biologia: 4.8, historia: 5.5, geography: 4.8, filosofia: 5.0, sociologia: 5.5, arte: 6.5, "educacao-fisica": 7.5, ingles: 5.5, financeira: 4.0, "projeto-vida": 5.5, tec1: 4.8, tec2: 4.0 }
                 }
             },
             {
@@ -671,7 +665,7 @@
                 frequencia: 88,
                 notesCount: 1,
                 notas: {
-                    b1: { portugues: 7.0, literatura: 7.5, redacao: 7.0, matematica: 6.5, fisica: 6.0, quimica: 6.8, biologia: 7.0, historia: 7.2, geografia: 8.0, filosofia: 7.0, sociologia: 7.5, arte: 8.0, "educacao-fisica": 8.5, ingles: 7.0, financeira: 7.5, "projeto-vida": 8.0, tec1: 7.5, tec2: 7.0 }
+                    b1: { portugues: 7.0, literatura: 7.5, redacao: 7.0, matematica: 6.5, fisica: 6.0, quimica: 6.8, biologia: 7.0, historia: 7.2, geography: 8.0, filosofia: 7.0, sociologia: 7.5, arte: 8.0, "educacao-fisica": 8.5, ingles: 7.0, financeira: 7.5, "projeto-vida": 8.0, tec1: 7.5, tec2: 7.0 }
                 }
             }
         ];
@@ -870,7 +864,7 @@
 
             let filtrados = alunos.filter((aluno, index) => {
                 aluno.indexOriginal = index;
-                const atendeBusca =                 aluno.nome.toLowerCase().includes(busca);
+                const atendeBusca = aluno.nome.toLowerCase().includes(busca);
                 const atendeTurma = (turmaSel === "Todos" || aluno.turma === turmaSel);
                 const atendeStatus = (statusFiltroAtual === "Todos" || determinarStatusFrequenciaMedia(aluno).label === statusFiltroAtual);
                 return atendeBusca && atendeTurma && atendeStatus;
@@ -885,7 +879,7 @@
             let htmlCompleto = "";
             for (let turma in turmasAgrupadas) {
                 let somaTurma = 0;
-                turmasAgadas[turma].forEach(a => { somaTurma += calcularMediaGeralAluno(a); });
+                turmasAgrupadas[turma].forEach(a => { somaTurma += calcularMediaGeralAluno(a); });
                 const mediaTurma = (somaTurma / turmasAgrupadas[turma].length).toFixed(1);
 
                 htmlCompleto += `
@@ -1032,7 +1026,7 @@
             }
 
             document.getElementById('modal-header-info').innerHTML = `
-                <h1 style="color: var(--primary-color);">${aluno.nome}</h1>
+                <h1 style="color: var(--primary-color); margin: 0;">${aluno.nome}</h1>
                 <p style="color: #666; margin: 5px 0;">Turma: <strong>${aluno.turma}</strong> | Frequência: <strong>${aluno.frequencia}%</strong></p>
                 <span class="status-badge ${status.class}">${perfilIA}</span>
             `;
@@ -1050,10 +1044,10 @@
             let previsaoFinal = Math.max(0, Math.min(10, ((somaB2 || somaB1 || 5.0) + tendencia) * (0.85 + (factorPresenca * 0.15))));
 
             document.getElementById('modal-semestres').innerHTML = `
-                <div class="card" style="padding:10px; text-align:center; flex:1;"><h5>Média 1º Bim</h5><strong>${somaB1 > 0 ? somaB1.toFixed(1) : '--'}</strong></div>
-                <div class="card" style="padding:10px; text-align:center; flex:1;"><h5>Média 2º Bim</h5><strong>${somaB2 > 0 ? somaB2.toFixed(1) : '--'}</strong></div>
-                <div class="card" style="padding:10px; text-align:center; flex:1; background:#eef2f7; border-color:var(--secondary-color);">
-                    <h5 style="color:var(--primary-color);">Projeção Preventiva (IA)</h5><strong style="color:var(--secondary-color); font-size:18px;">${previsaoFinal.toFixed(1)}</strong>
+                <div class="card" style="padding:10px; text-align:center; flex:1; margin-bottom:0;"><h5>Média 1º Bim</h5><strong>${somaB1 > 0 ? somaB1.toFixed(1) : '--'}</strong></div>
+                <div class="card" style="padding:10px; text-align:center; flex:1; margin-bottom:0;"><h5>Média 2º Bim</h5><strong>${somaB2 > 0 ? somaB2.toFixed(1) : '--'}</strong></div>
+                <div class="card" style="padding:10px; text-align:center; flex:1; background:#eef2f7; border-color:var(--secondary-color); margin-bottom:0;">
+                    <h5 style="color:var(--primary-color); margin:0 0 5px 0;">Projeção Preventiva (IA)</h5><strong style="color:var(--secondary-color); font-size:18px;">${previsaoFinal.toFixed(1)}</strong>
                 </div>
             `;
 
@@ -1139,7 +1133,6 @@
             });
         }
 
-        // APROFUNDAMENTO DO PLANO PREVENTIVO (PAI)
         function gerarPlanoPAI(aluno, config, previsaoFinal) {
             const media = calcularMediaGeralAluno(aluno);
             
@@ -1212,7 +1205,7 @@
                         <li>Indicar o aluno para atuar como monitor voluntário auxiliando estudantes com dificuldades em contraturnos escolares.</li>
                         <li>Oferecer desafios acadêmicos ou problemas de lógica avançados.</li>
                     </ul>`;
-                             socioHtml = `
+                socioHtml = `
                     <ul class="custom-list">
                         <li>Promover oportunidades de protagonismo juvenil, como liderança de equipes em projetos práticos ou representação estudantil.</li>
                     </ul>`;
@@ -1223,14 +1216,22 @@
             document.getElementById('pai-socioemocional').innerHTML = socioHtml;
         }
 
-        // NOVO SINALIZADOR: CRONOGRAMA DE ACOMPANHAMENTO DA SALA DE AULA
         function gerarCronogramaEstudos(aluno, config) {
             const bAtivo = aluno.notas.b2 ? 'b2' : 'b1';
             const notas = aluno.notas[bAtivo] || {};
             
             let disciplinasAluno = [];
             disciplinasGerais.forEach(d => {
-                if (notas[d.id] !== undefined) disciplinasAluno.push({ id: d.id, label: d.label, nota: notas[d.id] });
+                if (notesCount > 0 && notas[d.id] !== undefined) {
+                    disciplinasAluno.push({ id: d.id, label: d.label, nota: notas[d.id] });
+                }
+            });
+
+            const tecs = disciplinasTecnicas[config.key] || [];
+            tecs.forEach(d => {
+                if (notas[d.id] !== undefined) {
+                    disciplinasAluno.push({ id: d.id, label: d.label, nota: notas[d.id] });
+                }
             });
 
             disciplinasAluno.sort((a, b) => a.nota - b.nota);
@@ -1266,7 +1267,6 @@
             document.getElementById('cronograma-resumo').innerHTML = `<strong>Roteiro Semanal de Fixação:</strong> Dedique em média <strong>${totalHorasEstudo.toFixed(1)} horas semanais</strong> distribuídas nas atividades de consolidação em casa para acompanhar o ritmo da sala de aula.`;
         }
 
-        // CRONOGRAMA ADAPTATIVO POR AUTOAVALIAÇÃO (COM INTELIGÊNCIA DE ASSOCIAÇÃO)
         function gerarCronogramaAdaptativoPorFeedback() {
             if (alunoModalAbertoIndex === null) return;
             
@@ -1289,7 +1289,6 @@
             let recomendacoesMapeadas = [];
             let detectouEspecifico = false;
 
-            // Varredura por keywords no banco de dados pedagógico do sistema
             roteirosDificuldades.forEach(roteiro => {
                 let combinou = roteiro.keywords.some(keyword => dificuldade.includes(keyword));
                 if (combinou) {
@@ -1302,7 +1301,6 @@
                 }
             });
 
-            // Fallback caso seja um termo não previamente mapeado de forma explícita
             if (!detectouEspecifico && dificuldade.length > 0) {
                 recomendacoesMapeadas.push({
                     foco: `Dificuldade: "${dificuldade.length > 60 ? dificuldade.substring(0, 60) + '...' : dificuldade}"`,
@@ -1311,7 +1309,6 @@
                 });
             }
 
-            // Mapeando a área forte de domínio para fixação por ancoragem cognitiva
             if (entendeu.length > 0) {
                 recomendacoesMapeadas.push({
                     foco: `Domínio: "${entendeu.length > 60 ? entendeu.substring(0, 60) + '...' : entendeu}"`,
@@ -1320,7 +1317,6 @@
                 });
             }
 
-            // Técnica padrão complementar de retenção
             recomendacoesMapeadas.push({
                 foco: "Técnica Pomodoro Adaptada",
                 acao: "Estude em blocos curtos de 30 minutos focados com 5 minutos de descanso ativo (alongar ou beber água). Evita fadiga cerebral.",
@@ -1348,7 +1344,6 @@
             tabelaCorpo.innerHTML = htmlTabela;
         }
 
-        // GERAÇÃO DE COMUNICADOS PEDAGÓGICOS
         function gerarComunicados(aluno, previsaoFinal) {
             const media = calcularMediaGeralAluno(aluno).toFixed(1);
             let whatsappMsg = ""; let emailMsg = "";
