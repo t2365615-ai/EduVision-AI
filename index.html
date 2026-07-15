@@ -288,6 +288,7 @@
             <div class="modal-tabs">
                 <button class="tab-btn active" onclick="mudarTab(event, 'tab-desempenho')">Gráfico & Notas</button>
                 <button class="tab-btn" onclick="mudarTab(event, 'tab-plano')">Plano de Intervenção (PAI)</button>
+                <button class="tab-btn" onclick="mudarTab(event, 'tab-cronograma')">📅 Cronograma de Estudos IA</button>
                 <button class="tab-btn" onclick="mudarTab(event, 'tab-comunicado')">Comunicado Automatizado</button>
             </div>
 
@@ -318,11 +319,32 @@
                 </div>
             </div>
 
+            <div id="tab-cronograma" class="tab-content">
+                <h3>📅 Cronograma de Estudos Preditivo Personalizado</h3>
+                <p style="font-size: 13px; color:#666; margin-bottom: 20px;">
+                                Algoritmo gerador baseado na matriz de desempenho bimestral. Prioriza disciplinas com maior índice de defasagem acadêmica.
+                </p>
+                
+                <div class="info-box" id="cronograma-resumo" style="border-left: 5px solid var(--secondary-color);"></div>
+
+                <table style="margin-top: 15px;">
+                    <thead>
+                        <tr>
+                            <th>Componente Curricular</th>
+                            <th style="text-align: center;">Urgência</th>
+                            <th style="text-align: center;">Horas Semanais</th>
+                            <th>Foco Principal de Estudos</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cronograma-tabela-corpo"></tbody>
+                </table>
+            </div>
+
             <div id="tab-comunicado" class="tab-content">
                 <h3>Comunicados Gerados de Forma Autônoma</h3>
                 <p style="font-size: 13px; color:#666; margin-bottom: 15px;">Modelos prontos e adaptados dinamicamente com base na frequência e médias computadas no perfil do estudante.</p>
                 
-                               <div class="ai-section-title">✉️ Canal de Envio: WhatsApp (Curto e direto)</div>
+                <div class="ai-section-title">✉️ Canal de Envio: WhatsApp (Curto e direto)</div>
                 <div class="comunicado-box">
                     <button class="btn-copy" onclick="copiarComunicado('comunicado-whatsapp')">Copiar</button>
                     <div id="comunicado-whatsapp"></div>
@@ -373,21 +395,44 @@
             ]
         };
 
+        const topicosFocoDisciplinas = {
+            "portugues": "Sintaxe da oração, coesão textual e interpretação de textos modernos.",
+            "literatura": "Escolas literárias brasileiras, análise de poemas e contexto histórico.",
+            "redacao": "Estrutura do texto dissertativo-argumentativo, proposta de intervenção e repertório.",
+            "matematica": "Álgebra básica, equações de 2º grau e funções matemáticas.",
+            "fisica": "Cinemática escalar, leis de Newton e interpretação de gráficos físicos.",
+            "quimica": "Distribuição eletrônica, tabela periódica e ligações químicas básicas.",
+            "biologia": "Citologia básica, divisão celular (mitose/meiose) e ecologia geral.",
+            "historia": "História do Brasil colonial e eixos econômicos do século XVIII.",
+            "geografia": "Geografia física, relevo, clima e impacto da urbanização nas grandes metrópoles.",
+            "filosofia": "Introdução ao pensamento socrático e filosofia política moderna.",
+            "sociologia": "Teorias sociológicas clássicas (Marx, Durkheim e Weber) e cidadania.",
+            "arte": "Movimentos de vanguarda europeia e arte contemporânea brasileira.",
+            "educacao-fisica": "Fisiologia do exercício, saúde preventiva e esportes coletivos.",
+            "ingles": "Leitura instrumental, vocabulário técnico e tempos verbais fundamentais.",
+            "financeira": "Orçamento familiar, juros simples vs. compostos e planejamento financeiro.",
+            "projeto-vida": "Autoavaliação de habilidades socioemocionais e planejamento de carreira.",
+            "tec1": "Mapeamento de processos operacionais e ferramentas de gestão (5W2H / PDCA).",
+            "tec2": "Lei da oferta e demanda, macroeconomia básica e análise de microcenários locais."
+        };
+
         // BASE DE DADOS INTEGRADA
         let alunos = [
             {
                 nome: "Lucas Sousa",
                 turma: "1º Ano A",
                 frequencia: 92,
+                notesCount: 2,
                 notas: {
                     b1: { portugues: 8.5, literatura: 8.0, redacao: 8.5, matematica: 7.2, fisica: 7.0, quimica: 7.5, biologia: 8.0, historia: 8.0, geografia: 7.5, filosofia: 8.0, sociologia: 8.5, arte: 9.0, "educacao-fisica": 9.5, ingles: 8.0, financeira: 8.5, "projeto-vida": 9.0, tec1: 9.0, tec2: 8.0 },
-                    b2: { portugues: 8.0, literatura: 7.5, redacao: 8.0, matematica: 6.8, fisica: 7.2, quimica: 7.0, biologia: 7.8, historia: 8.5, geografia: 7.0, filosofia: 8.5, sociologia: 8.0, arte: 8.5, "educacao-fisica": 9.0, ingles: 8.5, financeira: 8.0, "projeto-vida": 9.5, tec1: 8.5, tec2: 7.5 }
+                    b2: { portugues: 8.0, literatura: 7.5, redacao: 8.0, matematica: 6.8, fisica: 7.2, quimica: 7.0, biologia: 7.8, historia: 8.5, geography: 7.0, filosofia: 8.5, sociologia: 8.0, arte: 8.5, "educacao-fisica": 9.0, ingles: 8.5, financeira: 8.0, "projeto-vida": 9.5, tec1: 8.5, tec2: 7.5 }
                 }
             },
             {
                 nome: "Beatriz Oliveira",
                 turma: "1º Ano B",
                 frequencia: 72,
+                notesCount: 2,
                 notas: {
                     b1: { portugues: 5.5, literatura: 5.0, redacao: 5.5, matematica: 4.8, fisica: 4.0, quimica: 4.5, biologia: 5.0, historia: 6.0, geografia: 5.0, filosofia: 5.5, sociologia: 5.0, arte: 7.0, "educacao-fisica": 8.0, ingles: 5.0, financeira: 4.5, "projeto-vida": 6.0, tec1: 5.0, tec2: 4.5 },
                     b2: { portugues: 5.0, literatura: 4.5, redacao: 5.0, matematica: 4.2, fisica: 4.5, quimica: 4.0, biologia: 4.8, historia: 5.5, geografia: 4.8, filosofia: 5.0, sociologia: 5.5, arte: 6.5, "educacao-fisica": 7.5, ingles: 5.5, financeira: 4.0, "projeto-vida": 5.5, tec1: 4.8, tec2: 4.0 }
@@ -397,6 +442,7 @@
                 nome: "Carlos Eduardo Silva",
                 turma: "2º Ano A",
                 frequencia: 88,
+                notesCount: 1,
                 notas: {
                     b1: { portugues: 7.0, literatura: 7.5, redacao: 7.0, matematica: 6.5, fisica: 6.0, quimica: 6.8, biologia: 7.0, historia: 7.2, geografia: 8.0, filosofia: 7.0, sociologia: 7.5, arte: 8.0, "educacao-fisica": 8.5, ingles: 7.0, financeira: 7.5, "projeto-vida": 8.0, tec1: 7.5, tec2: 7.0 }
                 }
@@ -723,313 +769,380 @@
                 data: {
                     labels: turmasNomes,
                     datasets: [
-                        { label: 'Média Acadêmica (Base 10)', data: mediasVal,                         backgroundColor: '#2a5298',
-                        yAxisID: 'y'
-                    },
-                    {
-                        label: 'Frequência Média (%)',
-                        data: presencasVal,
-                        backgroundColor: '#2ecc71',
-                        borderColor: '#2ecc71',
-                        borderWidth: 3,
-                        type: 'line',
-                        fill: false,
-                        yAxisID: 'y1'
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        type: 'linear',
-                        display: true,
-                        position: 'left',
-                        min: 0,
-                        max: 10,
-                        title: { display: true, text: 'Notas (0-10)' }
-                    },
-                    y1: {
-                        type: 'linear',
-                        display: true,
-                        position: 'right',
-                        min: 0,
-                        max: 100,
-                        grid: { drawOnChartArea: false },
-                        title: { display: true, text: 'Frequência (%)' }
-                    }
-                }
-            }
-        });
-    }
-
-    // EXPORTAÇÃO DE DADOS
-    function exportarExcel() {
-        let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
-        csvContent += "Estudante;Turma;Frequência;Média Geral;Status\n";
-
-        alunos.forEach(a => {
-            const media = calcularMediaGeralAluno(a).toFixed(2).replace('.', ',');
-            const status = determinarStatusFrequenciaMedia(a).label;
-            csvContent += `"${a.nome}";"${a.turma}";"${a.frequencia}%";"${media}";"${status}"\n`;
-        });
-
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "EduVision_Matriz_Alunos.csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
-    // CONTROLE DO MODAL DE DETALHES
-    function abrirModal(index) {
-        const aluno = alunos[index];
-        const status = determinarStatusFrequenciaMedia(aluno);
-        const config = obterDadosSegmento(aluno.turma);
-
-        // Classificação do Perfil Baseado em Desempenho e Presença
-        const mediaGeral = calcularMediaGeralAluno(aluno);
-        let perfilIA = "Desempenho Sob Atenção";
-        if (aluno.frequencia < 75) {
-            perfilIA = "Risco Crítico de Evasão";
-        } else if (mediaGeral >= 8.5) {
-            perfilIA = "Alta Performance Estável";
-        } else if (mediaGeral < 5.5) {
-            perfilIA = "Risco de Reprovação Acadêmica";
-        }
-
-        document.getElementById('modal-header-info').innerHTML = `
-            <h1 style="color: var(--primary-color);">${aluno.nome}</h1>
-            <p style="color: #666; margin: 5px 0;">Turma: <strong>${aluno.turma}</strong> | Frequência Acumulada: <strong>${aluno.frequencia}%</strong></p>
-            <span class="status-badge ${status.class}">${perfilIA}</span>
-        `;
-
-        // Cálculo das Médias por Bimestre para Projeção Preditiva
-        let totalMateriasValidas = disciplinasGerais.length + (disciplinasTecnicas[config.key] || []).length;
-        let b1Data = aluno.notas.b1 || {};
-        let b2Data = aluno.notas.b2 || {};
-
-        let somaB1 = Object.keys(b1Data).length > 0 ? Object.values(b1Data).reduce((a, b) => a + b, 0) / totalMateriasValidas : 0;
-        let somaB2 = Object.keys(b2Data).length > 0 ? Object.values(b2Data).reduce((a, b) => a + b, 0) / totalMateriasValidas : 0;
-
-        // Algoritmo Preditivo Simulado
-        let tendencia = 0;
-        if (somaB1 > 0 && somaB2 > 0) {
-            tendencia = (somaB2 - somaB1) * 0.4; // Peso para a evolução/regressão de nota
-        }
-        let fatorPresenca = aluno.frequencia / 100;
-        let previsaoFinal = Math.max(0, Math.min(10, ((somaB2 || somaB1 || 5.0) + tendencia) * (0.85 + (fatorPresenca * 0.15))));
-
-        document.getElementById('modal-semestres').innerHTML = `
-            <div class="semestre-card-mini"><h5>Média 1º Bim</h5><div class="semestre-value">${somaB1 > 0 ? somaB1.toFixed(1) : '--'}</div></div>
-            <div class="semestre-card-mini"><h5>Média 2º Bim</h5><div class="semestre-value">${somaB2 > 0 ? somaB2.toFixed(1) : '--'}</div></div>
-            <div class="semestre-card-mini" style="border-color: var(--secondary-color); background: #eef2f7;">
-                <h5 style="color: var(--primary-color);">Projeção Final IA</h5>
-                <div class="semestre-value" style="color: var(--secondary-color); font-size: 20px;">${previsaoFinal.toFixed(1)}</div>
-            </div>
-        `;
-
-        // Boletim Detalhado
-        let bAtivo = aluno.notas.b2 ? 'b2' : 'b1';
-        let notasDoBimestre = aluno.notas[bAtivo] || {};
-
-        let htmlBoletim = "";
-        disciplinasGerais.forEach(d => {
-            let val = notasDoBimestre[d.id] !== undefined ? notasDoBimestre[d.id] : 0;
-            htmlBoletim += `
-                <div class="boletim-row">
-                    <div class="boletim-header-row"><span>${d.label}</span><strong>${val.toFixed(1)}</strong></div>
-                    <div class="nota-meter-bg">
-                        <div class="nota-meter-fill" style="width: ${val * 10}%; background-color: ${val >= 7 ? 'var(--success-color)' : val >= 5 ? 'var(--warning-color)' : 'var(--danger-color)'};"></div>
-                    </div>
-                </div>`;
-        });
-
-        const tecs = disciplinasTecnicas[config.key] || [];
-        tecs.forEach(d => {
-            let val = notasDoBimestre[d.id] !== undefined ? notasDoBimestre[d.id] : 0;
-            htmlBoletim += `
-                <div class="boletim-row" style="border-left: 3px solid var(--secondary-color);">
-                    <div class="boletim-header-row"><strong>${d.label} (Téc)</strong><strong>${val.toFixed(1)}</strong></div>
-                    <div class="nota-meter-bg">
-                        <div class="nota-meter-fill" style="width: ${val * 10}%; background-color: ${val >= 7 ? 'var(--success-color)' : val >= 5 ? 'var(--warning-color)' : 'var(--danger-color)'};"></div>
-                    </div>
-                </div>`;
-        });
-
-        document.getElementById('modal-boletim-rows').innerHTML = htmlBoletim;
-
-        // Renderizações Secundárias do Modal
-        try {
-            gerarGraficoRadarModal(aluno, config);
-        } catch(e) {
-            console.warn("Não foi possível carregar o Radar de desempenho.");
-        }
-        gerarPlanoPAI(aluno, config, previsaoFinal);
-        gerarComunicados(aluno, previsaoFinal);
-
-        document.getElementById('detalhe-modal').style.display = "flex";
-    }
-
-    function fecharModal() {
-        document.getElementById('detalhe-modal').style.display = "none";
-    }
-
-    function mudarTab(event, tabId) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-
-        document.getElementById(tabId).classList.add('active');
-        event.currentTarget.classList.add('active');
-    }
-
-    // GRÁFICO DE RADAR DO ALUNO
-    function gerarGraficoRadarModal(aluno, config) {
-        if (typeof Chart === 'undefined') return;
-        const ctx = document.getElementById('chartAlunoModal').getContext('2d');
-
-        let labels = [];
-        let dataB1 = [];
-        let dataB2 = [];
-
-        disciplinasGerais.forEach(d => {
-            labels.push(d.label);
-            dataB1.push(aluno.notas.b1 ? (aluno.notas.b1[d.id] || 0) : 0);
-            dataB2.push(aluno.notas.b2 ? (aluno.notas.b2[d.id] || 0) : 0);
-        });
-
-        const tecs = disciplinasTecnicas[config.key] || [];
-        tecs.forEach(d => {
-            labels.push(d.label);
-            dataB1.push(aluno.notas.b1 ? (aluno.notas.b1[d.id] || 0) : 0);
-            dataB2.push(aluno.notas.b2 ? (aluno.notas.b2[d.id] || 0) : 0);
-        });
-
-        if (chartAlunoInstance) chartAlunoInstance.destroy();
-
-        chartAlunoInstance = new Chart(ctx, {
-            type: 'radar',
-            data: {
-                labels: labels,
-                datasets: [
-                    {
-                        label: '1º Bimestre',
-                        data: dataB1,
-                        backgroundColor: 'rgba(42, 82, 152, 0.1)',
-                        borderColor: 'rgba(42, 82, 152, 0.8)',
-                        borderWidth: 2,
-                        pointBackgroundColor: 'rgba(42, 82, 152, 1)'
-                    },
-                    {
-                        label: '2º Bimestre',
-                        data: dataB2,
-                        backgroundColor: 'rgba(46, 204, 113, 0.1)',
-                        borderColor: 'rgba(46, 204, 113, 0.8)',
-                        borderWidth: 2,
-                        pointBackgroundColor: 'rgba(46, 204, 113, 1)'
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    r: {
-                        angleLines: { display: true },
-                        suggestedMin: 0,
-                        suggestedMax: 10
+                        {
+                            label: 'Média Acadêmica (Base 10)',
+                            data: mediasVal,
+                            backgroundColor: '#2a5298',
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Frequência Média (%)',
+                            data: presencasVal,
+                            backgroundColor: '#2ecc71',
+                            borderColor: '#2ecc71',
+                            borderWidth: 3,
+                            type: 'line',
+                            fill: false,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            min: 0,
+                            max: 10,
+                            title: { display: true, text: 'Notas (0-10)' }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            min: 0,
+                            max: 100,
+                            grid: { drawOnChartArea: false },
+                            title: { display: true, text: 'Frequência (%)' }
+                        }
                     }
                 }
+            });
+        }
+
+        // EXPORTAÇÃO DE DADOS
+        function exportarExcel() {
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+            csvContent += "Estudante;Turma;Frequência;Média Geral;Status\n";
+
+            alunos.forEach(a => {
+                const media = calcularMediaGeralAluno(a).toFixed(2).replace('.', ',');
+                const status = determinarStatusFrequenciaMedia(a).label;
+                csvContent += `"${a.nome}";"${a.turma}";"${a.frequencia}%";"${media}";"${status}"\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "EduVision_Matriz_Alunos.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // CONTROLE DO MODAL DE DETALHES
+        function abrirModal(index) {
+            const aluno = alunos[index];
+            const status = determinarStatusFrequenciaMedia(aluno);
+            const config = obterDadosSegmento(aluno.turma);
+
+            // Classificação do Perfil Baseado em Desempenho e Presença
+            const mediaGeral = calcularMediaGeralAluno(aluno);
+            let perfilIA = "Desempenho Sob Atenção";
+            if (aluno.frequencia < 75) {
+                perfilIA = "Risco Crítico de Evasão";
+            } else if (mediaGeral >= 8.5) {
+                perfilIA = "Alta Performance Estável";
+            } else if (mediaGeral < 5.5) {
+                perfilIA = "Risco de Reprovação Acadêmica";
             }
-        });
-    }
 
-    // INTERVENÇÃO INDIVIDUALIZADA (PAI)
-    function gerarPlanoPAI(aluno, config, previsaoFinal) {
-        const media = calcularMediaGeralAluno(aluno);
-        document.getElementById('pai-dados-aluno').innerHTML = `
-            <strong>Estudante:</strong> ${aluno.nome} <br>
-            <strong>Segmento:</strong> ${aluno.turma} <br>
-            <strong>Rendimento Geral Atual:</strong> ${media.toFixed(1)} | Frequência: ${aluno.frequencia}% <br>
-            <strong>Cenário de Risco Projetado:</strong> <span style="color: ${previsaoFinal < 6.0 ? 'var(--danger-color)' : 'var(--success-color)'}; font-weight: bold;">
-                ${previsaoFinal < 6.0 ? 'Alto Risco de Retenção' : 'Aprovado sem Restrições'}
-            </span>
-        `;
+            document.getElementById('modal-header-info').innerHTML = `
+                <h1 style="color: var(--primary-color);">${aluno.nome}</h1>
+                <p style="color: #666; margin: 5px 0;">Turma: <strong>${aluno.turma}</strong> | Frequência Acumulada: <strong>${aluno.frequencia}%</strong></p>
+                <span class="status-badge ${status.class}">${perfilIA}</span>
+            `;
 
-        let objetivosHtml = "";
-        let acoesHtml = "";
+            // Cálculo das Médias por Bimestre para Projeção Preditiva
+            let totalMateriasValidas = disciplinasGerais.length + (disciplinasTecnicas[config.key] || []).length;
+            let b1Data = aluno.notas.b1 || {};
+            let b2Data = aluno.notas.b2 || {};
 
-        if (aluno.frequencia < 75) {
-            objetivosHtml += `<li>Recuperar assiduidade básica para atingimento dos 75% mínimos regimentais.</li>`;
-            acoesHtml += `<li><strong>Busca Ativa de Apoio:</strong> Realizar ligação para os responsáveis nas primeiras 24h de ausência consecutiva.</li>
-                          <li>Firmar plano de compensação de ausências estruturado com o setor pedagógico.</li>`;
+            let somaB1 = Object.keys(b1Data).length > 0 ? Object.values(b1Data).reduce((a, b) => a + b, 0) / totalMateriasValidas : 0;
+            let somaB2 = Object.keys(b2Data).length > 0 ? Object.values(b2Data).reduce((a, b) => a + b, 0) / totalMateriasValidas : 0;
+
+            // Algoritmo Preditivo Simulado
+            let tendencia = 0;
+            if (somaB1 > 0 && somaB2 > 0) {
+                tendencia = (somaB2 - somaB1) * 0.4;
+            }
+            let fatorPresenca = aluno.frequencia / 100;
+            let previsaoFinal = Math.max(0, Math.min(10, ((somaB2 || somaB1 || 5.0) + tendencia) * (0.85 + (fatorPresenca * 0.15))));
+
+            document.getElementById('modal-semestres').innerHTML = `
+                <div class="semestre-card-mini"><h5>Média 1º Bim</h5><div class="semestre-value">${somaB1 > 0 ? somaB1.toFixed(1) : '--'}</div></div>
+                <div class="semestre-card-mini"><h5>Média 2º Bim</h5><div class="semestre-value">${somaB2 > 0 ? somaB2.toFixed(1) : '--'}</div></div>
+                <div class="semestre-card-mini" style="border-color: var(--secondary-color); background: #eef2f7;">
+                    <h5 style="color: var(--primary-color);">Projeção Final IA</h5>
+                    <div class="semestre-value" style="color: var(--secondary-color); font-size: 20px;">${previsaoFinal.toFixed(1)}</div>
+                </div>
+            `;
+
+            // Boletim Detalhado
+            let bAtivo = aluno.notas.b2 ? 'b2' : 'b1';
+            let notasDoBimestre = aluno.notas[bAtivo] || {};
+
+            let htmlBoletim = "";
+            disciplinasGerais.forEach(d => {
+                let val = notasDoBimestre[d.id] !== undefined ? notasDoBimestre[d.id] : 0;
+                htmlBoletim += `
+                    <div class="boletim-row">
+                        <div class="boletim-header-row"><span>${d.label}</span><strong>${val.toFixed(1)}</strong></div>
+                        <div class="nota-meter-bg">
+                            <div class="nota-meter-fill" style="width: ${val * 10}%; background-color: ${val >= 7 ? 'var(--success-color)' : val >= 5 ? 'var(--warning-color)' : 'var(--danger-color)'};"></div>
+                        </div>
+                    </div>`;
+            });
+
+            const tecs = disciplinasTecnicas[config.key] || [];
+            tecs.forEach(d => {
+                let val = notasDoBimestre[d.id] !== undefined ? notasDoBimestre[d.id] : 0;
+                htmlBoletim += `
+                    <div class="boletim-row" style="border-left: 3px solid var(--secondary-color);">
+                        <div class="boletim-header-row"><strong>${d.label} (Téc)</strong><strong>${val.toFixed(1)}</strong></div>
+                        <div class="nota-meter-bg">
+                            <div class="nota-meter-fill" style="width: ${val * 10}%; background-color: ${val >= 7 ? 'var(--success-color)' : val >= 5 ? 'var(--warning-color)' : 'var(--danger-color)'};"></div>
+                        </div>
+                    </div>`;
+            });
+
+            document.getElementById('modal-boletim-rows').innerHTML = htmlBoletim;
+
+            try {
+                gerarGraficoRadarModal(aluno, config);
+            } catch(e) {
+                console.warn("Não foi possível carregar o Radar de desempenho.");
+            }
+            gerarPlanoPAI(aluno, config, previsaoFinal);
+            gerarCronogramaEstudos(aluno, config);
+            gerarComunicados(aluno, previsaoFinal);
+
+            document.getElementById('detalhe-modal').style.display = "flex";
         }
 
-        if (media < 6.0) {
-            objetivosHtml += `<li>Superar defasagens estruturais em componentes cruciais da base e da área técnica.</li>`;
-            acoesHtml += `<li><strong>Nivelamento no Contraturno:</strong> Inclusão obrigatória nas oficinas de Língua Portuguesa e Matemática.</li>
-                          <li>Aplicação de avaliações adaptadas com foco em competências básicas não desenvolvidas.</li>`;
+        function fecharModal() {
+            document.getElementById('detalhe-modal').style.display = "none";
         }
 
-        if (media >= 6.0 && media < 8.0) {
-            objetivosHtml += `<li>Estabilizar e consolidar o rendimento acadêmico visando à excelência.</li>`;
-            acoesHtml += `<li>Monitoramento pedagógico quinzenal por meio de tutor de classe parceiro.</li>
-                          <li>Estudo de caso guiado para desenvolvimento de técnicas avançadas de organização de tempo.</li>`;
+        function mudarTab(event, tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
         }
 
-        if (media >= 8.0) {
-            objetivosHtml += `<li>Expandir competências analíticas e incentivar papel de protagonismo de liderança.</li>`;
-            acoesHtml += `<li>Convidar o estudante para atuar no projeto de Monitoria Solidária com alunos de baixo desempenho.</li>
-                          <li>Estudos avançados e direcionamento para competições científicas ou projetos de extensão da instituição.</li>`;
+        // GRÁFICO DE RADAR DO ALUNO
+        function gerarGraficoRadarModal(aluno, config) {
+            if (typeof Chart === 'undefined') return;
+            const ctx = document.getElementById('chartAlunoModal').getContext('2d');
+
+            let labels = [];
+            let dataB1 = [];
+            let dataB2 = [];
+
+            disciplinasGerais.forEach(d => {
+                labels.push(d.label);
+                dataB1.push(aluno.notas.b1 ? (aluno.notas.b1[d.id] || 0) : 0);
+                dataB2.push(aluno.notas.b2 ? (aluno.notas.b2[d.id] || 0) : 0);
+            });
+
+            const tecs = disciplinasTecnicas[config.key] || [];
+            tecs.forEach(d => {
+                labels.push(d.label);
+                dataB1.push(aluno.notas.b1 ? (aluno.notas.b1[d.id] || 0) : 0);
+                dataB2.push(aluno.notas.b2 ? (aluno.notas.b2[d.id] || 0) : 0);
+            });
+
+            if (chartAlunoInstance) chartAlunoInstance.destroy();
+
+            chartAlunoInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: '1º Bimestre',
+                            data: dataB1,
+                            backgroundColor: 'rgba(42, 82, 152, 0.1)',
+                            borderColor: 'rgba(42, 82, 152, 0.8)',
+                            borderWidth: 2,
+                            pointBackgroundColor: 'rgba(42, 82, 152, 1)'
+                        },
+                        {
+                            label: '2º Bimestre',
+                            data: dataB2,
+                            backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                            borderColor: 'rgba(46, 204, 113, 0.8)',
+                            borderWidth: 2,
+                            pointBackgroundColor: 'rgba(46, 204, 113, 1)'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { display: true },
+                            suggestedMin: 0,
+                            suggestedMax: 10
+                        }
+                    }
+                }
+            });
         }
 
-        document.getElementById('pai-objetivos').innerHTML = `<ul class="ai-list">${objetivosHtml || '<li>Manter acompanhamento de rotina pedagógica saudável.</li>'}</ul>`;
-        document.getElementById('pai-acoes').innerHTML = `<ul class="ai-list">${acoesHtml || '<li>Nenhuma ação urgente requerida no momento. Estimular manutenção de hábitos.</li>'}</ul>`;
-    }
+        // INTERVENÇÃO INDIVIDUALIZADA (PAI)
+        function gerarPlanoPAI(aluno, config, previsaoFinal) {
+            const media = calcularMediaGeralAluno(aluno);
+            document.getElementById('pai-dados-aluno').innerHTML = `
+                <strong>Estudante:</strong> ${aluno.nome} <br>
+                <strong>Segmento:</strong> ${aluno.turma} <br>
+                <strong>Rendimento Geral Atual:</strong> ${media.toFixed(1)} | Frequência: ${aluno.frequencia}% <br>
+                <strong>Cenário de Risco Projetado:</strong> <span style="color: ${previsaoFinal < 6.0 ? 'var(--danger-color)' : 'var(--success-color)'}; font-weight: bold;">
+                    ${previsaoFinal < 6.0 ? 'Alto Risco de Retenção' : 'Aprovado sem Restrições'}
+                </span>
+            `;
 
-    // COMUNICADOS AUTOMATIZADOS
-    function gerarComunicados(aluno, previsaoFinal) {
-        const media = calcularMediaGeralAluno(aluno).toFixed(1);
-        let whatsappMsg = "";
-        let emailMsg = "";
+            let objetivosHtml = "";
+            let acoesHtml = "";
 
-        if (aluno.frequencia < 75 || media < 5.5) {
-            whatsappMsg = `Olá! Aqui é da Coordenação do EduVision AI. Entramos em contato para conversar sobre o desempenho e a presença escolar de ${aluno.nome}. Gostaríamos de agendar um atendimento para construirmos juntos um plano de apoio acadêmico. Qual o melhor dia para nos reunirmos?`;
+            if (aluno.frequencia < 75) {
+                objetivosHtml += `<li>Recuperar assiduidade básica para atingimento dos 75% mínimos regimentais.</li>`;
+                acoesHtml += `<li><strong>Busca Ativa de Apoio:</strong> Realizar ligação para os responsáveis nas primeiras 24h de ausência consecutiva.</li>
+                              <li>Firmar plano de compensação de ausências estruturado com o setor pedagógico.</li>`;
+            }
+
+            if (media < 6.0) {
+                objetivosHtml += `<li>Superar defasagens estruturais em componentes cruciais da base e da área técnica.</li>`;
+                acoesHtml += `<li><strong>Nivelamento no Contraturno:</strong> Inclusão obrigatória nas oficinas de Língua Portuguesa e Matemática.</li>
+                              <li>Aplicação de avaliações adaptadas com foco em competências básicas não desenvolvidas.</li>`;
+            }
+
+            if (media >= 6.0 && media < 8.0) {
+                objetivosHtml += `<li>Estabilizar e consolidar o rendimento acadêmico visando à excelência.</li>`;
+                acoesHtml += `<li>Monitoramento pedagógico quinzenal por meio de tutor de classe parceiro.</li>
+                              <li>Estudo de caso guiado para desenvolvimento de técnicas avançadas de organização de tempo.</li>`;
+            }
+
+            if (media >= 8.0) {
+                objetivosHtml += `<li>Expandir competências analíticas e incentivar papel de protagonismo de liderança.</li>`;
+                acoesHtml += `<li>Convidar o estudante para atuar no projeto de Monitoria Solidária com alunos de baixo desempenho.</li>
+                              <li>Estudos avançados e direcionamento para competições científicas ou projetos de extensão da instituição.</li>`;
+            }
+
+            document.getElementById('pai-objetivos').innerHTML = `<ul class="ai-list">${objetivosHtml || '<li>Manter acompanhamento de rotina pedagógica saudável.</li>'}</ul>`;
+            document.getElementById('pai-acoes').innerHTML = `<ul class="ai-list">${acoesHtml || '<li>Nenhuma ação urgente requerida no momento. Estimular manutenção de hábitos.</li>'}</ul>`;
+        }
+
+        // CRONOGRAMA DE ESTUDOS IA (DINÂMICO)
+        function gerarCronogramaEstudos(aluno, config) {
+            const bAtivo = aluno.notesCount === 2 ? 'b2' : 'b1';
+            const notas = aluno.notas[bAtivo] || {};
             
-            emailMsg = `Prezados Responsáveis por ${aluno.nome},\n\nIdentificamos, através de nossos painéis preventivos de acompanhamento acadêmico, que o estudante apresenta atualmente uma frequência de ${aluno.frequencia}% e rendimento médio de ${media}.\n\nEsses indicadores necessitam de nossa atenção imediata para evitar prejuízos pedagógicos no encerramento deste período. Diante disso, convidamos os senhores para comparecerem à nossa Coordenação a fim de definirmos em conjunto o Plano de Atendimento Individualizado (PAI).\n\nAtenciosamente,\nCoordenação de Desempenho Pedagógico.`;
-        } else if (media >= 8.5) {
-            whatsappMsg = `Olá! Passando para dar parabéns! 🌟 O rendimento escolar de ${aluno.nome} é excelente neste bimestre, com média geral de ${media} e grande presença nas atividades pedagógicas. Ficamos muito orgulhosos dessa dedicação!`;
+            let disciplinasAluno = [];
             
-            emailMsg = `Prezados Responsáveis,\n\nÉ com enorme satisfação que entramos em contato para compartilhar o excelente desempenho acadêmico de seu(sua) filho(a), ${aluno.nome}, que atingiu a média geral excepcional de ${media}.\n\nAgradecemos a parceria e parabenizamos a família pelo contínuo suporte, fator crucial para esta excelente trajetória escolar.\n\nCordialmente,\nEquipe de Coordenação Geral.`;
-        } else {
-            whatsappMsg = `Olá! Tudo bem? Entramos em contato para informar que ${aluno.nome} mantém um percurso escolar estável (Média: ${media} | Presença: ${aluno.frequencia}%). Seguiremos no acompanhamento pedagógico para buscar o máximo desenvolvimento!`;
+            disciplinasGerais.forEach(d => {
+                if (notas[d.id] !== undefined) {
+                    disciplinasAluno.push({ id: d.id, label: d.label, nota: notas[d.id] });
+                }
+            });
             
-            emailMsg = `Prezados Responsáveis,\n\nEntramos em contato para apresentar o boletim parcial de rendimento de ${aluno.nome}. O(a) estudante mantém-se ativo(a) na rotina acadêmica, registrando frequência de ${aluno.frequencia}% e média de ${media}.\n\nSeguiremos em acompanhamento próximo para apoiar o estudante em seu contínuo progresso.\n\nAtenciosamente,\nSetor Pedagógico.`;
+            const tecs = disciplinasTecnicas[config.key] || [];
+            tecs.forEach(d => {
+                if (notas[d.id] !== undefined) {
+                    disciplinasAluno.push({ id: d.id, label: d.label + " (Téc.)", nota: notas[d.id] });
+                }
+            });
+
+            disciplinasAluno.sort((a, b) => a.nota - b.nota);
+
+            let htmlTabela = "";
+            let totalHorasEstudo = 0;
+
+            disciplinasAluno.forEach(disc => {
+                let urgenciaText = "";
+                let urgenciaClass = "";
+                let horasRecomendadas = 0;
+
+                if (disc.nota < 5.5) {
+                    urgenciaText = "🚨 CRÍTICA";
+                    urgenciaClass = "status-critico";
+                    horasRecomendadas = 4;
+                } else if (disc.nota < 7.0) {
+                    urgenciaText = "⚠️ ATENÇÃO";
+                    urgenciaClass = "status-atencao";
+                    horasRecomendadas = 2;
+                } else {
+                    urgenciaText = "✅ MANTER";
+                    urgenciaClass = "status-bom";
+                    horasRecomendadas = 1;
+                }
+
+                totalHorasEstudo += horasRecomendadas;
+                const pontoFocal = topicosFocoDisciplinas[disc.id] || "Revisão dos conteúdos conceituais ministrados em sala de aula.";
+
+                htmlTabela += `
+                    <tr>
+                        <td><strong>${disc.label}</strong> <span style="font-size:11px; color:#888;">(Nota: ${disc.nota.toFixed(1)})</span></td>
+                        <td style="text-align: center;"><span class="status-badge ${urgenciaClass}">${urgenciaText}</span></td>
+                        <td style="text-align: center; font-weight: bold; color: var(--primary-color);">${horasRecomendadas}h / semana</td>
+                        <td style="font-size: 13px; line-height: 1.4;">${pontoFocal}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('cronograma-tabela-corpo').innerHTML = htmlTabela || "<tr><td colspan='4' style='text-align:center;'>Nenhum dado de nota disponível para gerar cronograma.</td></tr>";
+
+            document.getElementById('cronograma-resumo').innerHTML = `
+                <strong>Recomendação de Carga Horária:</strong> O aluno deve dedicar <strong>${totalHorasEstudo} horas semanais</strong> adicionais de estudo individual fora da sala de aula para alcançar o equilíbrio e sanar todas as pendências identificadas.
+            `;
         }
 
-        document.getElementById('comunicado-whatsapp').innerText = whatsappMsg;
-        document.getElementById('comunicado-email').innerText = emailMsg;
-    }
+        // COMUNICADOS AUTOMATIZADOS
+        function gerarComunicados(aluno, previsaoFinal) {
+            const media = calcularMediaGeralAluno(aluno).toFixed(1);
+            let whatsappMsg = "";
+            let emailMsg = "";
 
-    function copiarComunicado(id) {
-        const texto = document.getElementById(id).innerText;
-        navigator.clipboard.writeText(texto).then(() => {
-            alert("Conteúdo copiado com sucesso para a área de transferência!");
-        }).catch(err => {
-            console.error("Erro ao copiar: ", err);
-        });
-    }
+            if (aluno.frequencia < 75 || media < 5.5) {
+                whatsappMsg = `Olá! Aqui é da Coordenação do EduVision AI. Entramos em contato para conversar sobre o desempenho e a presença escolar de ${aluno.nome}. Gostarígamos de agendar um atendimento para construirmos juntos um plano de apoio acadêmico. Qual o melhor dia para nos reunirmos?`;
+                
+                emailMsg = `Prezados Responsáveis por ${aluno.nome},\n\nIdentificamos, através de nossos painéis preventivos de acompanhamento acadêmico, que o estudante apresenta atualmente uma frequência de ${aluno.frequencia}% e rendimento médio de ${media}.\n\nEsses indicadores necessitam de nossa atenção imediata para evitar prejuízos pedagógicos no encerramento deste período. Diante disso, convidamos os senhores para comparecerem à nossa Coordenação a fim de definirmos em conjunto o Plano de Atendimento Individualizado (PAI).\n\nAtenciosamente,\nCoordenação de Desempenho Pedagógico.`;
+            } else if (media >= 8.5) {
+                whatsappMsg = `Olá! Passando para dar parabéns! 🌟 O rendimento escolar de ${aluno.nome} é excelente neste bimestre, com média geral de ${media} e grande presença nas atividades pedagógicas. Ficamos muito orgulhosos dessa dedicação!`;
+                
+                emailMsg = `Prezados Responsáveis,\n\nÉ com enorme satisfação que entramos em contato para compartilhar o excelente desempenho acadêmico de seu(sua) filho(a), ${aluno.nome}, que atingiu a média geral excepcional de ${media}.\n\nAgradecemos a parceria e parabenizamos a família pelo contínuo suporte, fator crucial para esta excelente trajetória escolar.\n\nCordialmente,\nEquipe de Coordenação Geral.`;
+            } else {
+                whatsappMsg = `Olá! Tudo bem? Entramos em contato para informar que ${aluno.nome} mantém um percurso escolar estável (Média: ${media} | Presença: ${aluno.frequencia}%). Seguiremos no acompanhamento pedagógico para buscar o máximo desenvolvimento!`;
+                
+                emailMsg = `Prezados Responsáveis,\n\nEntramos em contato para apresentar o boletim parcial de rendimento de ${aluno.nome}. O(a) estudante mantém-se ativo(a) na rotina acadêmica, registrando frequência de ${aluno.frequencia}% e média de ${media}.\n\nSeguiremos em acompanhamento próximo para apoiar o estudante em seu contínuo progresso.\n\nAtenciosamente,\nSetor Pedagógico.`;
+            }
 
-    // FECHAR MODAL CLICANDO FORA
-    window.onclick = function(event) {
-        const modal = document.getElementById('detalhe-modal');
-        if (event.target === modal) {
-            fecharModal();
+            document.getElementById('comunicado-whatsapp').innerText = whatsappMsg;
+            document.getElementById('comunicado-email').innerText = emailMsg;
         }
-    }
+
+        function copiarComunicado(id) {
+            const texto = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(texto).then(() => {
+                alert("Conteúdo copiado com sucesso para a área de transferência!");
+            }).catch(err => {
+                console.error("Erro ao copiar: ", err);
+            });
+        }
+
+        // FECHAR MODAL CLICANDO FORA
+        window.onclick = function(event) {
+            const modal = document.getElementById('detalhe-modal');
+            if (event.target === modal) {
+                fecharModal();
+            }
+        }
     </script>
 </body>
 </html>
