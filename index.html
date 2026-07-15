@@ -321,7 +321,390 @@
 
             <div id="tab-cronograma" class="tab-content">
                 <h3>📅 Cronograma de Estudos Preditivo Personalizado</h3>
-                <p style="font-size: 13px; color:#666; margin-bottom: 20px;">hum aluno encontrado.</p>";
+                <p style="font-size: 13px; color:#666; margin-bottom: 20px;">Algoritmo gerador baseado na matriz de desempenho bimestral. Prioriza disciplinas com maior índice de defasagem acadêmica.</p>
+                
+                <div class="info-box" id="cronograma-resumo" style="border-left: 5px solid var(--secondary-color);"></div>
+
+                <table style="margin-top: 15px;">
+                    <thead>
+                        <tr>
+                            <th>Componente Curricular</th>
+                            <th style="text-align: center;">Urgência</th>
+                            <th style="text-align: center;">Horas Semanais</th>
+                            <th>Foco Principal de Estudos</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cronograma-tabela-corpo"></tbody>
+                </table>
+            </div>
+
+            <div id="tab-comunicado" class="tab-content">
+                <h3>Comunicados Gerados de Forma Autônoma</h3>
+                <p style="font-size: 13px; color:#666; margin-bottom: 15px;">Modelos prontos e adaptados dinamicamente com base na frequência e médias computadas no perfil do estudante.</p>
+                
+                <div class="ai-section-title">✉️ Canal de Envio: WhatsApp (Curto e direto)</div>
+                <div class="comunicado-box">
+                    <button class="btn-copy" onclick="copiarComunicado('comunicado-whatsapp')">Copiar</button>
+                    <div id="comunicado-whatsapp"></div>
+                </div>
+
+                <div class="ai-section-title" style="margin-top: 25px;">✉️ Canal de Envio: E-mail (Institucional)</div>
+                <div class="comunicado-box">
+                    <button class="btn-copy" onclick="copiarComunicado('comunicado-email')">Copiar</button>
+                    <div id="comunicado-email"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // LISTA INICIAL DE DISCIPLINAS
+        let disciplinasGerais = [
+            { id: "portugues", label: "L. Portuguesa" },
+            { id: "literatura", label: "Literatura" },
+            { id: "redacao", label: "Redação" },
+            { id: "matematica", label: "Matemática" },
+            { id: "fisica", label: "Física" },
+            { id: "quimica", label: "Química" },
+            { id: "biologia", label: "Biologia" },
+            { id: "historia", label: "História" },
+            { id: "geografia", label: "Geografia" },
+            { id: "filosofia", label: "Filosofia" },
+            { id: "sociologia", label: "Sociologia" },
+            { id: "arte", label: "Arte" },
+            { id: "educacao-fisica", label: "Ed. Física" },
+            { id: "ingles", label: "Inglês" },
+            { id: "financeira", label: "Ed. Financeira" },
+            { id: "projeto-vida", label: "Proj. de Vida" }
+        ];
+
+        let disciplinasTecnicas = {
+            "Admin": [
+                { id: "tec1", label: "Gestão de Processos" },
+                { id: "tec2", label: "Economia Aplicada" }
+            ],
+            "Agro": [
+                { id: "tec1", label: "Zootecnia Geral" },
+                { id: "tec2", label: "Solos e Irrigação" }
+            ],
+            "Mkt": [
+                { id: "tec1", label: "Comportamento" },
+                { id: "tec2", label: "Marketing Digital" }
+            ]
+        };
+
+        const topicosFocoDisciplinas = {
+            "portugues": "Sintaxe da oração, coesão textual e interpretação de textos modernos.",
+            "literatura": "Escolas literárias brasileiras, análise de poemas e contexto histórico.",
+            "redacao": "Estrutura do text dissertativo-argumentativo, proposta de intervenção e repertório.",
+            "matematica": "Álgebra básica, equações de 2º grau e funções matemáticas.",
+            "fisica": "Cinemática escalar, leis de Newton e interpretação de gráficos físicos.",
+            "quimica": "Distribuição eletrônica, tabela periódica e ligações químicas básicas.",
+            "biologia": "Citologia básica, divisão celular (mitose/meiose) e ecologia geral.",
+            "historia": "História do Brasil colonial e eixos econômicos do século XVIII.",
+            "geografia": "Geografia física, relevo, clima e impacto da urbanização nas grandes metrópoles.",
+            "filosofia": "Introdução ao pensamento socrático e filosofia política moderna.",
+            "sociologia": "Teorias sociológicas clássicas (Marx, Durkheim e Weber) e cidadania.",
+            "arte": "Movimentos de vanguarda europeia e arte contemporânea brasileira.",
+            "educacao-fisica": "Fisiologia do exercício, saúde preventiva e esportes coletivos.",
+            "ingles": "Leitura instrumental, vocabulário técnico e tempos verbais fundamentais.",
+            "financeira": "Orçamento familiar, juros simples vs. compostos e planejamento financeiro.",
+            "projeto-vida": "Autoavaliação de habilidades socioemocionais e planejamento de carreira.",
+            "tec1": "Mapeamento de processos operacionais e ferramentas de gestão (5W2H / PDCA).",
+            "tec2": "Lei da oferta e demanda, macroeconomia básica e análise de microcenários locais."
+        };
+
+        // BASE DE DADOS INTEGRADA
+        let alunos = [
+            {
+                nome: "Lucas Sousa",
+                turma: "1º Ano A",
+                frequencia: 92,
+                notesCount: 2,
+                notas: {
+                    b1: { portugues: 8.5, literatura: 8.0, redacao: 8.5, matematica: 7.2, fisica: 7.0, quimica: 7.5, biologia: 8.0, historia: 8.0, geografia: 7.5, filosofia: 8.0, sociologia: 8.5, arte: 9.0, "educacao-fisica": 9.5, ingles: 8.0, financeira: 8.5, "projeto-vida": 9.0, tec1: 9.0, tec2: 8.0 },
+                    b2: { portugues: 8.0, literatura: 7.5, redacao: 8.0, matematica: 6.8, fisica: 7.2, quimica: 7.0, biologia: 7.8, historia: 8.5, geografia: 7.0, filosofia: 8.5, sociologia: 8.0, arte: 8.5, "educacao-fisica": 9.0, ingles: 8.5, financeira: 8.0, "projeto-vida": 9.5, tec1: 8.5, tec2: 7.5 }
+                }
+            },
+            {
+                nome: "Beatriz Oliveira",
+                turma: "1º Ano B",
+                frequencia: 72,
+                notesCount: 2,
+                notas: {
+                    b1: { portugues: 5.5, literatura: 5.0, redacao: 5.5, matematica: 4.8, fisica: 4.0, quimica: 4.5, biologia: 5.0, historia: 6.0, geografia: 5.0, filosofia: 5.5, sociologia: 5.0, arte: 7.0, "educacao-fisica": 8.0, ingles: 5.0, financeira: 4.5, "projeto-vida": 6.0, tec1: 5.0, tec2: 4.5 },
+                    b2: { portugues: 5.0, literatura: 4.5, redacao: 5.0, matematica: 4.2, fisica: 4.5, quimica: 4.0, biologia: 4.8, historia: 5.5, geografia: 4.8, filosofia: 5.0, sociologia: 5.5, arte: 6.5, "educacao-fisica": 7.5, ingles: 5.5, financeira: 4.0, "projeto-vida": 5.5, tec1: 4.8, tec2: 4.0 }
+                }
+            },
+            {
+                nome: "Carlos Eduardo Silva",
+                turma: "2º Ano A",
+                frequencia: 88,
+                notesCount: 1,
+                notas: {
+                    b1: { portugues: 7.0, literatura: 7.5, redacao: 7.0, matematica: 6.5, fisica: 6.0, quimica: 6.8, biologia: 7.0, historia: 7.2, geografia: 8.0, filosofia: 7.0, sociologia: 7.5, arte: 8.0, "educacao-fisica": 8.5, ingles: 7.0, financeira: 7.5, "projeto-vida": 8.0, tec1: 7.5, tec2: 7.0 }
+                }
+            }
+        ];
+
+        let chartTurmasInstance = null;
+        let chartAlunoInstance = null;
+        let statusFiltroAtual = "Todos";
+
+        function fazerLogin(e) {
+            e.preventDefault();
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('dashboard-screen').style.display = 'block';
+            
+            try {
+                inicializarDashboard();
+            } catch (err) {
+                console.warn("Erro ao iniciar gráficos. Verifique sua conexão.", err);
+                ajustarCamposDisciplinas();
+                renderizarMétricas();
+                filtrarEAtualizar();
+            }
+        }
+
+        // ADICIONAR DISCIPLINAS DINAMICAMENTE
+        function adicionarDisciplinaDinamicamente() {
+            const nome = document.getElementById('nova-disc-nome').value.trim();
+            const tipo = document.getElementById('nova-disc-tipo').value;
+
+            if (!nome) {
+                alert("Por favor, digite um nome válido para a disciplina!");
+                return;
+            }
+
+            const formatId = nome.toLowerCase()
+                .normalize("NFD").replace(/[\u0300-\u036f]/g, "") 
+                .replace(/[^a-z0-9]/g, "-");                     
+
+            if (tipo === "geral") {
+                if (disciplinasGerais.some(d => d.id === formatId)) {
+                    alert("Esta disciplina geral já existe!");
+                    return;
+                }
+                disciplinasGerais.push({ id: formatId, label: nome });
+            } else {
+                for (let key in disciplinasTecnicas) {
+                    if (disciplinasTecnicas[key].some(d => d.id === formatId)) {
+                        alert("Esta disciplina técnica já existe!");
+                        return;
+                    }
+                    disciplinasTecnicas[key].push({ id: formatId, label: nome });
+                }
+            }
+
+            document.getElementById('nova-disc-nome').value = "";
+            ajustarCamposDisciplinas();
+            alert(`Sucesso! A disciplina "${nome}" foi incluída no seu currículo.`);
+        }
+
+        function obterDadosSegmento(turma) {
+            if (turma.includes("Administração") || turma.includes("A")) return { key: "Admin", label: "Componentes Técnicos (Administração)" };
+            if (turma.includes("Agropecuária") || turma.includes("B")) return { key: "Agro", label: "Componentes Técnicos (Agropecuária)" };
+            return { key: "Mkt", label: "Componentes Técnicos (Marketing)" };
+        }
+
+        function ajustarCamposDisciplinas() {
+            const turmaSelecionada = document.getElementById('turma').value;
+            const config = obterDadosSegmento(turmaSelecionada);
+            
+            document.getElementById('label-disciplina-tecnica').innerText = config.label;
+
+            // Renderizar Geral
+            let htmlGerais = "";
+            disciplinasGerais.forEach(d => {
+                htmlGerais += `<div class="input-group"><label>${d.label}</label><input type="number" id="nota-${d.id}" min="0" max="10" step="0.1" placeholder="0.0" required></div>`;
+            });
+            document.getElementById('container-disciplinas-gerais').innerHTML = htmlGerais;
+
+            // Renderizar Técnicas
+            let htmlTecnicas = "";
+            const tecs = disciplinasTecnicas[config.key] || [];
+            tecs.forEach(d => {
+                htmlTecnicas += `<div class="input-group"><label>${d.label}</label><input type="number" id="nota-${d.id}" min="0" max="10" step="0.1" placeholder="0.0" required></div>`;
+            });
+            document.getElementById('container-disciplinas-tecnicas').innerHTML = htmlTecnicas;
+        }
+
+        function calcularMediaGeralAluno(aluno) {
+            let soma = 0; let total = 0;
+            for (let b in aluno.notas) {
+                for (let disc in aluno.notas[b]) {
+                    soma += aluno.notas[b][disc];
+                    total++;
+                }
+            }
+            return total > 0 ? (soma / total) : 0;
+        }
+
+        function determinarStatusFrequenciaMedia(aluno) {
+            const media = calcularMediaGeralAluno(aluno);
+            const freq = aluno.frequencia;
+            if (media < 5.5 || freq < 75) return { label: "Crítico", class: "status-critico" };
+            if (media < 7.0 || freq < 85) return { label: "Atenção", class: "status-atencao" };
+            return { label: "Bom", class: "status-bom" };
+        }
+
+        function inicializarDashboard() {
+            ajustarCamposDisciplinas();
+            renderizarMétricas();
+            filtrarEAtualizar();
+            try {
+                gerarGraficoComparativo();
+            } catch(e) {
+                console.log("Falha ao gerar gráfico: Biblioteca Offline.");
+            }
+        }
+
+        function renderizarMétricas() {
+            let totalISE = 0; let criticos = 0;
+            alunos.forEach(a => {
+                const media = calcularMediaGeralAluno(a);
+                if (determinarStatusFrequenciaMedia(a).label === "Crítico") criticos++;
+                totalISE += (media * 10) * 0.4 + a.frequencia * 0.6;
+            });
+
+            const iseMedio = alunos.length > 0 ? (totalISE / alunos.length).toFixed(1) : 0;
+            document.getElementById('ise-val').innerText = `${iseMedio}%`;
+            const iseBar = document.getElementById('ise-graph-bar');
+            iseBar.style.width = `${iseMedio}%`;
+            iseBar.style.backgroundColor = iseMedio >= 80 ? '#2ecc71' : iseMedio >= 65 ? '#f39c12' : '#e74c3c';
+
+            document.getElementById('total-alunos').innerText = alunos.length;
+            document.getElementById('casos-risco').innerText = criticos;
+
+            const mediasTurmas = calcularMediasPorTurma();
+            let htmlMedias = '';
+            for (let turma in mediasTurmas) {
+                htmlMedias += `<div class="turma-item-mini"><strong>${turma}:</strong> <span>Nota ${mediasTurmas[turma].toFixed(1)}</span></div>`;
+            }
+            document.getElementById('container-medias-turma').innerHTML = htmlMedias;
+        }
+
+        function calcularMediasPorTurma() {
+            let agrupado = {};
+            alunos.forEach(a => {
+                const m = calcularMediaGeralAluno(a);
+                if (!agrupado[a.turma]) agrupado[a.turma] = { soma: 0, count: 0 };
+                agrupado[a.turma].soma += m; agrupado[a.turma].count++;
+            });
+            let medias = {};
+            for (let t in agrupado) medias[t] = agrupado[t].soma / agrupado[t].count;
+            return medias;
+        }
+
+        function cadastrarAluno(e) {
+            e.preventDefault();
+            const editIndex = parseInt(document.getElementById('edit-index').value);
+            const nome = document.getElementById('nome').value;
+            const turma = document.getElementById('turma').value;
+            const frequencia = parseInt(document.getElementById('frequencia').value);
+            const bAlvo = document.getElementById('bimestre-alvo').value;
+            const config = obterDadosSegmento(turma);
+
+            const blocoNotas = {};
+
+            disciplinasGerais.forEach(d => {
+                const inputEl = document.getElementById(`nota-${d.id}`);
+                blocoNotas[d.id] = inputEl ? (parseFloat(inputEl.value) || 0) : 0;
+            });
+
+            const tecs = disciplinasTecnicas[config.key] || [];
+            tecs.forEach(d => {
+                const inputEl = document.getElementById(`nota-${d.id}`);
+                blocoNotas[d.id] = inputEl ? (parseFloat(inputEl.value) || 0) : 0;
+            });
+
+            if (editIndex >= 0) {
+                alunos[editIndex].nome = nome;
+                alunos[editIndex].turma = turma;
+                alunos[editIndex].frequencia = frequencia;
+                alunos[editIndex].notas[bAlvo] = blocoNotas;
+            } else {
+                const alunoExistente = alunos.find(a => a.nome.toLowerCase() === nome.toLowerCase() && a.turma === turma);
+                if (alunoExistente) {
+                    alunoExistente.frequencia = frequencia;
+                    alunoExistente.notas[bAlvo] = blocoNotas;
+                } else {
+                    let novoAluno = { nome: nome, turma: turma, frequencia: frequencia, notas: {} };
+                    novoAluno.notas[bAlvo] = blocoNotas;
+                    alunos.push(novoAluno);
+                }
+            }
+            limparFormulario(); renderizarMétricas(); filtrarEAtualizar(); 
+            try { gerarGraficoComparativo(); } catch(e) {}
+        }
+
+        function limparFormulario() {
+            document.getElementById('cadastro-form').reset();
+            document.getElementById('edit-index').value = "-1";
+            document.getElementById('form-titulo').innerText = "📝 Matrícula e Notas";
+            document.getElementById('btn-cancelar').style.display = "none";
+            ajustarCamposDisciplinas();
+        }
+
+        function definirFiltroStatus(status) {
+            statusFiltroAtual = status;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            if (status === 'Todos') document.getElementById('btn-filtro-todos').classList.add('active');
+            else if (status === 'Atenção') document.getElementById('btn-filtro-atencao').classList.add('active');
+            else if (status === 'Crítico') document.getElementById('btn-filtro-critico').classList.add('active');
+            filtrarEAtualizar();
+        }
+
+        function filtrarEAtualizar() {
+            const busca = document.getElementById('busca-nome').value.toLowerCase();
+            const turmaSel = document.getElementById('filtro-turma').value;
+
+            let filtrados = alunos.filter((aluno, index) => {
+                aluno.indexOriginal = index;
+                const atendeBusca = aluno.nome.toLowerCase().includes(busca);
+                const atendeTurma = (turmaSel === "Todos" || aluno.turma === turmaSel);
+                const atendeStatus = (statusFiltroAtual === "Todos" || determinarStatusFrequenciaMedia(aluno).label === statusFiltroAtual);
+                return atendeBusca && atendeTurma && atendeStatus;
+            });
+
+            let turmasAgrupadas = {};
+            filtrados.forEach(a => {
+                if (!turmasAgrupadas[a.turma]) turmasAgrupadas[a.turma] = [];
+                turmasAgrupadas[a.turma].push(a);
+            });
+
+            let htmlCompleto = "";
+            for (let turma in turmasAgrupadas) {
+                let somaTurma = 0;
+                turmasAgrupadas[turma].forEach(a => { somaTurma += calcularMediaGeralAluno(a); });
+                const mediaTurma = (somaTurma / turmasAgrupadas[turma].length).toFixed(1);
+
+                htmlCompleto += `
+                    <div class="turma-group-header"><span>🏫 ${turma}</span><span>Média: ${mediaTurma}</span></div>
+                    <table>
+                        <thead>
+                            <tr><th>Estudante</th><th>Presença</th><th>Média Geral</th><th>Bimestres</th><th>Status</th><th style="text-align: right;">Ações</th></tr>
+                        </thead>
+                        <tbody>`;
+
+                turmasAgrupadas[turma].forEach(aluno => {
+                    const status = determinarStatusFrequenciaMedia(aluno);
+                    const media = calcularMediaGeralAluno(aluno).toFixed(1);
+                    const bimestresAtivos = Object.keys(aluno.notas).map(b => b.toUpperCase()).join(', ');
+                    htmlCompleto += `
+                        <tr>
+                            <td><span class="nome-clicavel" onclick="abrirModal(${aluno.indexOriginal})">${aluno.nome}</span></td>
+                            <td>${aluno.frequencia}%</td><td>${media}</td><td>${bimestresAtivos}</td>
+                            <td><span class="status-badge ${status.class}">${status.label}</span></td>
+                            <td style="text-align: right;">
+                                <button class="action-btn" title="Editar" onclick="editarAluno(${aluno.indexOriginal})">✏️</button>
+                                <button class="action-btn" title="Remover" onclick="deletarAluno(${aluno.indexOriginal})">🗑️</button>
+                            </td>
+                        </tr>`;
+                });
+                htmlCompleto += `</tbody></table>`;
+            }
+            document.getElementById('tabela-conteudo-agrupado').innerHTML = htmlCompleto || "<p style='text-align:center; padding: 20px; color:#666;'>Nenhum aluno encontrado.</p>";
         }
 
         function editarAluno(index) {
@@ -725,391 +1108,7 @@
             let emailMsg = "";
 
             if (aluno.frequencia < 75 || media < 5.5) {
-                whatsappMsg = `Olá! Aqui é da Coordenação do EduVision AI. Entramos em contato para conversar sobre o desempenho e a presença escolar de ${aluno.nome}. GostaríAlgoritmo gerador baseado na matriz de desempenho bimestral. Prioriza disciplinas com maior índice de defasagem acadêmica.
-                </p>
-                
-                <div class="info-box" id="cronograma-resumo" style="border-left: 5px solid var(--secondary-color);"></div>
-
-                <table style="margin-top: 15px;">
-                    <thead>
-                        <tr>
-                            <th>Componente Curricular</th>
-                            <th style="text-align: center;">Urgência</th>
-                            <th style="text-align: center;">Horas Semanais</th>
-                            <th>Foco Principal de Estudos</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cronograma-tabela-corpo"></tbody>
-                </table>
-            </div>
-
-            <div id="tab-comunicado" class="tab-content">
-                <h3>Comunicados Gerados de Forma Autônoma</h3>
-                <p style="font-size: 13px; color:#666; margin-bottom: 15px;">Modelos prontos e adaptados dinamicamente com base na frequência e médias computadas no perfil do estudante.</p>
-                
-                <div class="ai-section-title">✉️ Canal de Envio: WhatsApp (Curto e direto)</div>
-                <div class="comunicado-box">
-                    <button class="btn-copy" onclick="copiarComunicado('comunicado-whatsapp')">Copiar</button>
-                    <div id="comunicado-whatsapp"></div>
-                </div>
-
-                <div class="ai-section-title" style="margin-top: 25px;">✉️ Canal de Envio: E-mail (Institucional)</div>
-                <div class="comunicado-box">
-                    <button class="btn-copy" onclick="copiarComunicado('comunicado-email')">Copiar</button>
-                    <div id="comunicado-email"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // LISTA INICIAL DE DISCIPLINAS
-        let disciplinasGerais = [
-            { id: "portugues", label: "L. Portuguesa" },
-            { id: "literatura", label: "Literatura" },
-            { id: "redacao", label: "Redação" },
-            { id: "matematica", label: "Matemática" },
-            { id: "fisica", label: "Física" },
-            { id: "quimica", label: "Química" },
-            { id: "biologia", label: "Biologia" },
-            { id: "historia", label: "História" },
-            { id: "geografia", label: "Geografia" },
-            { id: "filosofia", label: "Filosofia" },
-            { id: "sociologia", label: "Sociologia" },
-            { id: "arte", label: "Arte" },
-            { id: "educacao-fisica", label: "Ed. Física" },
-            { id: "ingles", label: "Inglês" },
-            { id: "financeira", label: "Ed. Financeira" },
-            { id: "projeto-vida", label: "Proj. de Vida" }
-        ];
-
-        let disciplinasTecnicas = {
-            "Admin": [
-                { id: "tec1", label: "Gestão de Processos" },
-                { id: "tec2", label: "Economia Aplicada" }
-            ],
-            "Agro": [
-                { id: "tec1", label: "Zootecnia Geral" },
-                { id: "tec2", label: "Solos e Irrigação" }
-            ],
-            "Mkt": [
-                { id: "tec1", label: "Comportamento" },
-                { id: "tec2", label: "Marketing Digital" }
-            ]
-        };
-
-        const topicosFocoDisciplinas = {
-            "portugues": "Sintaxe da oração, coesão textual e interpretação de textos modernos.",
-            "literatura": "Escolas literárias brasileiras, análise de poemas e contexto histórico.",
-            "redacao": "Estrutura do texto dissertativo-argumentativo, proposta de intervenção e repertório.",
-            "matematica": "Álgebra básica, equações de 2º grau e funções matemáticas.",
-            "fisica": "Cinemática escalar, leis de Newton e interpretação de gráficos físicos.",
-            "quimica": "Distribuição eletrônica, tabela periódica e ligações químicas básicas.",
-            "biologia": "Citologia básica, divisão celular (mitose/meiose) e ecologia geral.",
-            "historia": "História do Brasil colonial e eixos econômicos do século XVIII.",
-            "geografia": "Geografia física, relevo, clima e impacto da urbanização nas grandes metrópoles.",
-            "filosofia": "Introdução ao pensamento socrático e filosofia política moderna.",
-            "sociologia": "Teorias sociológicas clássicas (Marx, Durkheim e Weber) e cidadania.",
-            "arte": "Movimentos de vanguarda europeia e arte contemporânea brasileira.",
-            "educacao-fisica": "Fisiologia do exercício, saúde preventiva e esportes coletivos.",
-            "ingles": "Leitura instrumental, vocabulário técnico e tempos verbais fundamentais.",
-            "financeira": "Orçamento familiar, juros simples vs. compostos e planejamento financeiro.",
-            "projeto-vida": "Autoavaliação de habilidades socioemocionais e planejamento de carreira.",
-            "tec1": "Mapeamento de processos operacionais e ferramentas de gestão (5W2H / PDCA).",
-            "tec2": "Lei da oferta e demanda, macroeconomia básica e análise de microcenários locais."
-        };
-
-        // BASE DE DADOS INTEGRADA
-        let alunos = [
-            {
-                nome: "Lucas Sousa",
-                turma: "1º Ano A",
-                frequencia: 92,
-                notesCount: 2,
-                notas: {
-                    b1: { portugues: 8.5, literatura: 8.0, redacao: 8.5, matematica: 7.2, fisica: 7.0, quimica: 7.5, biologia: 8.0, historia: 8.0, geografia: 7.5, filosofia: 8.0, sociologia: 8.5, arte: 9.0, "educacao-fisica": 9.5, ingles: 8.0, financeira: 8.5, "projeto-vida": 9.0, tec1: 9.0, tec2: 8.0 },
-                    b2: { portugues: 8.0, literatura: 7.5, redacao: 8.0, matematica: 6.8, fisica: 7.2, quimica: 7.0, biologia: 7.8, historia: 8.5, geography: 7.0, filosofia: 8.5, sociologia: 8.0, arte: 8.5, "educacao-fisica": 9.0, ingles: 8.5, financeira: 8.0, "projeto-vida": 9.5, tec1: 8.5, tec2: 7.5 }
-                }
-            },
-            {
-                nome: "Beatriz Oliveira",
-                turma: "1º Ano B",
-                frequencia: 72,
-                notesCount: 2,
-                notas: {
-                    b1: { portugues: 5.5, literatura: 5.0, redacao: 5.5, matematica: 4.8, fisica: 4.0, quimica: 4.5, biologia: 5.0, historia: 6.0, geografia: 5.0, filosofia: 5.5, sociologia: 5.0, arte: 7.0, "educacao-fisica": 8.0, ingles: 5.0, financeira: 4.5, "projeto-vida": 6.0, tec1: 5.0, tec2: 4.5 },
-                    b2: { portugues: 5.0, literatura: 4.5, redacao: 5.0, matematica: 4.2, fisica: 4.5, quimica: 4.0, biologia: 4.8, historia: 5.5, geografia: 4.8, filosofia: 5.0, sociologia: 5.5, arte: 6.5, "educacao-fisica": 7.5, ingles: 5.5, financeira: 4.0, "projeto-vida": 5.5, tec1: 4.8, tec2: 4.0 }
-                }
-            },
-            {
-                nome: "Carlos Eduardo Silva",
-                turma: "2º Ano A",
-                frequencia: 88,
-                notesCount: 1,
-                notas: {
-                    b1: { portugues: 7.0, literatura: 7.5, redacao: 7.0, matematica: 6.5, fisica: 6.0, quimica: 6.8, biologia: 7.0, historia: 7.2, geografia: 8.0, filosofia: 7.0, sociologia: 7.5, arte: 8.0, "educacao-fisica": 8.5, ingles: 7.0, financeira: 7.5, "projeto-vida": 8.0, tec1: 7.5, tec2: 7.0 }
-                }
-            }
-        ];
-
-        let chartTurmasInstance = null;
-        let chartAlunoInstance = null;
-        let statusFiltroAtual = "Todos";
-
-        function fazerLogin(e) {
-            e.preventDefault();
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('dashboard-screen').style.display = 'block';
-            
-            try {
-                inicializarDashboard();
-            } catch (err) {
-                console.warn("Erro ao iniciar gráficos. Verifique sua conexão.", err);
-                ajustarCamposDisciplinas();
-                renderizarMétricas();
-                filtrarEAtualizar();
-            }
-        }
-
-        // ADICIONAR DISCIPLINAS DINAMICAMENTE
-        function adicionarDisciplinaDinamicamente() {
-            const nome = document.getElementById('nova-disc-nome').value.trim();
-            const tipo = document.getElementById('nova-disc-tipo').value;
-
-            if (!nome) {
-                alert("Por favor, digite um nome válido para a disciplina!");
-                return;
-            }
-
-            const formatId = nome.toLowerCase()
-                .normalize("NFD").replace(/[\u0300-\u036f]/g, "") 
-                .replace(/[^a-z0-9]/g, "-");                     
-
-            if (tipo === "geral") {
-                if (disciplinasGerais.some(d => d.id === formatId)) {
-                    alert("Esta disciplina geral já existe!");
-                    return;
-                }
-                disciplinasGerais.push({ id: formatId, label: nome });
-            } else {
-                for (let key in disciplinasTecnicas) {
-                    if (disciplinasTecnicas[key].some(d => d.id === formatId)) {
-                        alert("Esta disciplina técnica já existe!");
-                        return;
-                    }
-                    disciplinasTecnicas[key].push({ id: formatId, label: nome });
-                }
-            }
-
-            document.getElementById('nova-disc-nome').value = "";
-            ajustarCamposDisciplinas();
-            alert(`Sucesso! A disciplina "${nome}" foi incluída no seu currículo.`);
-        }
-
-        function obterDadosSegmento(turma) {
-            if (turma.includes("Administração") || turma.includes("A")) return { key: "Admin", label: "Componentes Técnicos (Administração)" };
-            if (turma.includes("Agropecuária") || turma.includes("B")) return { key: "Agro", label: "Componentes Técnicos (Agropecuária)" };
-            return { key: "Mkt", label: "Componentes Técnicos (Marketing)" };
-        }
-
-        function ajustarCamposDisciplinas() {
-            const turmaSelecionada = document.getElementById('turma').value;
-            const config = obterDadosSegmento(turmaSelecionada);
-            
-            document.getElementById('label-disciplina-tecnica').innerText = config.label;
-
-            // Renderizar Geral
-            let htmlGerais = "";
-            disciplinasGerais.forEach(d => {
-                htmlGerais += `<div class="input-group"><label>${d.label}</label><input type="number" id="nota-${d.id}" min="0" max="10" step="0.1" placeholder="0.0" required></div>`;
-            });
-            document.getElementById('container-disciplinas-gerais').innerHTML = htmlGerais;
-
-            // Renderizar Técnicas
-            let htmlTecnicas = "";
-            const tecs = disciplinasTecnicas[config.key] || [];
-            tecs.forEach(d => {
-                htmlTecnicas += `<div class="input-group"><label>${d.label}</label><input type="number" id="nota-${d.id}" min="0" max="10" step="0.1" placeholder="0.0" required></div>`;
-            });
-            document.getElementById('container-disciplinas-tecnicas').innerHTML = htmlTecnicas;
-        }
-
-        function calcularMediaGeralAluno(aluno) {
-            let soma = 0; let total = 0;
-            for (let b in aluno.notas) {
-                for (let disc in aluno.notas[b]) {
-                    soma += aluno.notas[b][disc];
-                    total++;
-                }
-            }
-            return total > 0 ? (soma / total) : 0;
-        }
-
-        function determinarStatusFrequenciaMedia(aluno) {
-            const media = calcularMediaGeralAluno(aluno);
-            const freq = aluno.frequencia;
-            if (media < 5.5 || freq < 75) return { label: "Crítico", class: "status-critico" };
-            if (media < 7.0 || freq < 85) return { label: "Atenção", class: "status-atencao" };
-            return { label: "Bom", class: "status-bom" };
-        }
-
-        function inicializarDashboard() {
-            ajustarCamposDisciplinas();
-            renderizarMétricas();
-            filtrarEAtualizar();
-            try {
-                gerarGraficoComparativo();
-            } catch(e) {
-                console.log("Falha ao gerar gráfico: Biblioteca Offline.");
-            }
-        }
-
-        function renderizarMétricas() {
-            let totalISE = 0; let criticos = 0;
-            alunos.forEach(a => {
-                const media = calcularMediaGeralAluno(a);
-                if (determinarStatusFrequenciaMedia(a).label === "Crítico") criticos++;
-                totalISE += (media * 10) * 0.4 + a.frequencia * 0.6;
-            });
-
-            const iseMedio = alunos.length > 0 ? (totalISE / alunos.length).toFixed(1) : 0;
-            document.getElementById('ise-val').innerText = `${iseMedio}%`;
-            const iseBar = document.getElementById('ise-graph-bar');
-            iseBar.style.width = `${iseMedio}%`;
-            iseBar.style.backgroundColor = iseMedio >= 80 ? '#2ecc71' : iseMedio >= 65 ? '#f39c12' : '#e74c3c';
-
-            document.getElementById('total-alunos').innerText = alunos.length;
-            document.getElementById('casos-risco').innerText = criticos;
-
-            const mediasTurmas = calcularMediasPorTurma();
-            let htmlMedias = '';
-            for (let turma in mediasTurmas) {
-                htmlMedias += `<div class="turma-item-mini"><strong>${turma}:</strong> <span>Nota ${mediasTurmas[turma].toFixed(1)}</span></div>`;
-            }
-            document.getElementById('container-medias-turma').innerHTML = htmlMedias;
-        }
-
-        function calcularMediasPorTurma() {
-            let agrupado = {};
-            alunos.forEach(a => {
-                const m = calcularMediaGeralAluno(a);
-                if (!agrupado[a.turma]) agrupado[a.turma] = { soma: 0, count: 0 };
-                agrupado[a.turma].soma += m; agrupado[a.turma].count++;
-            });
-            let medias = {};
-            for (let t in agrupado) medias[t] = agrupado[t].soma / agrupado[t].count;
-            return medias;
-        }
-
-        function cadastrarAluno(e) {
-            e.preventDefault();
-            const editIndex = parseInt(document.getElementById('edit-index').value);
-            const nome = document.getElementById('nome').value;
-            const turma = document.getElementById('turma').value;
-            const frequencia = parseInt(document.getElementById('frequencia').value);
-            const bAlvo = document.getElementById('bimestre-alvo').value;
-            const config = obterDadosSegmento(turma);
-
-            const blocoNotas = {};
-
-            disciplinasGerais.forEach(d => {
-                const inputEl = document.getElementById(`nota-${d.id}`);
-                blocoNotas[d.id] = inputEl ? (parseFloat(inputEl.value) || 0) : 0;
-            });
-
-            const tecs = disciplinasTecnicas[config.key] || [];
-            tecs.forEach(d => {
-                const inputEl = document.getElementById(`nota-${d.id}`);
-                blocoNotas[d.id] = inputEl ? (parseFloat(inputEl.value) || 0) : 0;
-            });
-
-            if (editIndex >= 0) {
-                alunos[editIndex].nome = nome;
-                alunos[editIndex].turma = turma;
-                alunos[editIndex].frequencia = frequencia;
-                alunos[editIndex].notas[bAlvo] = blocoNotas;
-            } else {
-                const alunoExistente = alunos.find(a => a.nome.toLowerCase() === nome.toLowerCase() && a.turma === turma);
-                if (alunoExistente) {
-                    alunoExistente.frequencia = frequencia;
-                    alunoExistente.notas[bAlvo] = blocoNotas;
-                } else {
-                    let novoAluno = { nome: nome, turma: turma, frequencia: frequencia, notas: {} };
-                    novoAluno.notas[bAlvo] = blocoNotas;
-                    alunos.push(novoAluno);
-                }
-            }
-            limparFormulario(); renderizarMétricas(); filtrarEAtualizar(); 
-            try { gerarGraficoComparativo(); } catch(e) {}
-        }
-
-        function limparFormulario() {
-            document.getElementById('cadastro-form').reset();
-            document.getElementById('edit-index').value = "-1";
-            document.getElementById('form-titulo').innerText = "📝 Matrícula e Notas";
-            document.getElementById('btn-cancelar').style.display = "none";
-            ajustarCamposDisciplinas();
-        }
-
-        function definirFiltroStatus(status) {
-            statusFiltroAtual = status;
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            if (status === 'Todos') document.getElementById('btn-filtro-todos').classList.add('active');
-            else if (status === 'Atenção') document.getElementById('btn-filtro-atencao').classList.add('active');
-            else if (status === 'Crítico') document.getElementById('btn-filtro-critico').classList.add('active');
-            filtrarEAtualizar();
-        }
-
-        function filtrarEAtualizar() {
-            const busca = document.getElementById('busca-nome').value.toLowerCase();
-            const turmaSel = document.getElementById('filtro-turma').value;
-
-            let filtrados = alunos.filter((aluno, index) => {
-                aluno.indexOriginal = index;
-                const atendeBusca = aluno.nome.toLowerCase().includes(busca);
-                const atendeTurma = (turmaSel === "Todos" || aluno.turma === turmaSel);
-                const atendeStatus = (statusFiltroAtual === "Todos" || determinarStatusFrequenciaMedia(aluno).label === statusFiltroAtual);
-                return atendeBusca && atendeTurma && atendeStatus;
-            });
-
-            let turmasAgrupadas = {};
-            filtrados.forEach(a => {
-                if (!turmasAgrupadas[a.turma]) turmasAgrupadas[a.turma] = [];
-                turmasAgrupadas[a.turma].push(a);
-            });
-
-            let htmlCompleto = "";
-            for (let turma in turmasAgrupadas) {
-                let somaTurma = 0;
-                turmasAgrupadas[turma].forEach(a => { somaTurma += calcularMediaGeralAluno(a); });
-                const mediaTurma = (somaTurma / turmasAgrupadas[turma].length).toFixed(1);
-
-                htmlCompleto += `
-                    <div class="turma-group-header"><span>🏫 ${turma}</span><span>Média: ${mediaTurma}</span></div>
-                    <table>
-                        <thead>
-                            <tr><th>Estudante</th><th>Presença</th><th>Média Geral</th><th>Bimestres</th><th>Status</th><th style="text-align: right;">Ações</th></tr>
-                        </thead>
-                        <tbody>`;
-
-                turmasAgrupadas[turma].forEach(aluno => {
-                    const status = determinarStatusFrequenciaMedia(aluno);
-                    const media = calcularMediaGeralAluno(aluno).toFixed(1);
-                    const bimestresAtivos = Object.keys(aluno.notas).map(b => b.toUpperCase()).join(', ');
-                    htmlCompleto += `
-                        <tr>
-                            <td><span class="nome-clicavel" onclick="abrirModal(${aluno.indexOriginal})">${aluno.nome}</span></td>
-                            <td>${aluno.frequencia}%</td><td>${media}</td><td>${bimestresAtivos}</td>
-                            <td><span class="status-badge ${status.class}">${status.label}</span></td>
-                            <td style="text-align: right;">
-                                <button class="action-btn" title="Editar" onclick="editarAluno(${aluno.indexOriginal})">✏️</button>
-                                <button class="action-btn" title="Remover" onclick="deletarAluno(${aluno.indexOriginal})">🗑️</button>
-                            </td>
-                        </tr>`;
-                });
-                htmlCompleto += `</tbody></table>`;
-            }
-            document.getElementById('tabela-conteudo-agrupado').innerHTML = htmlCompleto || "<p style='text-align:center; padding: 20px; color:#666;'>Nengamos de agendar um atendimento para construirmos juntos um plano de apoio acadêmico. Qual o melhor dia para nos reunirmos?`;
+                whatsappMsg = `Olá! Aqui é da Coordenação do EduVision AI. Entramos em contato para conversar sobre o desempenho e a presença escolar de ${aluno.nome}. Gostaríamos de agendar um atendimento para construirmos juntos um plano de apoio acadêmico. Qual o melhor dia para nos reunirmos?`;
                 
                 emailMsg = `Prezados Responsáveis por ${aluno.nome},\n\nIdentificamos, através de nossos painéis preventivos de acompanhamento acadêmico, que o estudante apresenta atualmente uma frequência de ${aluno.frequencia}% e rendimento médio de ${media}.\n\nEsses indicadores necessitam de nossa atenção imediata para evitar prejuízos pedagógicos no encerramento deste período. Diante disso, convidamos os senhores para comparecerem à nossa Coordenação a fim de definirmos em conjunto o Plano de Atendimento Individualizado (PAI).\n\nAtenciosamente,\nCoordenação de Desempenho Pedagógico.`;
             } else if (media >= 8.5) {
