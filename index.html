@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduVision AI - Painel Pedagógico</title>
+    <title>EduVision AI - Painel Pedagógico Preventivo</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -104,7 +104,6 @@
             background-color: #6c757d;
         }
 
-        /* Tabelas */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -140,7 +139,6 @@
             font-weight: bold;
         }
 
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -157,7 +155,7 @@
         .modal-content {
             background-color: white;
             width: 90%;
-            max-width: 800px;
+            max-width: 900px;
             max-height: 90vh;
             border-radius: 8px;
             overflow-y: auto;
@@ -177,11 +175,11 @@
             padding: 20px;
         }
 
-        /* Abas no Modal */
         .tabs-container {
             display: flex;
             border-bottom: 2px solid #ddd;
             margin-bottom: 15px;
+            overflow-x: auto;
         }
 
         .tab-btn {
@@ -191,6 +189,7 @@
             cursor: pointer;
             font-weight: bold;
             color: #666;
+            white-space: nowrap;
         }
 
         .tab-btn.active {
@@ -257,6 +256,15 @@
         .boletim-header-row {
             display: flex;
             justify-content: space-between;
+        }
+
+        .custom-list {
+            margin-left: 20px;
+            margin-top: 5px;
+        }
+        .custom-list li {
+            margin-bottom: 8px;
+            line-height: 1.4;
         }
     </style>
 </head>
@@ -405,8 +413,8 @@
                 <div class="tabs-container">
                     <button class="tab-btn active" onclick="mudarTab(event, 'tab-desempenho')">📊 Desempenho</button>
                     <button class="tab-btn" onclick="mudarTab(event, 'tab-pai')">📋 Plano Preventivo (PAI)</button>
-                    <button class="tab-btn" onclick="mudarTab(event, 'tab-cronograma')">📅 Cronograma de Estudos</button>
-                    <button class="tab-btn" onclick="mudarTab(event, 'tab-pronunciamento')">💬 Voz do Aluno</button>
+                    <button class="tab-btn" onclick="mudarTab(event, 'tab-cronograma')">📅 Sincronização em Sala</button>
+                    <button class="tab-btn" onclick="mudarTab(event, 'tab-pronunciamento')">💬 Voz do Aluno & IA</button>
                     <button class="tab-btn" onclick="mudarTab(event, 'tab-comunicado')">✉️ Comunicados (IA)</button>
                 </div>
 
@@ -427,26 +435,37 @@
                     <h3>📋 Plano de Atendimento Individualizado (PAI)</h3>
                     <div class="info-box" id="pai-dados-aluno" style="background-color: #f8f9fa; border-left: 5px solid var(--primary-color);"></div>
                     
-                    <h4>Objetivos Pedagógicos</h4>
-                    <div id="pai-objetivos"></div>
-
-                    <h4 style="margin-top: 15px;">Ações e Estratégias Recomendadas</h4>
-                    <div id="pai-acoes"></div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                        <div>
+                            <h4 style="color: var(--primary-color);">🎯 Metas Cognitivas e Acadêmicas</h4>
+                            <div id="pai-objetivos"></div>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--secondary-color);">⚙️ Medidas de Intervenção Pedagógica</h4>
+                            <div id="pai-acoes"></div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <h4 style="color: #c0392b;">🌱 Ações de Engajamento & Apoio Socioemocional</h4>
+                        <div id="pai-socioemocional"></div>
+                    </div>
                 </div>
 
                 <div id="tab-cronograma" class="tab-content">
-                    <h3>📅 Cronograma de Estudos Personalizado (IA)</h3>
-                    <p style="font-size: 13px; color:#666;">Priorização autônoma de disciplinas com maior índice de defasagem acadêmica.</p>
+                    <h3>📅 Cronograma de Estudos - Sincronização com as Aulas</h3>
+                    <p style="font-size: 13px; color:#666; margin-bottom: 15px;">
+                        Compare o roteiro ministrado pelo professor em sala de aula com sugestões de revisão ativa e tarefas complementares para consolidação em casa.
+                    </p>
                     
                     <div class="info-box" id="cronograma-resumo" style="border-left: 5px solid var(--secondary-color); margin-top: 10px;"></div>
 
                     <table>
                         <thead>
                             <tr>
-                                <th>Componente Curricular</th>
-                                <th style="text-align: center;">Urgência</th>
-                                <th style="text-align: center;">Horas Semanais</th>
-                                <th>Foco Principal de Estudos</th>
+                                <th>Componente</th>
+                                <th>Ministrado em Aula (Foco Principal)</th>
+                                <th>Estratégia de Estudo Ativo (Revisão)</th>
+                                <th style="text-align: center;">Tempo Sugerido</th>
                             </tr>
                         </thead>
                         <tbody id="cronograma-tabela-corpo"></tbody>
@@ -456,36 +475,36 @@
                 <div id="tab-pronunciamento" class="tab-content">
                     <h3>🗣️ Espaço de Autoavaliação do Estudante</h3>
                     <p style="font-size: 13px; color:#666; margin-bottom: 15px;">
-                        O aluno indica o que já entende e suas principais dificuldades. A IA gera um cronograma adaptativo sob medida, reduzindo a necessidade de atendimento individual direto do professor.
+                        O aluno relata o que já aprendeu bem e quais conceitos de fato não compreendeu. O algoritmo varre o dicionário pedagógico para montar um plano imediato focado em preencher essa lacuna.
                     </p>
                     
                     <div class="form-group">
                         <label style="color: var(--success-color);">O que eu compreendi muito bem?</label>
-                        <textarea id="aluno-entendeu" rows="3" placeholder="Ex: Entendi bem a parte de ligações químicas e tabela periódica..."></textarea>
+                        <textarea id="aluno-entendeu" rows="2" placeholder="Ex: Entendi ligações iônicas, mas em história gosto de Brasil Colonial..."></textarea>
                     </div>
 
                     <div class="form-group">
-                        <label style="color: var(--danger-color);">O que eu sinto mais dificuldade ou não compreendi?</label>
-                        <textarea id="aluno-dificuldade" rows="3" placeholder="Ex: Tenho muita dificuldade em fazer balanceamento de equações e estequiometria..."></textarea>
+                        <label style="color: var(--danger-color);">O que eu sinto mais dificuldade ou não compreendi de jeito nenhum?</label>
+                        <textarea id="aluno-dificuldade" rows="2" placeholder="Ex: Não entendi estequiometria, frações, cinemática, redação argumentativa..."></textarea>
                     </div>
 
                     <button class="btn" style="width: 100%; background-color: var(--secondary-color);" onclick="gerarCronogramaAdaptativoPorFeedback()">
-                        ✨ Gerar Cronograma Adaptativo de Estudos
+                        ✨ Gerar Plano de Estudo Emergencial Personalizado
                     </button>
 
                     <div id="retorno-cronograma-ia" style="margin-top: 20px; display: none;">
                         <div class="info-box" style="border-left: 5px solid var(--primary-color); background: #f0f4f8;">
-                            <h4 style="color: var(--primary-color); margin-bottom: 5px;">🎯 Diagnóstico do Tutor de IA</h4>
+                          <h4 style="color: var(--primary-color); margin-bottom: 5px;">🎯 Diagnóstico de Tutor Educacional AI</h4>
                             <div id="ia-diagnostico-texto" style="font-size: 13px; line-height: 1.5;"></div>
                         </div>
 
-                        <h4>📅 Grade Emergencial Recomendada</h4>
+                        <h4>📅 Roteiro Emergencial com Métodos Ativos de Aprendizagem</h4>
                         <table>
                             <thead>
                                 <tr style="background-color: #f2f2f2;">
-                                    <th>Foco do Estudo</th>
-                                    <th>Ação Recomendada</th>
-                                    <th style="text-align: center;">Complexidade</th>
+                                    <th style="width: 30%;">Tópico Mapeado</th>
+                                    <th style="width: 50%;">Atividade Recomendada</th>
+                                    <th style="text-align: center; width: 20%;">Urgência / Complexidade</th>
                                 </tr>
                             </thead>
                             <tbody id="tabela-cronograma-ia-corpo"></tbody>
@@ -570,6 +589,60 @@
             "tec2": "Lei da oferta e demanda, macroeconomia básica e análise de microcenários locais."
         };
 
+        // ROTEIROS DE APRENDIZAGEM PARA DIFICULDADES COMUNS
+        const roteirosDificuldades = [
+            {
+                keywords: ["estequiometria", "calculo estequiometrico", "reacao quimica", "balanceamento"],
+                tema: "Estequiometria e Balanceamento Químico",
+                dicas: [
+                    "Etapa 1: Pratique o balanceamento de equações usando o método das tentativas (Macho: Metais, Ametais, Carbono, Hidrogênio, Oxigênio).",
+                    "Etapa 2: Monte uma tabela de proporção de mols antes de converter para massas em gramas.",
+                    "Etapa 3: Resolva 3 exercícios básicos focando unicamente na proporção em mol."
+                ],
+                esforco: "🔴 ALTO"
+            },
+            {
+                keywords: ["fracao", "fracoes", "divisao", "mmc"],
+                tema: "Operações Fundamentais com Frações",
+                dicas: [
+                    "Etapa 1: Lembre-se que em somas/subtrações com denominadores diferentes, você DEVE calcular o MMC.",
+                    "Etapa 2: Para multiplicação, multiplique reto (numerador por numerador); para divisão, inverta a segunda fração e multiplique.",
+                    "Etapa 3: Utilize desenhos (fatias de pizza ou blocos) para materializar graficamente as partes e o todo."
+                ],
+                esforco: "🟡 MÉDIO"
+            },
+            {
+                keywords: ["redacao", "argumentacao", "introducao", "conclusao", "enem"],
+                tema: "Estruturação de Redação Dissertativo-Argumentativa",
+                dicas: [
+                    "Etapa 1: Defina sua tese na introdução de forma clara (2 argumentos principais).",
+                    "Etapa 2: Utilize conectivos interparágrafos (Ademais, Outrossim, Portanto) para garantir pontos de coesão.",
+                    "Etapa 3: Na proposta de intervenção, garanta os 5 elementos obrigatórios: Agente, Ação, Meio, Detalhe e Efeito."
+                ],
+                esforco: "🔴 ALTO"
+            },
+            {
+                keywords: ["cinematica", "movimento", "velocidade", "aceleracao", "fisica"],
+                tema: "Cinemática e Funções de Posição (M.U e M.U.V)",
+                dicas: [
+                    "Etapa 1: Diferencie o Movimento Uniforme (velocidade constante: S = S0 + v.t) do Uniformemente Variado (Sorvetão).",
+                    "Etapa 2: Construa diagramas cartesianos do tempo contra o espaço para identificar acelerações e frenagens.",
+                    "Etapa 3: Anote os dados do problema nas margens antes de tentar aplicar qualquer fórmula matemática."
+                ],
+                esforco: "🔴 ALTO"
+            },
+            {
+                keywords: ["ingles", "verb to be", "vocabulario", "pronuncia"],
+                tema: "Interpretação de Texto e Fluência Básica em Inglês",
+                dicas: [
+                    "Etapa 1: Sublinhe palavras cognatas (parecidas com o português) ao ler um parágrafo.",
+                    "Etapa 2: Identifique o tempo verbal predominante (passado, presente ou futuro) pelas marcas estruturais.",
+                    "Etapa 3: Faça um glossário pessoal com no mínimo 5 palavras novas descobertas por texto lido."
+                ],
+                esforco: "🟢 BAIXO"
+            }
+        ];
+
         // BASE DE DADOS INTEGRADA
         let alunos = [
             {
@@ -588,7 +661,7 @@
                 frequencia: 72,
                 notesCount: 2,
                 notas: {
-                    b1: { portugues: 5.5, literatura: 5.0, redacao: 5.5, matematica: 4.8, fisica: 4.0, quimica: 4.5, biologia: 5.0, historia: 6.0, geografia: 5.0, filosofia: 5.5, sociologia: 5.0, arte: 7.0, "educacao-fisica": 8.0, ingles: 5.0, financeira: 4.5, "projeto-vida": 6.0, tec1: 5.0, tec2: 4.5 },
+                    b1: { portugues: 5.5, literatura: 5.0, redacao: 5.5, matematica: 4.8, fisica: 4.0, quimica: 4.5, biologia: 5.0, historia: 6.0, geography: 5.0, filosofia: 5.5, sociologia: 5.0, arte: 7.0, "educacao-fisica": 8.0, ingles: 5.0, financeira: 4.5, "projeto-vida": 6.0, tec1: 5.0, tec2: 4.5 },
                     b2: { portugues: 5.0, literatura: 4.5, redacao: 5.0, matematica: 4.2, fisica: 4.5, quimica: 4.0, biologia: 4.8, historia: 5.5, geografia: 4.8, filosofia: 5.0, sociologia: 5.5, arte: 6.5, "educacao-fisica": 7.5, ingles: 5.5, financeira: 4.0, "projeto-vida": 5.5, tec1: 4.8, tec2: 4.0 }
                 }
             },
@@ -666,14 +739,12 @@
             
             document.getElementById('label-disciplina-tecnica').innerText = config.label;
 
-            // Renderizar Geral
             let htmlGerais = "";
             disciplinasGerais.forEach(d => {
                 htmlGerais += `<div class="form-group" style="display:inline-block; width:48%; margin-right:2%;"><label style="font-size:12px;">${d.label}</label><input type="number" id="nota-${d.id}" min="0" max="10" step="0.1" placeholder="0.0"></div>`;
             });
             document.getElementById('container-disciplinas-gerais').innerHTML = htmlGerais;
 
-            // Renderizar Técnicas
             let htmlTecnicas = "";
             const tecs = disciplinasTecnicas[config.key] || [];
             tecs.forEach(d => {
@@ -799,7 +870,7 @@
 
             let filtrados = alunos.filter((aluno, index) => {
                 aluno.indexOriginal = index;
-                const atendeBusca = aluno.nome.toLowerCase().includes(busca);
+                const atendeBusca =                 aluno.nome.toLowerCase().includes(busca);
                 const atendeTurma = (turmaSel === "Todos" || aluno.turma === turmaSel);
                 const atendeStatus = (statusFiltroAtual === "Todos" || determinarStatusFrequenciaMedia(aluno).label === statusFiltroAtual);
                 return atendeBusca && atendeTurma && atendeStatus;
@@ -814,7 +885,7 @@
             let htmlCompleto = "";
             for (let turma in turmasAgrupadas) {
                 let somaTurma = 0;
-                turmasAgrupadas[turma].forEach(a => { somaTurma += calcularMediaGeralAluno(a); });
+                turmasAgadas[turma].forEach(a => { somaTurma += calcularMediaGeralAluno(a); });
                 const mediaTurma = (somaTurma / turmasAgrupadas[turma].length).toFixed(1);
 
                 htmlCompleto += `
@@ -946,7 +1017,6 @@
             const status = determinarStatusFrequenciaMedia(aluno);
             const config = obterDadosSegmento(aluno.turma);
 
-            // Reseta campos do pronunciamento do aluno ao abrir para evitar misturar dados
             document.getElementById('aluno-entendeu').value = "";
             document.getElementById('aluno-dificuldade').value = "";
             document.getElementById('retorno-cronograma-ia').style.display = "none";
@@ -976,14 +1046,14 @@
 
             let tendencia = 0;
             if (somaB1 > 0 && somaB2 > 0) tendencia = (somaB2 - somaB1) * 0.4;
-            let fatorPresenca = aluno.frequencia / 100;
-            let previsaoFinal = Math.max(0, Math.min(10, ((somaB2 || somaB1 || 5.0) + tendencia) * (0.85 + (fatorPresenca * 0.15))));
+            let factorPresenca = aluno.frequencia / 100;
+            let previsaoFinal = Math.max(0, Math.min(10, ((somaB2 || somaB1 || 5.0) + tendencia) * (0.85 + (factorPresenca * 0.15))));
 
             document.getElementById('modal-semestres').innerHTML = `
                 <div class="card" style="padding:10px; text-align:center; flex:1;"><h5>Média 1º Bim</h5><strong>${somaB1 > 0 ? somaB1.toFixed(1) : '--'}</strong></div>
                 <div class="card" style="padding:10px; text-align:center; flex:1;"><h5>Média 2º Bim</h5><strong>${somaB2 > 0 ? somaB2.toFixed(1) : '--'}</strong></div>
                 <div class="card" style="padding:10px; text-align:center; flex:1; background:#eef2f7; border-color:var(--secondary-color);">
-                    <h5 style="color:var(--primary-color);">Projeção IA</h5><strong style="color:var(--secondary-color); font-size:18px;">${previsaoFinal.toFixed(1)}</strong>
+                    <h5 style="color:var(--primary-color);">Projeção Preventiva (IA)</h5><strong style="color:var(--secondary-color); font-size:18px;">${previsaoFinal.toFixed(1)}</strong>
                 </div>
             `;
 
@@ -1016,7 +1086,6 @@
 
             document.getElementById('modal-boletim-rows').innerHTML = htmlBoletim;
 
-            // Ativar Aba Padrão
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById('tab-desempenho').classList.add('active');
@@ -1070,36 +1139,96 @@
             });
         }
 
+        // APROFUNDAMENTO DO PLANO PREVENTIVO (PAI)
         function gerarPlanoPAI(aluno, config, previsaoFinal) {
             const media = calcularMediaGeralAluno(aluno);
+            
             document.getElementById('pai-dados-aluno').innerHTML = `
-                <strong>Rendimento Geral Atual:</strong> ${media.toFixed(1)} | Frequência: ${aluno.frequencia}% <br>
-                <strong>Projeção Preventiva:</strong> <span style="color: ${previsaoFinal < 6.0 ? 'var(--danger-color)' : 'var(--success-color)'}; font-weight: bold;">
-                    ${previsaoFinal < 6.0 ? 'Atenção Continuada Recomendada' : 'Fluxo Regular Estável'}
+                <strong>📍 Diagnóstico Multidimensional:</strong> Rendimento Médio: ${media.toFixed(1)} | Frequência Escolar: ${aluno.frequencia}% <br>
+                <strong>🔮 Projeção Preventiva (Final):</strong> <span style="color: ${previsaoFinal < 6.0 ? 'var(--danger-color)' : 'var(--success-color)'}; font-weight: bold;">
+                    ${previsaoFinal < 6.0 ? '⚠️ NECESSIDADE URGENTE DE INTERVENÇÃO (Risco de Defasagem/Retenção)' : '✅ DESENVOLVIMENTO ACADÊMICO SAUDÁVEL (Fluxo Regular)'}
                 </span>
             `;
 
-            let objetivosHtml = "<li>Acompanhar as disciplinas básicas.</li>";
-            let acoesHtml = "<li>Revisar conteúdos de forma autônoma.</li>";
+            let metasHtml = "";
+            let acoesHtml = "";
+            let socioHtml = "";
 
             if (aluno.frequencia < 75) {
-                objetivosHtml = "<li>Recuperar assiduidade básica emergencial.</li>";
-                acoesHtml = "<li>Buscar apoio da coordenação escolar para justificar faltas e planejar tarefas domiciliares.</li>";
+                metasHtml = `
+                    <ul class="custom-list">
+                        <li><strong>Assiduidade Básica:</strong> Recuperar frequência para no mínimo 75% antes do fechamento letivo.</li>
+                        <li><strong>Organização:</strong> Sincronizar entregas acadêmicas atrasadas utilizando regime de compensação de faltas.</li>
+                    </ul>`;
+                acoesHtml = `
+                    <ul class="custom-list">
+                        <li>Encaminhamento imediato para agendamento com a Equipe de Orientação Pedagógica.</li>
+                        <li>Elaboração de um portfólio físico contendo as principais atividades teóricas ministradas no período de ausência.</li>
+                    </ul>`;
+                socioHtml = `
+                    <ul class="custom-list">
+                        <li><strong>Escuta Ativa:</strong> Entrevista com o aluno e responsáveis para analisar se o absenteísmo é decorrente de problemas de saúde, transporte ou vulnerabilidade socioemocional.</li>
+                        <li><strong>Criação de Vínculo:</strong> Designar um colega de classe como padrinho/madrinha acadêmico para repassar anotações e conteúdos dos dias perdidos.</li>
+                    </ul>`;
             } else if (media < 5.5) {
-                objetivosHtml = "<li>Sanar defasagens cognitivas severas.</li>";
-                acoesHtml = "<li>Orientar realização de oficinas de reforço ou trilhas de nivelamento.</li>";
+                metasHtml = `
+                    <ul class="custom-list">
+                        <li><strong>Recuperação Conceitual:</strong> Alcançar nível de suficiência cognitiva (Nota mínima 6.0) nas áreas críticas detectadas no Radar.</li>
+                        <li><strong>Consolidação Instrumental:</strong> Desenvolver o hábito diário de leitura técnica para interpretação de questões de múltipla escolha.</li>
+                    </ul>`;
+                acoesHtml = `
+                    <ul class="custom-list">
+                        <li>Inserir o estudante no programa de monitoria e reforço escolar no contraturno.</li>
+                        <li>Uso de metodologias de ensino diferenciadas (utilização de simuladores virtuais, vídeos curtos e materiais interativos).</li>
+                    </ul>`;
+                socioHtml = `
+                    <ul class="custom-list">
+                        <li><strong>Trabalho de Autoconfiança:</strong> Evitar expor publicamente as notas do aluno, trabalhando em dinâmicas de feedback construtivo individualizado (Foco no esforço progressivo).</li>
+                        <li>Estimular o aluno a participar ativamente de atividades práticas (como projetos técnicos ou feiras escolares) para canalizar suas forças.</li>
+                    </ul>`;
+            } else if (media < 7.0) {
+                metasHtml = `
+                    <ul class="custom-list">
+                        <li><strong>Nivelamento Progressivo:</strong> Sair da zona de flutuação de notas e estabelecer uma média sólida acima de 7.5.</li>
+                        <li><strong>Consolidação de Estudos:</strong> Aplicar estratégias básicas de resumo autônomo (fichamentos ou mapas conceituais).</li>
+                    </ul>`;
+                acoesHtml = `
+                    <ul class="custom-list">
+                        <li>Incentivar a autoavaliação do estudante ao final de cada unidade curricular de alta complexidade.</li>
+                        <li>Recomendar trilhas de aprofundamento ou listas de exercícios extras de nível moderado.</li>
+                    </ul>`;
+                socioHtml = `
+                    <ul class="custom-list">
+                        <li>Fortalecer a autonomia de estudo. Parabenizar formalmente cada evolução nas notas periódicas para incentivar a constância.</li>
+                    </ul>`;
+            } else {
+                metasHtml = `
+                    <ul class="custom-list">
+                        <li><strong>Manutenção da Excelência:</strong> Expandir o repertório cognitivo e técnico mantendo notas de alto nível (> 8.5).</li>
+                        <li><strong>Liderança Cooperativa:</strong> Contribuir com o clima de aprendizado colaborativo da turma.</li>
+                    </ul>`;
+                acoesHtml = `
+                    <ul class="custom-list">
+                        <li>Indicar o aluno para atuar como monitor voluntário auxiliando estudantes com dificuldades em contraturnos escolares.</li>
+                        <li>Oferecer desafios acadêmicos ou problemas de lógica avançados.</li>
+                    </ul>`;
+                             socioHtml = `
+                    <ul class="custom-list">
+                        <li>Promover oportunidades de protagonismo juvenil, como liderança de equipes em projetos práticos ou representação estudantil.</li>
+                    </ul>`;
             }
 
-            document.getElementById('pai-objetivos').innerHTML = `<ul>${objetivosHtml}</ul>`;
-            document.getElementById('pai-acoes').innerHTML = `<ul>${acoesHtml}</ul>`;
+            document.getElementById('pai-objetivos').innerHTML = metasHtml;
+            document.getElementById('pai-acoes').innerHTML = acoesHtml;
+            document.getElementById('pai-socioemocional').innerHTML = socioHtml;
         }
 
+        // NOVO SINALIZADOR: CRONOGRAMA DE ACOMPANHAMENTO DA SALA DE AULA
         function gerarCronogramaEstudos(aluno, config) {
             const bAtivo = aluno.notas.b2 ? 'b2' : 'b1';
             const notas = aluno.notas[bAtivo] || {};
             
             let disciplinasAluno = [];
-            
             disciplinasGerais.forEach(d => {
                 if (notas[d.id] !== undefined) disciplinasAluno.push({ id: d.id, label: d.label, nota: notas[d.id] });
             });
@@ -1109,46 +1238,44 @@
             let htmlTabela = "";
             let totalHorasEstudo = 0;
 
-            disciplinasAluno.slice(0, 5).forEach(disc => {
-                let statusClass = "status-bom";
-                let urgenciaText = "✅ MANTER";
-                let horasRecomendadas = 1;
+            disciplinasAluno.forEach(disc => {
+                let tempoMinutos = 45;
+                let revisaoAtiva = "Elaborar um resumo visual ou autoexplicar o conteúdo em voz alta.";
 
                 if (disc.nota < 5.5) {
-                    urgenciaText = "🚨 CRÍTICA";
-                    statusClass = "status-critico";
-                    horasRecomendadas = 4;
+                    tempoMinutos = 120;
+                    revisaoAtiva = "💥 <strong>Foco Emergencial:</strong> Fazer engenharia reversa de 3 exercícios resolvidos de provas anteriores.";
                 } else if (disc.nota < 7.0) {
-                    urgenciaText = "⚠️ ATENÇÃO";
-                    statusClass = "status-atencao";
-                    horasRecomendadas = 2;
+                    tempoMinutos = 60;
+                    revisaoAtiva = "📝 Escrever um parágrafo de síntese sem olhar as notas e depois comparar com a apostila.";
                 }
 
-                totalHorasEstudo += horasRecomendadas;
-                const pontoFocal = topicosFocoDisciplinas[disc.id] || "Leitura e resolução de roteiros de estudo.";
+                totalHorasEstudo += (tempoMinutos / 60);
+                const conteudoPresencial = topicosFocoDisciplinas[disc.id] || "Conteúdo teórico regular programado pela unidade letiva.";
 
                 htmlTabela += `
                     <tr>
                         <td><strong>${disc.label}</strong> (Nota: ${disc.nota.toFixed(1)})</td>
-                        <td style="text-align: center;"><span class="status-badge ${statusClass}">${urgenciaText}</span></td>
-                        <td style="text-align: center; font-weight: bold;">${horasRecomendadas}h</td>
-                        <td style="font-size: 12px;">${pontoFocal}</td>
+                        <td style="font-size: 13px; color: #555;">${conteudoPresencial}</td>
+                        <td style="font-size: 13px; font-weight: 500;">${revisaoAtiva}</td>
+                        <td style="text-align: center; font-weight: bold; color: var(--primary-color);">${tempoMinutos} min</td>
                     </tr>`;
             });
 
             document.getElementById('cronograma-tabela-corpo').innerHTML = htmlTabela;
-            document.getElementById('cronograma-resumo').innerHTML = `<strong>Recomendação Global:</strong> Recomendado dedicação semanal de até <strong>${totalHorasEstudo} horas</strong> estruturadas.`;
+            document.getElementById('cronograma-resumo').innerHTML = `<strong>Roteiro Semanal de Fixação:</strong> Dedique em média <strong>${totalHorasEstudo.toFixed(1)} horas semanais</strong> distribuídas nas atividades de consolidação em casa para acompanhar o ritmo da sala de aula.`;
         }
 
+        // CRONOGRAMA ADAPTATIVO POR AUTOAVALIAÇÃO (COM INTELIGÊNCIA DE ASSOCIAÇÃO)
         function gerarCronogramaAdaptativoPorFeedback() {
             if (alunoModalAbertoIndex === null) return;
             
             const aluno = alunos[alunoModalAbertoIndex];
             const entendeu = document.getElementById('aluno-entendeu').value.trim();
-            const dificuldade = document.getElementById('aluno-dificuldade').value.trim();
+            const dificuldade = document.getElementById('aluno-dificuldade').value.trim().toLowerCase();
 
             if (!entendeu && !dificuldade) {
-                alert("Por favor, relate o que entendeu ou sua dificuldade antes de solicitar à IA.");
+                alert("Por favor, preencha o que compreendeu ou onde encontrou dificuldades para que a IA processe o plano.");
                 return;
             }
 
@@ -1159,57 +1286,82 @@
             tabelaCorpo.innerHTML = "";
             containerRetorno.style.display = "block";
 
-            let diagnosticoHTML = `Analisando a autodeclaração de <strong>${aluno.nome}</strong>, geramos diretrizes de estudo inteligentes para otimizar seu aprendizado de forma independente.`;
-            let recomendacoes = [];
+            let recomendacoesMapeadas = [];
+            let detectouEspecifico = false;
 
-            if (dificuldade) {
-                diagnosticoHTML += `<br><br>⚠️ <strong>Foco de Atenção Declarado:</strong> Dificuldades relatadas em <em>"${dificuldade}"</em>. Plano focado em quebrar este tema em microssegundos de estudo diário.`;
-                recomendacoes.push({
-                    foco: `Superar: "${dificuldade.length > 50 ? dificuldade.substring(0, 50) + '...' : dificuldade}"`,
-                    acao: "Assistir a uma videoaula básica focada (máx 15min) e realizar 3 exercícios guiados passo a passo.",
-                    esforço: "🔴 ALTO"
+            // Varredura por keywords no banco de dados pedagógico do sistema
+            roteirosDificuldades.forEach(roteiro => {
+                let combinou = roteiro.keywords.some(keyword => dificuldade.includes(keyword));
+                if (combinou) {
+                    detectouEspecifico = true;
+                    recomendacoesMapeadas.push({
+                        foco: roteiro.tema,
+                        acao: `<strong style='color:#c0392b;'>Trilha Corretiva Direcionada:</strong><br>` + roteiro.dicas.join("<br>"),
+                        esforco: roteiro.esforco
+                    });
+                }
+            });
+
+            // Fallback caso seja um termo não previamente mapeado de forma explícita
+            if (!detectouEspecifico && dificuldade.length > 0) {
+                recomendacoesMapeadas.push({
+                    foco: `Dificuldade: "${dificuldade.length > 60 ? dificuldade.substring(0, 60) + '...' : dificuldade}"`,
+                    acao: "<strong>Estratégia Universal de Estudos:</strong><br>1. Divida o tema em partes menores.<br>2. Assista a uma videoaula conceitual básica (máximo de 15 min).<br>3. Faça 2 exercícios de nível de fixação com consulta direta aos materiais.",
+                    esforco: "🔴 ALTO"
                 });
             }
 
-            if (entendeu) {
-                diagnosticoHTML += `<br><br>✅ <strong>Ponto de Apoio Forte:</strong> Excelente compreensão demonstrada em <em>"${entendeu}"</em>. Use essa base para ganhar confiança.`;
-                recomendacoes.push({
-                    foco: `Fixar: "${entendeu.length > 50 ? entendeu.substring(0, 50) + '...' : entendeu}"`,
-                    acao: "Fazer um mapa mental rápido de 5 minutos para resumir o que já sabe e consolidar a memória.",
-                    esforço: "🟢 BAIXO"
+            // Mapeando a área forte de domínio para fixação por ancoragem cognitiva
+            if (entendeu.length > 0) {
+                recomendacoesMapeadas.push({
+                    foco: `Domínio: "${entendeu.length > 60 ? entendeu.substring(0, 60) + '...' : entendeu}"`,
+                    acao: "<strong>Técnica de Autoexplicação:</strong> Explique esse tópico para um colega de turma ou em frente ao espelho para enraizar o conteúdo de forma definitiva no cérebro.",
+                    esforco: "🟢 BAIXO"
                 });
             }
 
-            recomendacoes.push({
-                foco: "Técnica Geral de Pomodoro",
-                acao: "Estudar em blocos de 25 minutos de atenção total com 5 minutos de pausa. Reduz a fadiga cerebral.",
-                esforço: "🟡 MÉDIO"
+            // Técnica padrão complementar de retenção
+            recomendacoesMapeadas.push({
+                foco: "Técnica Pomodoro Adaptada",
+                acao: "Estude em blocos curtos de 30 minutos focados com 5 minutos de descanso ativo (alongar ou beber água). Evita fadiga cerebral.",
+                esforco: "🟡 MÉDIO"
             });
 
             let htmlTabela = "";
-            recomendacoes.forEach(rec => {
+            recomendacoesMapeadas.forEach(rec => {
                 htmlTabela += `
                     <tr>
-                        <td style="padding: 10px; border-bottom: 1px solid #ddd; font-size:12px;"><strong>${rec.foco}</strong></td>
-                        <td style="padding: 10px; border-bottom: 1px solid #ddd; font-size:12px; color:#555;">${rec.acao}</td>
-                        <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: center; font-weight: bold; font-size:11px;">${rec.esforço}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #ddd; font-size:12px;"><strong>${rec.foco}</strong></td>
+                        <td style="padding: 12px; border-bottom: 1px solid #ddd; font-size:12px; color:#333; line-height: 1.4;">${rec.acao}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #ddd; text-align: center; font-weight: bold; font-size:11px;">${rec.esforco}</td>
                     </tr>`;
             });
+
+            let diagnosticoHTML = `Análise de Autoavaliação para <strong>${aluno.nome}</strong> concluída com sucesso.<br><br>`;
+            if (detectouEspecifico) {
+                diagnosticoHTML += `✨ <strong>Mapeamento Preciso:</strong> Nossa IA identificou conceitos específicos em seu relato e aplicou micro-passos pedagógicos refinados do nosso banco de dados corporativo.`;
+            } else {
+                diagnosticoHTML += `⚡ <strong>Padrão Adaptativo Ativado:</strong> Geramos diretrizes genéricas baseadas em heurísticas ativas de estudo para o tema reportado.`;
+            }
 
             diagnosticoTexto.innerHTML = diagnosticoHTML;
             tabelaCorpo.innerHTML = htmlTabela;
         }
 
+        // GERAÇÃO DE COMUNICADOS PEDAGÓGICOS
         function gerarComunicados(aluno, previsaoFinal) {
             const media = calcularMediaGeralAluno(aluno).toFixed(1);
             let whatsappMsg = ""; let emailMsg = "";
 
-            if (aluno.frequencia < 75 || media < 5.5) {
-                whatsappMsg = `Olá! Da coordenação do EduVision. Solicitamos contato dos responsáveis de ${aluno.nome} para alinhamento pedagógico conjunto sobre frequência (${aluno.frequencia}%) e desempenho.`;
-                emailMsg = `Prezados Responsáveis,\n\nIdentificamos necessidade de atenção focada no desempenho do estudante ${aluno.nome} (Média Geral: ${media} | Presença: ${aluno.frequencia}%).\n\nConvidamos os senhores para dialogar de forma construtiva sobre o progresso curricular do estudante.\n\nAtenciosamente.`;
+            if (aluno.frequencia < 75) {
+                whatsappMsg = `Olá! Aqui é da equipe de Orientação do EduVision. Identificamos que a frequência de ${aluno.nome} está atualmente em ${aluno.frequencia}%. Solicitamos o contato dos pais ou responsáveis o quanto antes para traçarmos juntos uma estratégia conjunta de reposição e acompanhamento das aulas.`;
+                emailMsg = `Prezados Pais e Responsáveis,\n\nEntramos em contato para reportar que a frequência escolar de ${aluno.nome} encontra-se abaixo do patamar mínimo regulamentar (Frequência Registrada: ${aluno.frequencia}%).\n\nConsiderando a importância da rotina presencial para a apropriação dos conteúdos curriculares, solicitamos uma conversa pedagógica para estruturarmos uma rotina de regularização das ausências.\n\nAtenciosamente,\nEquipe Pedagógica Preventiva.`;
+            } else if (media < 5.5) {
+                whatsappMsg = `Olá! Equipe EduVision de apoio pedagógico. Identificamos que ${aluno.nome} precisa de reforço em alguns componentes básicos (Média Geral: ${media}). Gostaríamos de propor um plano de estudos no contraturno com apoio dos professores. Aguardamos seu contato para alinhamento!`;
+                emailMsg = `Prezados Responsáveis,\n\nNossa plataforma de acompanhamento pedagógico identificou que o estudante ${aluno.nome} apresenta oscilações de rendimento em componentes curriculares essenciais (Média Geral Atual: ${media}).\n\nCom o objetivo de apoiar o estudante de forma preventiva, elaboramos um Plano de Atendimento Individualizado (PAI). Solicitamos reunião presencial ou virtual para apresentação e assinatura conjunta do roteiro de recuperação ativa.\n\nAtenciosamente,\nEquipe de Coordenação Pedagógica.`;
             } else {
-                whatsappMsg = `Olá! Tudo bem? Passando para avisar que ${aluno.nome} está mantendo um progresso curricular regular e saudável! (Média Geral: ${media})`;
-                emailMsg = `Prezados Responsáveis,\n\nEntramos em contato para reportar que o estudante ${aluno.nome} mantém um percurso letivo estável dentro das diretrizes e competências esperadas. Parabéns pelo apoio continuado.\n\nAtenciosamente.`;
+                whatsappMsg = `Olá! Passando para compartilhar excelentes notícias! ${aluno.nome} apresenta um desempenho escolar exemplar com média geral de ${media} e excelente presença de ${aluno.frequencia}%. Parabéns pelo suporte familiar continuado!`;
+                emailMsg = `Prezados Responsáveis,\n\nGostaríamos de congratulá-los pelo percurso acadêmico de ${aluno.nome} neste período letivo.\n\nO estudante apresenta excelente engajamento nas atividades ministradas, mantendo média geral de ${media} e assiduidade de ${aluno.frequencia}%. Tais índices refletem o empenho direto do aluno e o apoio do núcleo familiar.\n\nAtenciosamente,\nDireção Pedagógica.`;
             }
 
             document.getElementById('comunicado-whatsapp').innerText = whatsappMsg;
@@ -1219,7 +1371,7 @@
         function copiarComunicado(id) {
             const texto = document.getElementById(id).innerText;
             navigator.clipboard.writeText(texto).then(() => {
-                alert("Texto copiado!");
+                alert("Texto copiado para a área de transferência!");
             });
         }
 
