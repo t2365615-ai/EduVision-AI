@@ -157,8 +157,8 @@
         .modal-content {
             background-color: white;
             width: 90%;
-            max-width: 800px;
-            max-height: 90vh;
+            max-width: 900px;
+            max-height: 95vh;
             border-radius: 8px;
             overflow-y: auto;
             box-shadow: 0 4px 20px rgba(0,0,0,0.2);
@@ -182,6 +182,7 @@
             display: flex;
             border-bottom: 2px solid #ddd;
             margin-bottom: 15px;
+            overflow-x: auto;
         }
 
         .tab-btn {
@@ -191,6 +192,7 @@
             cursor: pointer;
             font-weight: bold;
             color: #666;
+            white-space: nowrap;
         }
 
         .tab-btn.active {
@@ -233,6 +235,7 @@
             border-radius: 4px;
             margin-bottom: 15px;
             background-color: #fdfefe;
+            border-left: 5px solid var(--primary-color);
         }
 
         .nota-meter-bg {
@@ -258,6 +261,17 @@
             display: flex;
             justify-content: space-between;
         }
+        
+        .list-pedagogica {
+            margin-left: 20px;
+            margin-top: 8px;
+            margin-bottom: 15px;
+        }
+
+        .list-pedagogica li {
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
@@ -265,7 +279,7 @@
     <div class="container">
         <header>
             <h1>EduVision AI</h1>
-            <p>Painel de Gestão e Acompanhamento Pedagógico Preventivo</p>
+            <p>Painel de Gestão e Acompanhamento Pedagógico Preventivo de Alto Desempenho</p>
         </header>
 
         <div class="grid-layout">
@@ -405,8 +419,8 @@
                 <div class="tabs-container">
                     <button class="tab-btn active" onclick="mudarTab(event, 'tab-desempenho')">📊 Desempenho</button>
                     <button class="tab-btn" onclick="mudarTab(event, 'tab-pai')">📋 Plano Preventivo (PAI)</button>
-                    <button class="tab-btn" onclick="mudarTab(event, 'tab-cronograma')">📅 Cronograma de Estudos</button>
-                    <button class="tab-btn" onclick="mudarTab(event, 'tab-pronunciamento')">💬 Voz do Aluno</button>
+                    <button class="tab-btn" onclick="mudarTab(event, 'tab-cronograma')">📅 Cronograma Base</button>
+                    <button class="tab-btn" onclick="mudarTab(event, 'tab-pronunciamento')">💬 Voz do Aluno (Adaptativo)</button>
                     <button class="tab-btn" onclick="mudarTab(event, 'tab-comunicado')">✉️ Comunicados (IA)</button>
                 </div>
 
@@ -416,7 +430,7 @@
                             <canvas id="chartAlunoModal"></canvas>
                         </div>
                         <div>
-                            <h4>Resultados e Notas</h4>
+                            <h4>Resultados e Notas em Tempo Real</h4>
                             <div id="modal-semestres" style="display: flex; gap: 10px; margin: 15px 0;"></div>
                             <div id="modal-boletim-rows" style="max-height: 250px; overflow-y: auto; padding-right: 10px;"></div>
                         </div>
@@ -424,29 +438,29 @@
                 </div>
 
                 <div id="tab-pai" class="tab-content">
-                    <h3>📋 Plano de Atendimento Individualizado (PAI)</h3>
-                    <div class="info-box" id="pai-dados-aluno" style="background-color: #f8f9fa; border-left: 5px solid var(--primary-color);"></div>
+                    <h3>📋 Plano de Atendimento Individualizado (PAI) Preventivo</h3>
+                    <div class="info-box" id="pai-dados-aluno"></div>
                     
-                    <h4>Objetivos Pedagógicos</h4>
+                    <h4>🎯 Objetivos Pedagógicos de Curto Prazo</h4>
                     <div id="pai-objetivos"></div>
 
-                    <h4 style="margin-top: 15px;">Ações e Estratégias Recomendadas</h4>
+                    <h4 style="margin-top: 15px;">🛠️ Ações Preventivas e Estruturadas (Escola e Família)</h4>
                     <div id="pai-acoes"></div>
                 </div>
 
                 <div id="tab-cronograma" class="tab-content">
-                    <h3>📅 Cronograma de Estudos Personalizado (IA)</h3>
-                    <p style="font-size: 13px; color:#666;">Priorização autônoma de disciplinas com maior índice de defasagem acadêmica.</p>
+                    <h3>📅 Cronograma de Estudos Recomendado</h3>
+                    <p style="font-size: 13px; color:#666; margin-bottom: 10px;">Priorização autônoma calculada de acordo com as notas lançadas pelo corpo docente.</p>
                     
-                    <div class="info-box" id="cronograma-resumo" style="border-left: 5px solid var(--secondary-color); margin-top: 10px;"></div>
+                    <div class="info-box" id="cronograma-resumo" style="border-left: 5px solid var(--secondary-color);"></div>
 
                     <table>
                         <thead>
                             <tr>
                                 <th>Componente Curricular</th>
-                                <th style="text-align: center;">Urgência</th>
+                                <th style="text-align: center;">Status de Alerta</th>
                                 <th style="text-align: center;">Horas Semanais</th>
-                                <th>Foco Principal de Estudos</th>
+                                <th>Estratégia de Aprendizado & Foco Ativo</th>
                             </tr>
                         </thead>
                         <tbody id="cronograma-tabela-corpo"></tbody>
@@ -454,59 +468,56 @@
                 </div>
 
                 <div id="tab-pronunciamento" class="tab-content">
-                    <h3>🗣️ Espaço de Autoavaliação do Estudante</h3>
+                    <h3>🗣️ Feedback do Aluno & Algoritmo Adaptativo</h3>
                     <p style="font-size: 13px; color:#666; margin-bottom: 15px;">
-                        O aluno indica o que já entende e suas principais dificuldades. A IA gera um cronograma adaptativo sob medida, reduzindo a necessidade de atendimento individual direto do professor.
+                        O aluno indica o que já assimilou e suas maiores dúvidas. A inteligência do painel cruza os relatos dele com as piores notas lançadas pelo professor para fabricar uma trilha emergencial.
                     </p>
                     
                     <div class="form-group">
-                        <label style="color: var(--success-color);">O que eu compreendi muito bem?</label>
-                        <textarea id="aluno-entendeu" rows="3" placeholder="Ex: Entendi bem a parte de ligações químicas e tabela periódica..."></textarea>
+                        <label style="color: var(--success-color);">O que eu já entendi com clareza?</label>
+                        <textarea id="aluno-entendeu" rows="3" placeholder="Ex: Consigo diferenciar ligações iônicas de covalentes..."></textarea>
                     </div>
 
                     <div class="form-group">
-                        <label style="color: var(--danger-color);">O que eu sinto mais dificuldade ou não compreendi?</label>
-                        <textarea id="aluno-dificuldade" rows="3" placeholder="Ex: Tenho muita dificuldade em fazer balanceamento de equações e estequiometria..."></textarea>
+                        <label style="color: var(--danger-color);">O que sinto maior dificuldade ou bloqueio?</label>
+                        <textarea id="aluno-dificuldade" rows="3" placeholder="Ex: Não consigo aplicar a fórmula de balanceamento químico..."></textarea>
                     </div>
 
                     <button class="btn" style="width: 100%; background-color: var(--secondary-color);" onclick="gerarCronogramaAdaptativoPorFeedback()">
-                        ✨ Gerar Cronograma Adaptativo de Estudos
+                        ✨ Processar e Atualizar Cronograma Emergencial
                     </button>
 
                     <div id="retorno-cronograma-ia" style="margin-top: 20px; display: none;">
                         <div class="info-box" style="border-left: 5px solid var(--primary-color); background: #f0f4f8;">
-                            <h4 style="color: var(--primary-color); margin-bottom: 5px;">🎯 Diagnóstico do Tutor de IA</h4>
+                            <h4 style="color: var(--primary-color); margin-bottom: 5px;">🎯 Diagnóstico Integrado (Professor × Aluno)</h4>
                             <div id="ia-diagnostico-texto" style="font-size: 13px; line-height: 1.5;"></div>
                         </div>
 
-                        <h4>📅 Grade Emergencial Recomendada</h4>
+                        <h4>📅 Grade Dinâmica de Estudos (Próximos 15 dias)</h4>
                         <table>
                             <thead>
                                 <tr style="background-color: #f2f2f2;">
-                                    <th>Foco do Estudo</th>
-                                    <th>Ação Recomendada</th>
-                                    <th style="text-align: center;">Complexidade</th>
+                                    <th>Meta Acadêmica</th>
+                                                                        <th>Foco de Estudo</th>
+                                    <th>Recomendação Prática</th>
                                 </tr>
                             </thead>
-                            <tbody id="tabela-cronograma-ia-corpo"></tbody>
+                            <tbody id="ia-cronograma-corpo"></tbody>
                         </table>
                     </div>
                 </div>
 
                 <div id="tab-comunicado" class="tab-content">
-                    <h3>✉️ Comunicados Gerados de Forma Autônoma</h3>
-                    <p style="font-size: 13px; color:#666; margin-bottom: 15px;">Modelos prontos baseados na frequência e médias computadas.</p>
-                    
-                    <strong>✉️ Canal de Envio: WhatsApp (Curto e direto)</strong>
-                    <div class="comunicado-box">
-                        <button class="btn-copy" onclick="copiarComunicado('comunicado-whatsapp')">Copiar</button>
-                        <div id="comunicado-whatsapp"></div>
+                    <h3>✉️ Comunicados Personalizados (IA)</h3>
+                    <p style="font-size: 13px; color:#666; margin-bottom: 15px;">Selecione o tom do comunicado para os responsáveis ou para o próprio estudante de acordo com a situação atual.</p>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                        <button class="btn" style="background-color: var(--primary-color);" onclick="gerarComunicado('acolhedor')">Acolhedor & Preventivo</button>
+                        <button class="btn btn-danger" onclick="gerarComunicado('urgente')">Alerta Urgente</button>
+                        <button class="btn btn-secondary" onclick="gerarComunicado('elogio')">Reconhecimento & Elogio</button>
                     </div>
-
-                    <strong style="display: block; margin-top: 20px;">✉️ Canal de Envio: E-mail (Institucional)</strong>
                     <div class="comunicado-box">
-                        <button class="btn-copy" onclick="copiarComunicado('comunicado-email')">Copiar</button>
-                        <div id="comunicado-email"></div>
+                        <button class="btn-copy" onclick="copiarComunicado()">Copiar</button>
+                        <div id="comunicado-texto">Gere um comunicado usando um dos botões acima...</div>
                     </div>
                 </div>
             </div>
@@ -514,721 +525,893 @@
     </div>
 
     <script>
-        // LISTA INICIAL DE DISCIPLINAS
-        let disciplinasGerais = [
-            { id: "portugues", label: "L. Portuguesa" },
-            { id: "literatura", label: "Literatura" },
-            { id: "redacao", label: "Redação" },
-            { id: "matematica", label: "Matemática" },
-            { id: "fisica", label: "Física" },
-            { id: "quimica", label: "Química" },
-            { id: "biologia", label: "Biologia" },
-            { id: "historia", label: "História" },
-            { id: "geografia", label: "Geografia" },
-            { id: "filosofia", label: "Filosofia" },
-            { id: "sociologia", label: "Sociologia" },
-            { id: "arte", label: "Arte" },
-            { id: "educacao-fisica", label: "Ed. Física" },
-            { id: "ingles", label: "Inglês" },
-            { id: "financeira", label: "Ed. Financeira" },
-            { id: "projeto-vida", label: "Proj. de Vida" }
-        ];
-
-        let disciplinasTecnicas = {
-            "Admin": [
-                { id: "tec1", label: "Gestão de Processos" },
-                { id: "tec2", label: "Economia Aplicada" }
-            ],
-            "Agro": [
-                { id: "tec1", label: "Zootecnia Geral" },
-                { id: "tec2", label: "Solos e Irrigação" }
-            ],
-            "Mkt": [
-                { id: "tec1", label: "Comportamento" },
-                { id: "tec2", label: "Marketing Digital" }
-            ]
+        // --- CONFIGURAÇÕES E ESTADO GLOBAL ---
+        let disciplinasGerais = ["Português", "Matemática", "História", "Geografia", "Física", "Química", "Biologia"];
+        const disciplinasTecnicasPorCurso = {
+            "Administração": ["Gestão Financeira", "Empreendedorismo", "Teoria Geral da Administração"],
+            "Agropecuária": ["Zootecnia", "Solos e Nutrição", "Fitotecnia"],
+            "Marketing": ["Comportamento do Consumidor", "Marketing Digital", "Pesquisa de Mercado"]
         };
 
-        const topicosFocoDisciplinas = {
-            "portugues": "Sintaxe da oração, coesão textual e interpretação de textos modernos.",
-            "literatura": "Escolas literárias brasileiras, análise de poemas e contexto histórico.",
-            "redacao": "Estrutura do texto dissertativo-argumentativo, proposta de intervenção e repertório.",
-            "matematica": "Álgebra básica, equações de 2º grau e funções matemáticas.",
-            "fisica": "Cinemática escalar, leis de Newton e interpretação de gráficos físicos.",
-            "quimica": "Distribuição eletrônica, tabela periódica e ligações químicas básicas.",
-            "biologia": "Citologia básica, divisão celular (mitose/meiose) e ecologia geral.",
-            "historia": "História do Brasil colonial e eixos econômicos do século XVIII.",
-            "geografia": "Geografia física, relevo, clima e impacto da urbanização nas grandes metrópoles.",
-            "filosofia": "Introdução ao pensamento socrático e filosofia política moderna.",
-            "sociologia": "Teorias sociológicas clássicas (Marx, Durkheim e Weber) e cidadania.",
-            "arte": "Movimentos de vanguarda europeia e arte contemporânea brasileira.",
-            "educacao-fisica": "Fisiologia do exercício, saúde preventiva e esportes coletivos.",
-            "ingles": "Leitura instrumental, vocabulário técnico e tempos verbais fundamentais.",
-            "financeira": "Orçamento familiar, juros simples vs. compostos e planejamento financeiro.",
-            "projeto-vida": "Autoavaliação de habilidades socioemocionais e planejamento de carreira.",
-            "tec1": "Mapeamento de processos operacionais e ferramentas de gestão (5W2H / PDCA).",
-            "tec2": "Lei da oferta e demanda, macroeconomia básica e análise de microcenários locais."
-        };
-
-        // BASE DE DADOS INTEGRADA
+        // Banco de dados em memória (inicializado com alguns dados fictícios para fins de demonstração)
         let alunos = [
             {
-                nome: "Lucas Sousa",
+                nome: "Mariana Souza Santos",
                 turma: "1º Ano A",
-                frequencia: 92,
-                notesCount: 2,
-                notas: {
-                    b1: { portugues: 8.5, literatura: 8.0, redacao: 8.5, matematica: 7.2, fisica: 7.0, quimica: 7.5, biologia: 8.0, historia: 8.0, geografia: 7.5, filosofia: 8.0, sociologia: 8.5, arte: 9.0, "educacao-fisica": 9.5, ingles: 8.0, financeira: 8.5, "projeto-vida": 9.0, tec1: 9.0, tec2: 8.0 },
-                    b2: { portugues: 8.0, literatura: 7.5, redacao: 8.0, matematica: 6.8, fisica: 7.2, quimica: 7.0, biologia: 7.8, historia: 8.5, geografia: 7.0, filosofia: 8.5, sociologia: 8.0, arte: 8.5, "educacao-fisica": 9.0, ingles: 8.5, financeira: 8.0, "projeto-vida": 9.5, tec1: 8.5, tec2: 7.5 }
-                }
-            },
-            {
-                nome: "Beatriz Oliveira",
-                turma: "1º Ano B",
                 frequencia: 72,
-                notesCount: 2,
+                bimestreAtivo: "b2",
                 notas: {
-                    b1: { portugues: 5.5, literatura: 5.0, redacao: 5.5, matematica: 4.8, fisica: 4.0, quimica: 4.5, biologia: 5.0, historia: 6.0, geografia: 5.0, filosofia: 5.5, sociologia: 5.0, arte: 7.0, "educacao-fisica": 8.0, ingles: 5.0, financeira: 4.5, "projeto-vida": 6.0, tec1: 5.0, tec2: 4.5 },
-                    b2: { portugues: 5.0, literatura: 4.5, redacao: 5.0, matematica: 4.2, fisica: 4.5, quimica: 4.0, biologia: 4.8, historia: 5.5, geografia: 4.8, filosofia: 5.0, sociologia: 5.5, arte: 6.5, "educacao-fisica": 7.5, ingles: 5.5, financeira: 4.0, "projeto-vida": 5.5, tec1: 4.8, tec2: 4.0 }
-                }
+                    b1: { "Português": 7.5, "Matemática": 6.0, "História": 8.0, "Geografia": 7.0, "Física": 5.5, "Química": 6.5, "Biologia": 8.0, "Gestão Financeira": 7.0, "Empreendedorismo": 8.5, "Teoria Geral da Administração": 8.0 },
+                    b2: { "Português": 5.0, "Matemática": 4.5, "História": 7.0, "Geografia": 6.0, "Física": 4.0, "Química": 5.0, "Biologia": 7.5, "Gestão Financeira": 5.5, "Empreendedorismo": 8.0, "Teoria Geral da Administração": 6.0 }
+                },
+                feedbackAluno: { entendeu: "Fácil entendimento em Empreendedorismo", dificuldade: "Dificuldade extrema em equações de Física e Lógica Matemática" }
             },
             {
-                nome: "Carlos Eduardo Silva",
-                turma: "2º Ano A",
-                frequencia: 88,
-                notesCount: 1,
+                nome: "Carlos Eduardo Lima",
+                turma: "3º Ano A",
+                frequencia: 95,
+                bimestreAtivo: "b2",
                 notas: {
-                    b1: { portugues: 7.0, literatura: 7.5, redacao: 7.0, matematica: 6.5, fisica: 6.0, quimica: 6.8, biologia: 7.0, historia: 7.2, geografia: 8.0, filosofia: 7.0, sociologia: 7.5, arte: 8.0, "educacao-fisica": 8.5, ingles: 7.0, financeira: 7.5, "projeto-vida": 8.0, tec1: 7.5, tec2: 7.0 }
-                }
+                    b1: { "Português": 8.5, "Matemática": 9.0, "História": 8.5, "Geografia": 9.0, "Física": 8.0, "Química": 8.5, "Biologia": 9.0, "Comportamento do Consumidor": 9.5, "Marketing Digital": 10.0, "Pesquisa de Mercado": 9.0 },
+                    b2: { "Português": 9.0, "Matemática": 8.5, "História": 8.0, "Geografia": 9.5, "Física": 8.5, "Química": 9.0, "Biologia": 9.5, "Comportamento do Consumidor": 9.0, "Marketing Digital": 9.5, "Pesquisa de Mercado": 9.0 }
+                },
+                feedbackAluno: { entendeu: "", dificuldade: "" }
             }
         ];
 
+        let filtroStatusAtual = 'Todos';
         let chartTurmasInstance = null;
-        let chartAlunoInstance = null;
-        let statusFiltroAtual = "Todos";
-        let alunoModalAbertoIndex = null;
+        let chartAlunoModalInstance = null;
+        let alunoSelecionadoIndex = null;
 
+        // --- INICIALIZAÇÃO ---
         window.onload = function() {
             ajustarCamposDisciplinas();
-            renderizarMétricas();
-            filtrarEAtualizar();
-            try {
-                gerarGraficoComparativo();
-            } catch (e) {
-                console.warn("Falha de rede ou Chart.js indisponível.", e);
-            }
+            atualizarPainel();
         };
 
-        // ADICIONAR DISCIPLINAS DINAMICAMENTE
-        function adicionarDisciplinaDinamicamente() {
-            const nome = document.getElementById('nova-disc-nome').value.trim();
-            const tipo = document.getElementById('nova-disc-tipo').value;
-
-            if (!nome) {
-                alert("Por favor, digite um nome válido para a disciplina!");
-                return;
-            }
-
-            const formatId = nome.toLowerCase()
-                .normalize("NFD").replace(/[\u0300-\u036f]/g, "") 
-                .replace(/[^a-z0-9]/g, "-");                     
-
-            if (tipo === "geral") {
-                if (disciplinasGerais.some(d => d.id === formatId)) {
-                    alert("Esta disciplina geral já existe!");
-                    return;
-                }
-                disciplinasGerais.push({ id: formatId, label: nome });
-            } else {
-                for (let key in disciplinasTecnicas) {
-                    if (disciplinasTecnicas[key].some(d => d.id === formatId)) {
-                        alert("Esta disciplina técnica já existe!");
-                        return;
-                    }
-                    disciplinasTecnicas[key].push({ id: formatId, label: nome });
-                }
-            }
-
-            document.getElementById('nova-disc-nome').value = "";
-            ajustarCamposDisciplinas();
-            alert(`Sucesso! A disciplina "${nome}" foi incluída no seu currículo.`);
-        }
-
-        function obterDadosSegmento(turma) {
-            if (turma.includes("Administração") || turma.includes("A")) return { key: "Admin", label: "Componentes Técnicos (Administração)" };
-            if (turma.includes("Agropecuária") || turma.includes("B")) return { key: "Agro", label: "Componentes Técnicos (Agropecuária)" };
-            return { key: "Mkt", label: "Componentes Técnicos (Marketing)" };
+        // --- MANIPULAÇÃO DINÂMICA DE DISCIPLINAS NO FORMULÁRIO ---
+        function obterCursoDaTurma(turma) {
+            if (turma.includes("Administração") || turma.includes("Ano A")) return "Administração";
+            if (turma.includes("Agropecuária") || turma.includes("Ano B")) return "Agropecuária";
+            return "Marketing";
         }
 
         function ajustarCamposDisciplinas() {
-            const turmaSelecionada = document.getElementById('turma').value;
-            const config = obterDadosSegmento(turmaSelecionada);
-            
-            document.getElementById('label-disciplina-tecnica').innerText = config.label;
+            const turma = document.getElementById("turma").value;
+            const curso = obterCursoDaTurma(turma);
 
-            // Renderizar Geral
-            let htmlGerais = "";
-            disciplinasGerais.forEach(d => {
-                htmlGerais += `<div class="form-group" style="display:inline-block; width:48%; margin-right:2%;"><label style="font-size:12px;">${d.label}</label><input type="number" id="nota-${d.id}" min="0" max="10" step="0.1" placeholder="0.0"></div>`;
+            // Renderizar Gerais
+            const containerGerais = document.getElementById("container-disciplinas-gerais");
+            containerGerais.innerHTML = "";
+            disciplinasGerais.forEach(disc => {
+                containerGerais.appendChild(criarCampoNota(disc));
             });
-            document.getElementById('container-disciplinas-gerais').innerHTML = htmlGerais;
 
             // Renderizar Técnicas
-            let htmlTecnicas = "";
-            const tecs = disciplinasTecnicas[config.key] || [];
-            tecs.forEach(d => {
-                htmlTecnicas += `<div class="form-group" style="display:inline-block; width:48%; margin-right:2%;"><label style="font-size:12px;">${d.label}</label><input type="number" id="nota-${d.id}" min="0" max="10" step="0.1" placeholder="0.0"></div>`;
+            const labelTecnica = document.getElementById("label-disciplina-tecnica");
+            labelTecnica.textContent = `Componentes Técnicos (${curso})`;
+            const containerTecnicas = document.getElementById("container-disciplinas-tecnicas");
+            containerTecnicas.innerHTML = "";
+            
+            const tecnicas = disciplinasTecnicasPorCurso[curso] || [];
+            tecnicas.forEach(disc => {
+                containerTecnicas.appendChild(criarCampoNota(disc));
             });
-            document.getElementById('container-disciplinas-tecnicas').innerHTML = htmlTecnicas;
         }
 
-        function calcularMediaGeralAluno(aluno) {
-            let soma = 0; let total = 0;
-            for (let b in aluno.notas) {
-                for (let disc in aluno.notas[b]) {
-                    soma += aluno.notas[b][disc];
-                    total++;
+        function criarCampoNota(nomeDisciplina, valor = "") {
+            const div = document.createElement("div");
+            div.className = "form-group";
+            div.style.display = "flex";
+            div.style.justify = "space-between";
+            div.style.alignItems = "center";
+            div.style.gap = "10px";
+            div.style.marginBottom = "8px";
+
+            const label = document.createElement("span");
+            label.textContent = nomeDisciplina;
+            label.style.fontSize = "13px";
+            label.style.flex = "1";
+
+            const input = document.createElement("input");
+            input.type = "number";
+            input.step = "0.1";
+            input.min = "0";
+            input.max = "10";
+            input.placeholder = "0.0";
+            input.style.width = "80px";
+            input.dataset.disciplina = nomeDisciplina;
+            input.value = valor;
+            input.required = true;
+
+            div.appendChild(label);
+            div.appendChild(input);
+            return div;
+        }
+
+        function adicionarDisciplinaDinamicamente() {
+            const nomeInput = document.getElementById("nova-disc-nome");
+            const tipo = document.getElementById("nova-disc-tipo").value;
+            const nome = nomeInput.value.trim();
+
+            if (!nome) {
+                alert("Insira um nome válido para a disciplina.");
+                return;
+            }
+
+            if (tipo === "geral") {
+                if (!disciplinasGerais.includes(nome)) disciplinasGerais.push(nome);
+            } else {
+                // Adiciona para todos os cursos para fins de simplificação
+                Object.keys(disciplinasTecnicasPorCurso).forEach(curso => {
+                    if (!disciplinasTecnicasPorCurso[curso].includes(nome)) {
+                        disciplinasTecnicasPorCurso[curso].push(nome);
+                    }
+                });
+            }
+
+            nomeInput.value = "";
+            ajustarCamposDisciplinas();
+            alert(`Disciplina "${nome}" adicionada com sucesso!`);
+        }
+
+        // --- CÁLCULO DAS MÉTRICAS E PROCESSAMENTO DE DADOS (IA/PREVENTIVO) ---
+        function calcularISEDoAluno(aluno) {
+            // ISE (Índice de Sucesso Escolar): Combinação ponderada de Frequência (40%) e Médias Recentes (60%)
+            const bimestreAtivo = aluno.bimestreAtivo || "b1";
+            const notasBimestre = aluno.notas[bimestreAtivo] || {};
+            
+            const disciplinas = Object.keys(notasBimestre);
+            if (disciplinas.length === 0) return { ise: 100, mediaGeral: 100, status: "Bom", pioresDisciplinas: [] };
+
+            let somaNotas = 0;
+            let pioresDisciplinas = [];
+
+            disciplinas.forEach(d => {
+                const nota = parseFloat(notasBimestre[d]) || 0;
+                somaNotas += nota;
+                if (nota < 6.0) {
+                    pioresDisciplinas.push({ nome: d, nota: nota });
                 }
+            });
+
+            const mediaGeral = (somaNotas / disciplinas.length);
+            const freqFator = aluno.frequencia / 100; // Escala 0 a 1
+            const mediaFator = mediaGeral / 10; // Escala 0 a 1
+
+            const ise = ((freqFator * 0.4) + (mediaFator * 0.6)) * 100;
+
+            let status = "Bom";
+            if (ise < 60 || aluno.frequencia < 75) {
+                status = "Crítico";
+            } else if (ise < 75 || pioresDisciplinas.length > 0) {
+                status = "Atenção";
             }
-            return total > 0 ? (soma / total) : 0;
+
+            pioresDisciplinas.sort((a, b) => a.nota - b.nota);
+
+            return {
+                ise: Math.round(ise),
+                mediaGeral: mediaGeral.toFixed(1),
+                status: status,
+                pioresDisciplinas: pioresDisciplinas
+            };
         }
 
-        function determinarStatusFrequenciaMedia(aluno) {
-            const media = calcularMediaGeralAluno(aluno);
-            const freq = aluno.frequencia;
-            if (media < 5.5 || freq < 75) return { label: "Crítico", class: "status-critico" };
-            if (media < 7.0 || freq < 85) return { label: "Atenção", class: "status-atencao" };
-            return { label: "Bom", class: "status-bom" };
-        }
+        // --- OPERAÇÕES DE CADASTRO E EDICÃO ---
+        function cadastrarAluno(event) {
+            event.preventDefault();
 
-        function renderizarMétricas() {
-            let totalISE = 0; let criticos = 0;
-            alunos.forEach(a => {
-                const media = calcularMediaGeralAluno(a);
-                if (determinarStatusFrequenciaMedia(a).label === "Crítico") criticos++;
-                totalISE += (media * 10) * 0.4 + a.frequencia * 0.6;
-            });
+            const editIndex = parseInt(document.getElementById("edit-index").value);
+            const nome = document.getElementById("nome").value.trim();
+            const turma = document.getElementById("turma").value;
+            const frequencia = parseFloat(document.getElementById("frequencia").value);
+            const bimestreAlvo = document.getElementById("bimestre-alvo").value;
 
-            const iseMedio = alunos.length > 0 ? (totalISE / alunos.length).toFixed(1) : 0;
-            document.getElementById('ise-val').innerText = `${iseMedio}%`;
-            const iseBar = document.getElementById('ise-graph-bar');
-            iseBar.style.width = `${iseMedio}%`;
-            iseBar.style.backgroundColor = iseMedio >= 80 ? '#2ecc71' : iseMedio >= 65 ? '#f39c12' : '#e74c3c';
+            // Coleta todas as notas dos inputs renderizados
+            const notasColetadas = {};
+            const inputsGerais = document.querySelectorAll("#container-disciplinas-gerais input");
+            const inputsTecnicos = document.querySelectorAll("#container-disciplinas-tecnicas input");
 
-            document.getElementById('total-alunos').innerText = alunos.length;
-            document.getElementById('casos-risco').innerText = criticos;
+            inputsGerais.forEach(inp => { notasColetadas[inp.dataset.disciplina] = parseFloat(inp.value) || 0; });
+            inputsTecnicos.forEach(inp => { notasColetadas[inp.dataset.disciplina] = parseFloat(inp.value) || 0; });
 
-            const mediasTurmas = calcularMediasPorTurma();
-            let htmlMedias = '';
-            for (let turma in mediasTurmas) {
-                htmlMedias += `<div class="status-badge status-bom" style="background:#eef2f7; color:#333; margin-right:5px;"><strong>${turma}:</strong> Nota ${mediasTurmas[turma].toFixed(1)}</div>`;
-            }
-            document.getElementById('container-medias-turma').innerHTML = htmlMedias;
-        }
+            if (editIndex === -1) {
+                // Criar Novo Aluno
+                const novoAluno = {
+                    nome: nome,
+                    turma: turma,
+                    frequencia: frequencia,
+                    bimestreAtivo: bimestreAlvo,
+                    notas: {
+                        b1: bimestreAlvo === "b1" ? { ...notasColetadas } : {},
+                        b2: bimestreAlvo === "b2" ? { ...notasColetadas } : {}
+                    },
+                    feedbackAluno: { entendeu: "", dificuldade: "" }
+                };
+                
+                // Se o lançamento for b2 mas b1 estiver vazio, preencher com as mesmas notas como fallback inicial
+                if(bimestreAlvo === "b2") {
+                    novoAluno.notas.b1 = { ...notasColetadas };
+                } else {
+                    novoAluno.notas.b2 = { ...notasColetadas };
+                }
 
-        function calcularMediasPorTurma() {
-            let agrupado = {};
-            alunos.forEach(a => {
-                const m = calcularMediaGeralAluno(a);
-                if (!agrupado[a.turma]) agrupado[a.turma] = { soma: 0, count: 0 };
-                agrupado[a.turma].soma += m; agrupado[a.turma].count++;
-            });
-            let medias = {};
-            for (let t in agrupado) medias[t] = agrupado[t].soma / agrupado[t].count;
-            return medias;
-        }
-
-        function cadastrarAluno(e) {
-            e.preventDefault();
-            const editIndex = parseInt(document.getElementById('edit-index').value);
-            const nome = document.getElementById('nome').value;
-            const turma = document.getElementById('turma').value;
-            const frequencia = parseInt(document.getElementById('frequencia').value);
-            const bAlvo = document.getElementById('bimestre-alvo').value;
-            const config = obterDadosSegmento(turma);
-
-            const blocoNotas = {};
-
-            disciplinasGerais.forEach(d => {
-                const inputEl = document.getElementById(`nota-${d.id}`);
-                blocoNotas[d.id] = inputEl ? (parseFloat(inputEl.value) || 0) : 0;
-            });
-
-            const tecs = disciplinasTecnicas[config.key] || [];
-            tecs.forEach(d => {
-                const inputEl = document.getElementById(`nota-${d.id}`);
-                blocoNotas[d.id] = inputEl ? (parseFloat(inputEl.value) || 0) : 0;
-            });
-
-            if (editIndex >= 0) {
+                alunos.push(novoAluno);
+            } else {
+                // Editar Existente
                 alunos[editIndex].nome = nome;
                 alunos[editIndex].turma = turma;
                 alunos[editIndex].frequencia = frequencia;
-                alunos[editIndex].notas[bAlvo] = blocoNotas;
-            } else {
-                const alunoExistente = alunos.find(a => a.nome.toLowerCase() === nome.toLowerCase() && a.turma === turma);
-                if (alunoExistente) {
-                    alunoExistente.frequencia = frequencia;
-                    alunoExistente.notas[bAlvo] = blocoNotas;
-                } else {
-                    let novoAluno = { nome: nome, turma: turma, frequencia: frequencia, notas: {}, notesCount: 1 };
-                    novoAluno.notas[bAlvo] = blocoNotas;
-                    alunos.push(novoAluno);
-                }
+                alunos[editIndex].bimestreAtivo = bimestreAlvo;
+                alunos[editIndex].notas[bimestreAlvo] = { ...notasColetadas };
             }
-            limparFormulario(); renderizarMétricas(); filtrarEAtualizar(); 
-            try { gerarGraficoComparativo(); } catch(e) {}
+
+            limparFormulario();
+            atualizarPainel();
+        }
+
+        function prepararEdicao(index) {
+            const aluno = alunos[index];
+            document.getElementById("edit-index").value = index;
+            document.getElementById("nome").value = aluno.nome;
+            document.getElementById("turma").value = aluno.turma;
+            document.getElementById("frequencia").value = aluno.frequencia;
+            document.getElementById("bimestre-alvo").value = aluno.bimestreAtivo;
+            document.getElementById("form-titulo").textContent = "✏️ Editando Aluno";
+            document.getElementById("btn-cancelar").style.display = "block";
+
+            ajustarCamposDisciplinas();
+
+            // Atribuir valores salvos aos inputs correspondentes do formulário
+            const notasSalvas = aluno.notas[aluno.bimestreAtivo] || {};
+            setTimeout(() => {
+                const inputs = document.querySelectorAll("#cadastro-form input[data-disciplina]");
+                inputs.forEach(inp => {
+                    const disc = inp.dataset.disciplina;
+                    if (notasSalvas[disc] !== undefined) {
+                        inp.value = notasSalvas[disc];
+                    }
+                });
+            }, 50);
+        }
+
+        function removerAluno(index) {
+            if (confirm("Deseja realmente remover os registros deste aluno?")) {
+                alunos.splice(index, 1);
+                atualizarPainel();
+            }
         }
 
         function limparFormulario() {
-            document.getElementById('cadastro-form').reset();
-            document.getElementById('edit-index').value = "-1";
-            document.getElementById('form-titulo').innerText = "📝 Matrícula e Notas";
-            document.getElementById('btn-cancelar').style.display = "none";
+            document.getElementById("cadastro-form").reset();
+            document.getElementById("edit-index").value = "-1";
+            document.getElementById("form-titulo").textContent = "📝 Matrícula e Notas";
+            document.getElementById("btn-cancelar").style.display = "none";
             ajustarCamposDisciplinas();
         }
 
+        // --- FILTRAGEM, TABELA E MÉTRICAS ---
         function definirFiltroStatus(status) {
-            statusFiltroAtual = status;
+            filtroStatusAtual = status;
+            
+            // Ajustar destaques visuais nos botões
+            document.getElementById("btn-filtro-todos").className = status === 'Todos' ? 'btn' : 'btn btn-secondary';
+            document.getElementById("btn-filtro-atencao").className = status === 'Atenção' ? 'btn' : 'btn btn-secondary';
+            document.getElementById("btn-filtro-critico").className = status === 'Crítico' ? 'btn' : 'btn btn-secondary';
+            
+            if(status === 'Atenção') {
+                document.getElementById("btn-filtro-atencao").style.backgroundColor = "var(--warning-color)";
+                document.getElementById("btn-filtro-atencao").style.color = "#333";
+            }
+            
             filtrarEAtualizar();
         }
 
         function filtrarEAtualizar() {
-            const busca = document.getElementById('busca-nome').value.toLowerCase();
-            const turmaSel = document.getElementById('filtro-turma').value;
+            const buscaNome = document.getElementById("busca-nome").value.toLowerCase();
+            const filtroTurma = document.getElementById("filtro-turma").value;
 
-            let filtrados = alunos.filter((aluno, index) => {
-                aluno.indexOriginal = index;
-                const atendeBusca = aluno.nome.toLowerCase().includes(busca);
-                const atendeTurma = (turmaSel === "Todos" || aluno.turma === turmaSel);
-                const atendeStatus = (statusFiltroAtual === "Todos" || determinarStatusFrequenciaMedia(aluno).label === statusFiltroAtual);
-                return atendeBusca && atendeTurma && atendeStatus;
+            const alunosFiltrados = alunos.map((aluno, index) => {
+                const diagnostico = calcularISEDoAluno(aluno);
+                return { ...aluno, indexOriginal: index, diagnostico: diagnostico };
+            }).filter(item => {
+                const bateNome = item.nome.toLowerCase().includes(buscaNome);
+                const bateTurma = filtroTurma === "Todos" || item.turma === filtroTurma;
+                const bateStatus = filtroStatusAtual === "Todos" || item.diagnostico.status === filtroStatusAtual;
+                return bateNome && bateTurma && bateStatus;
             });
 
-            let turmasAgrupadas = {};
-            filtrados.forEach(a => {
-                if (!turmasAgrupadas[a.turma]) turmasAgrupadas[a.turma] = [];
-                turmasAgrupadas[a.turma].push(a);
+            renderizarTabelaAgrupada(alunosFiltrados);
+        }
+
+        function renderizarTabelaAgrupada(alunosLista) {
+            const container = document.getElementById("tabela-conteudo-agrupado");
+            
+            if(alunosLista.length === 0) {
+                container.innerHTML = `<p style="text-align: center; color: #666; padding: 20px;">Nenhum aluno encontrado para os filtros selecionados.</p>`;
+                return;
+            }
+
+            // Agrupa por turma
+            const turmasAgrupadas = {};
+            alunosLista.forEach(aluno => {
+                if(!turmasAgrupadas[aluno.turma]) {
+                    turmasAgrupadas[aluno.turma] = [];
+                }
+                turmasAgrupadas[aluno.turma].push(aluno);
             });
 
             let htmlCompleto = "";
-            for (let turma in turmasAgrupadas) {
-                let somaTurma = 0;
-                turmasAgrupadas[turma].forEach(a => { somaTurma += calcularMediaGeralAluno(a); });
-                const mediaTurma = (somaTurma / turmasAgrupadas[turma].length).toFixed(1);
-
+            Object.keys(turmasAgrupadas).sort().forEach(turma => {
                 htmlCompleto += `
-                    <div style="background-color: #eef2f7; padding: 10px; font-weight: bold; margin-top: 15px; border-radius: 4px; display: flex; justify-content: space-between;">
-                        <span>🏫 ${turma}</span><span>Média Geral: ${mediaTurma}</span>
-                    </div>
+                    <h4 style="margin-top: 20px; color: var(--secondary-color); border-bottom: 2px solid #ddd; padding-bottom: 5px;">${turma}</h4>
                     <table>
                         <thead>
-                            <tr><th>Estudante</th><th>Presença</th><th>Média Geral</th><th>Bimestres</th><th>Status</th><th style="text-align: right;">Ações</th></tr>
+                            <tr>
+                                <th>Nome do Estudante</th>
+                                <th style="text-align: center;">Frequência</th>
+                                <th style="text-align: center;">Média Geral (Recente)</th>
+                                <th style="text-align: center;">ISE (IA)</th>
+                                <th style="text-align: center;">Status de Risco</th>
+                                <th style="text-align: center;">Ações</th>
+                            </tr>
                         </thead>
-                        <tbody>`;
+                        <tbody>
+                `;
 
                 turmasAgrupadas[turma].forEach(aluno => {
-                    const status = determinarStatusFrequenciaMedia(aluno);
-                    const media = calcularMediaGeralAluno(aluno).toFixed(1);
-                    const bimestresAtivos = Object.keys(aluno.notas).map(b => b.toUpperCase()).join(', ');
+                    let statusClass = "status-bom";
+                    if (aluno.diagnostico.status === "Crítico") statusClass = "status-critico";
+                    if (aluno.diagnostico.status === "Atenção") statusClass = "status-atencao";
+
                     htmlCompleto += `
                         <tr>
                             <td><span class="nome-clicavel" onclick="abrirModal(${aluno.indexOriginal})">${aluno.nome}</span></td>
-                            <td>${aluno.frequencia}%</td><td>${media}</td><td>${bimestresAtivos}</td>
-                            <td><span class="status-badge ${status.class}">${status.label}</span></td>
-                            <td style="text-align: right;">
-                                <button class="btn" style="padding: 5px 8px; font-size:12px;" onclick="editarAluno(${aluno.indexOriginal})">✏️</button>
-                                <button class="btn btn-danger" style="padding: 5px 8px; font-size:12px;" onclick="deletarAluno(${aluno.indexOriginal})">🗑️</button>
+                            <td style="text-align: center;">${aluno.frequencia}%</td>
+                            <td style="text-align: center; font-weight: bold;">${aluno.diagnostico.mediaGeral}</td>
+                            <td style="text-align: center; color: var(--primary-color); font-weight: bold;">${aluno.diagnostico.ise}%</td>
+                            <td style="text-align: center;"><span class="status-badge ${statusClass}">${aluno.diagnostico.status}</span></td>
+                            <td style="text-align: center;">
+                                <button class="btn btn-secondary" style="padding: 5px 10px; font-size: 11px;" onclick="prepararEdicao(${aluno.indexOriginal})">✏️</button>
+                                <button class="btn btn-danger" style="padding: 5px 10px; font-size: 11px;" onclick="removerAluno(${aluno.indexOriginal})">🗑️</button>
                             </td>
-                        </tr>`;
+                        </tr>
+                    `;
                 });
+
                 htmlCompleto += `</tbody></table>`;
-            }
-            document.getElementById('tabela-conteudo-agrupado').innerHTML = htmlCompleto || "<p style='text-align:center; padding: 20px; color:#666;'>Nenhum aluno encontrado.</p>";
-        }
-
-        function editarAluno(index) {
-            const aluno = alunos[index];
-            document.getElementById('edit-index').value = index;
-            document.getElementById('nome').value = aluno.nome;
-            document.getElementById('turma').value = aluno.turma;
-            document.getElementById('frequencia').value = aluno.frequencia;
-            ajustarCamposDisciplinas();
-
-            const bAlvo = Object.keys(aluno.notas).includes('b2') ? 'b2' : Object.keys(aluno.notas)[0] || 'b1';
-            document.getElementById('bimestre-alvo').value = bAlvo;
-
-            if (aluno.notas[bAlvo]) {
-                const notas = aluno.notas[bAlvo];
-                disciplinasGerais.forEach(d => {
-                    const el = document.getElementById(`nota-${d.id}`);
-                    if (el) el.value = notas[d.id] !== undefined ? notas[d.id] : '';
-                });
-                const config = obterDadosSegmento(aluno.turma);
-                const tecs = disciplinasTecnicas[config.key] || [];
-                tecs.forEach(d => {
-                    const el = document.getElementById(`nota-${d.id}`);
-                    if (el) el.value = notas[d.id] !== undefined ? notas[d.id] : '';
-                });
-            }
-            document.getElementById('form-titulo').innerText = "✏️ Editando Notas de " + aluno.nome;
-            document.getElementById('btn-cancelar').style.display = "inline-block";
-        }
-
-        function deletarAluno(index) {
-            if (confirm("Deseja realmente remover os dados pedagógicos deste aluno?")) {
-                alunos.splice(index, 1); renderizarMétricas(); filtrarEAtualizar(); 
-                try { gerarGraficoComparativo(); } catch(e) {}
-            }
-        }
-
-        function gerarGraficoComparativo() {
-            if (typeof Chart === 'undefined') return;
-            const canvas = document.getElementById('chartTurmas');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const turmasNomes = ["1º Ano A", "1º Ano B", "2º Ano A", "2º Ano B", "3º Ano A", "3º Ano B"];
-            let mediasVal = []; let presencasVal = [];
-
-            turmasNomes.forEach(turma => {
-                const alunosTurma = alunos.filter(a => a.turma === turma);
-                if (alunosTurma.length > 0) {
-                    let somaNotas = 0; let somaFreq = 0;
-                    alunosTurma.forEach(a => { somaNotas += calcularMediaGeralAluno(a); somaFreq += a.frequencia; });
-                    mediasVal.push((somaNotas / alunosTurma.length).toFixed(1));
-                    presencasVal.push((somaFreq / alunosTurma.length).toFixed(0));
-                } else { mediasVal.push(0); presencasVal.push(0); }
             });
 
-            if (chartTurmasInstance) chartTurmasInstance.destroy();
+            container.innerHTML = htmlCompleto;
+        }
 
-            chartTurmasInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: turmasNomes,
-                    datasets: [
-                        { label: 'Média Acadêmica (Base 10)', data: mediasVal, backgroundColor: '#2a5298', yAxisID: 'y' },
-                        { label: 'Frequência Média (%)', data: presencasVal, backgroundColor: '#2ecc71', borderColor: '#2ecc71', borderWidth: 3, type: 'line', fill: false, yAxisID: 'y1' }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { type: 'linear', display: true, position: 'left', min: 0, max: 10 },
-                        y1: { type: 'linear', display: true, position: 'right', min: 0, max: 100, grid: { drawOnChartArea: false } }
-                    }
+        function atualizarPainel() {
+            // Recálculo de Métricas do Dashboard
+            let totalISE = 0;
+            let casosCriticos = 0;
+            const mediasPorTurma = {};
+
+            alunos.forEach(aluno => {
+                const diag = calcularISEDoAluno(aluno);
+                totalISE += diag.ise;
+                if(diag.status === "Crítico") casosCriticos++;
+
+                if(!mediasPorTurma[aluno.turma]) {
+                    mediasPorTurma[aluno.turma] = { soma: 0, count: 0 };
                 }
+                mediasPorTurma[aluno.turma].soma += parseFloat(diag.mediaGeral);
+                mediasPorTurma[aluno.turma].count++;
             });
+
+            const mediaIseGlobal = alunos.length > 0 ? Math.round(totalISE / alunos.length) : 0;
+            
+            document.getElementById("total-alunos").textContent = alunos.length;
+            document.getElementById("casos-risco").textContent = casosCriticos;
+            document.getElementById("ise-val").textContent = `${mediaIseGlobal}%`;
+            
+            const iseBar = document.getElementById("ise-graph-bar");
+            iseBar.style.width = `${mediaIseGlobal}%`;
+            if (mediaIseGlobal < 60) iseBar.style.backgroundColor = "var(--danger-color)";
+            else if (mediaIseGlobal < 75) iseBar.style.backgroundColor = "var(--warning-color)"            else iseBar.style.backgroundColor = "var(--success-color)";
+
+            // Renderização do Widget de Médias por Turma
+            const containerMedias = document.getElementById("container-medias-turma");
+            containerMedias.innerHTML = "";
+            
+            Object.keys(mediasPorTurma).forEach(turma => {
+                const mediaTurmaFinal = (mediasPorTurma[turma].soma / mediasPorTurma[turma].count).toFixed(1);
+                const cardMedia = document.createElement("div");
+                cardMedia.style.padding = "10px 15px";
+                cardMedia.style.border = "1px solid #ddd";
+                cardMedia.style.borderRadius = "4px";
+                cardMedia.style.fontSize = "13px";
+                cardMedia.style.background = "#fafafa";
+                cardMedia.innerHTML = `<strong>${turma}:</strong> ${mediaTurmaFinal}`;
+                containerMedias.appendChild(cardMedia);
+            });
+
+            // Atualiza os Filtros e Lista
+            filtrarEAtualizar();
+            // Atualiza Gráfico de Performance Geral das Turmas
+            construirGraficoGeral(mediasPorTurma);
         }
 
+        // --- EXPORTAR DADOS ---
         function exportarExcel() {
-            let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
-            csvContent += "Estudante;Turma;Frequência;Média Geral;Status\n";
-            alunos.forEach(a => {
-                const media = calcularMediaGeralAluno(a).toFixed(2).replace('.', ',');
-                const status = determinarStatusFrequenciaMedia(a).label;
-                csvContent += `"${a.nome}";"${a.turma}";"${a.frequencia}%";"${media}";"${status}"\n`;
+            if (alunos.length === 0) {
+                alert("Nenhum dado cadastrado para exportar.");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Nome,Turma,Frequencia,Bimestre Ativo,Status de Risco,ISE (%),Media Geral\r\n";
+
+            alunos.forEach(aluno => {
+                const diag = calcularISEDoAluno(aluno);
+                const row = [
+                    `"${aluno.nome}"`,
+                    `"${aluno.turma}"`,
+                    `"${aluno.frequencia}%"`,
+                    `"${aluno.bimestreAtivo}"`,
+                    `"${diag.status}"`,
+                    `"${diag.ise}%"`,
+                    `"${diag.mediaGeral}"`
+                ].join(",");
+                csvContent += row + "\r\n";
             });
+
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "EduVision_Matriz_Alunos.csv");
+            link.setAttribute("download", "edu_vision_preventivo_alunos.csv");
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         }
 
-        // CONTROLE DO MODAL DE DETALHES
-        function abrirModal(index) {
-            alunoModalAbertoIndex = index;
-            const aluno = alunos[index];
-            const status = determinarStatusFrequenciaMedia(aluno);
-            const config = obterDadosSegmento(aluno.turma);
+        // --- CONSTRUTOR DE GRÁFICOS (CHART.JS) ---
+        function construirGraficoGeral(mediasPorTurma) {
+            const ctx = document.getElementById('chartTurmas').getContext('2d');
+            
+            const labels = Object.keys(mediasPorTurma);
+            const dadosMedias = labels.map(t => (mediasPorTurma[t].soma / mediasPorTurma[t].count).toFixed(1));
 
-            // Reseta campos do pronunciamento do aluno ao abrir para evitar misturar dados
-            document.getElementById('aluno-entendeu').value = "";
-            document.getElementById('aluno-dificuldade').value = "";
-            document.getElementById('retorno-cronograma-ia').style.display = "none";
-
-            const mediaGeral = calcularMediaGeralAluno(aluno);
-            let perfilIA = "Desempenho Sob Atenção";
-            if (aluno.frequencia < 75) {
-                perfilIA = "Risco Crítico de Evasão";
-            } else if (mediaGeral >= 8.5) {
-                perfilIA = "Alta Performance Estável";
-            } else if (mediaGeral < 5.5) {
-                perfilIA = "Risco de Reprovação Acadêmica";
+            if (chartTurmasInstance) {
+                chartTurmasInstance.destroy();
             }
 
-            document.getElementById('modal-header-info').innerHTML = `
-                <h1 style="color: var(--primary-color);">${aluno.nome}</h1>
-                <p style="color: #666; margin: 5px 0;">Turma: <strong>${aluno.turma}</strong> | Frequência: <strong>${aluno.frequencia}%</strong></p>
-                <span class="status-badge ${status.class}">${perfilIA}</span>
-            `;
+            chartTurmasInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Média de Notas do Curso/Turma (Bimestre Ativo)',
+                        data: dadosMedias,
+                        backgroundColor: 'rgba(42, 82, 152, 0.75)',
+                        borderColor: 'rgba(30, 60, 114, 1)',
+                        borderWidth: 1.5,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { min: 0, max: 10 }
+                    }
+                }
+            });
+        }
 
-            let totalMateriasValidas = disciplinasGerais.length + (disciplinasTecnicas[config.key] || []).length;
-            let b1Data = aluno.notas.b1 || {};
-            let b2Data = aluno.notas.b2 || {};
+        // --- SISTEMA DE MODAL DETALHADO DO ESTUDANTE ---
+        function abrirModal(index) {
+            alunoSelecionadoIndex = index;
+            const aluno = alunos[index];
+            const diag = calcularISEDoAluno(aluno);
 
-            let somaB1 = Object.keys(b1Data).length > 0 ? Object.values(b1Data).reduce((a, b) => a + b, 0) / totalMateriasValidas : 0;
-            let somaB2 = Object.keys(b2Data).length > 0 ? Object.values(b2Data).reduce((a, b) => a + b, 0) / totalMateriasValidas : 0;
+            document.getElementById("detalhe-modal").style.display = "flex";
+            
+            // Informações Básicas do Modal Header
+            let statusBadge = `<span class="status-badge status-bom">Bom</span>`;
+            if (diag.status === "Crítico") statusBadge = `<span class="status-badge status-critico">Risco Crítico</span>`;
+            if (diag.status === "Atenção") statusBadge = `<span class="status-badge status-atencao">Risco Médio (Atenção)</span>`;
 
-            let tendencia = 0;
-            if (somaB1 > 0 && somaB2 > 0) tendencia = (somaB2 - somaB1) * 0.4;
-            let fatorPresenca = aluno.frequencia / 100;
-            let previsaoFinal = Math.max(0, Math.min(10, ((somaB2 || somaB1 || 5.0) + tendencia) * (0.85 + (fatorPresenca * 0.15))));
-
-            document.getElementById('modal-semestres').innerHTML = `
-                <div class="card" style="padding:10px; text-align:center; flex:1;"><h5>Média 1º Bim</h5><strong>${somaB1 > 0 ? somaB1.toFixed(1) : '--'}</strong></div>
-                <div class="card" style="padding:10px; text-align:center; flex:1;"><h5>Média 2º Bim</h5><strong>${somaB2 > 0 ? somaB2.toFixed(1) : '--'}</strong></div>
-                <div class="card" style="padding:10px; text-align:center; flex:1; background:#eef2f7; border-color:var(--secondary-color);">
-                    <h5 style="color:var(--primary-color);">Projeção IA</h5><strong style="color:var(--secondary-color); font-size:18px;">${previsaoFinal.toFixed(1)}</strong>
+            document.getElementById("modal-header-info").innerHTML = `
+                <h2>${aluno.nome} <span style="font-size: 14px; font-weight: normal; color: #666;">(${aluno.turma})</span></h2>
+                <div style="margin-top: 5px; display: flex; gap: 15px; align-items: center; font-size: 13px;">
+                    <span>Frequência: <strong>${aluno.frequencia}%</strong></span>
+                    <span>ISE: <strong>${diag.ise}%</strong></span>
+                    ${statusBadge}
                 </div>
             `;
 
-            let bAtivo = aluno.notas.b2 ? 'b2' : 'b1';
-            let notesDisplay = aluno.notas[bAtivo] || {};
+            // Resetar Tabs para Primeira Tab
+            const botoesTab = document.querySelectorAll(".tab-btn");
+            botoesTab.forEach(btn => btn.classList.remove("active"));
+            botoesTab[0].classList.add("active");
 
-            let htmlBoletim = "";
-            disciplinasGerais.forEach(d => {
-                let val = notesDisplay[d.id] !== undefined ? notesDisplay[d.id] : 0;
-                htmlBoletim += `
-                    <div class="boletim-row">
-                        <div class="boletim-header-row"><span>${d.label}</span><strong>${val.toFixed(1)}</strong></div>
-                        <div class="nota-meter-bg">
-                            <div class="nota-meter-fill" style="width: ${val * 10}%; background-color: ${val >= 7 ? 'var(--success-color)' : val >= 5 ? 'var(--warning-color)' : 'var(--danger-color)'};"></div>
-                        </div>
-                    </div>`;
-            });
+            const conteudosTab = document.querySelectorAll(".tab-content");
+            conteudosTab.forEach(cont => cont.classList.remove("active"));
+            conteudosTab[0].classList.add("active");
 
-            const tecs = disciplinasTecnicas[config.key] || [];
-            tecs.forEach(d => {
-                let val = notesDisplay[d.id] !== undefined ? notesDisplay[d.id] : 0;
-                htmlBoletim += `
-                    <div class="boletim-row" style="border-left: 3px solid var(--secondary-color); padding-left: 5px;">
-                        <div class="boletim-header-row"><strong>${d.label} (Téc)</strong><strong>${val.toFixed(1)}</strong></div>
-                        <div class="nota-meter-bg">
-                            <div class="nota-meter-fill" style="width: ${val * 10}%; background-color: ${val >= 7 ? 'var(--success-color)' : val >= 5 ? 'var(--warning-color)' : 'var(--danger-color)'};"></div>
-                        </div>
-                    </div>`;
-            });
-
-            document.getElementById('modal-boletim-rows').innerHTML = htmlBoletim;
-
-            // Ativar Aba Padrão
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById('tab-desempenho').classList.add('active');
-            document.querySelector('.tab-btn').classList.add('active');
-
-            try { gerarGraficoRadarModal(aluno, config); } catch(e) {}
-            gerarPlanoPAI(aluno, config, previsaoFinal);
-            gerarCronogramaEstudos(aluno, config);
-            gerarComunicados(aluno, previsaoFinal);
-
-            document.getElementById('detalhe-modal').style.display = "flex";
+            // Popular Abas
+            popularTabDesempenho(aluno);
+            popularTabPai(aluno, diag);
+            popularTabCronograma(aluno, diag);
+            popularTabPronunciamento(aluno);
+            
+            // Limpa Área de Comunicados
+            document.getElementById("comunicado-texto").textContent = "Gere um comunicado de acordo com a situação atual...";
         }
 
         function fecharModal() {
-            document.getElementById('detalhe-modal').style.display = "none";
-            alunoModalAbertoIndex = null;
+            document.getElementById("detalhe-modal").style.display = "none";
+            if(chartAlunoModalInstance) {
+                chartAlunoModalInstance.destroy();
+                chartAlunoModalInstance = null;
+            }
         }
 
         function mudarTab(event, tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            const tabs = document.querySelectorAll(".tab-content");
+            tabs.forEach(tab => tab.classList.remove("active"));
 
-            document.getElementById(tabId).classList.add('active');
-            event.currentTarget.classList.add('active');
+            const tabBtns = document.querySelectorAll(".tab-btn");
+            tabBtns.forEach(btn => btn.classList.remove("active"));
+
+            document.getElementById(tabId).classList.add("active");
+            event.currentTarget.classList.add("active");
         }
 
-        function gerarGraficoRadarModal(aluno, config) {
-            if (typeof Chart === 'undefined') return;
-            const ctx = document.getElementById('chartAlunoModal').getContext('2d');
-
-            let labels = []; let dataB1 = []; let dataB2 = [];
-
-            disciplinasGerais.forEach(d => {
-                labels.push(d.label);
-                dataB1.push(aluno.notas.b1 ? (aluno.notas.b1[d.id] || 0) : 0);
-                dataB2.push(aluno.notas.b2 ? (aluno.notas.b2[d.id] || 0) : 0);
-            });
-
-            if (chartAlunoInstance) chartAlunoInstance.destroy();
-
-            chartAlunoInstance = new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        { label: '1º Bimestre', data: dataB1, backgroundColor: 'rgba(42, 82, 152, 0.1)', borderColor: 'rgba(42, 82, 152, 0.8)', borderWidth: 1.5 },
-                        { label: '2º Bimestre', data: dataB2, backgroundColor: 'rgba(46, 204, 113, 0.1)', borderColor: 'rgba(46, 204, 113, 0.8)', borderWidth: 1.5 }
-                    ]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
-        }
-
-        function gerarPlanoPAI(aluno, config, previsaoFinal) {
-            const media = calcularMediaGeralAluno(aluno);
-            document.getElementById('pai-dados-aluno').innerHTML = `
-                <strong>Rendimento Geral Atual:</strong> ${media.toFixed(1)} | Frequência: ${aluno.frequencia}% <br>
-                <strong>Projeção Preventiva:</strong> <span style="color: ${previsaoFinal < 6.0 ? 'var(--danger-color)' : 'var(--success-color)'}; font-weight: bold;">
-                    ${previsaoFinal < 6.0 ? 'Atenção Continuada Recomendada' : 'Fluxo Regular Estável'}
-                </span>
+        // --- ABA 1: PERFORMANCE & GRÁFICOS (MODAL) ---
+        function popularTabDesempenho(aluno) {
+            // Configurar botões de alternância de Semestres/Bimestres no modal
+            const bAtivo = aluno.bimestreAtivo || "b1";
+            const semestresDiv = document.getElementById("modal-semestres");
+            semestresDiv.innerHTML = `
+                <button class="btn ${bAtivo === 'b1' ? '' : 'btn-secondary'}" style="padding: 5px 10px; font-size:12px;" onclick="mudarBimestreAtivoModal('b1')">1º Bimestre</button>
+                <button class="btn ${bAtivo === 'b2' ? '' : 'btn-secondary'}" style="padding: 5px 10px; font-size:12px;" onclick="mudarBimestreAtivoModal('b2')">2º Bimestre</button>
             `;
 
-            let objetivosHtml = "<li>Acompanhar as disciplinas básicas.</li>";
-            let acoesHtml = "<li>Revisar conteúdos de forma autônoma.</li>";
-
-            if (aluno.frequencia < 75) {
-                objetivosHtml = "<li>Recuperar assiduidade básica emergencial.</li>";
-                acoesHtml = "<li>Buscar apoio da coordenação escolar para justificar faltas e planejar tarefas domiciliares.</li>";
-            } else if (media < 5.5) {
-                objetivosHtml = "<li>Sanar defasagens cognitivas severas.</li>";
-                acoesHtml = "<li>Orientar realização de oficinas de reforço ou trilhas de nivelamento.</li>";
-            }
-
-            document.getElementById('pai-objetivos').innerHTML = `<ul>${objetivosHtml}</ul>`;
-            document.getElementById('pai-acoes').innerHTML = `<ul>${acoesHtml}</ul>`;
+            renderizarBoletimRows(aluno, bAtivo);
+            construirGraficoRadarAluno(aluno, bAtivo);
         }
 
-        function gerarCronogramaEstudos(aluno, config) {
-            const bAtivo = aluno.notas.b2 ? 'b2' : 'b1';
-            const notas = aluno.notas[bAtivo] || {};
+        function mudarBimestreAtivoModal(bimestre) {
+            const aluno = alunos[alunoSelecionadoIndex];
+            renderizarBoletimRows(aluno, bimestre);
+            construirGraficoRadarAluno(aluno, bimestre);
             
-            let disciplinasAluno = [];
-            
-            disciplinasGerais.forEach(d => {
-                if (notas[d.id] !== undefined) disciplinasAluno.push({ id: d.id, label: d.label, nota: notas[d.id] });
-            });
-
-            disciplinasAluno.sort((a, b) => a.nota - b.nota);
-
-            let htmlTabela = "";
-            let totalHorasEstudo = 0;
-
-            disciplinasAluno.slice(0, 5).forEach(disc => {
-                let statusClass = "status-bom";
-                let urgenciaText = "✅ MANTER";
-                let horasRecomendadas = 1;
-
-                if (disc.nota < 5.5) {
-                    urgenciaText = "🚨 CRÍTICA";
-                    statusClass = "status-critico";
-                    horasRecomendadas = 4;
-                } else if (disc.nota < 7.0) {
-                    urgenciaText = "⚠️ ATENÇÃO";
-                    statusClass = "status-atencao";
-                    horasRecomendadas = 2;
-                }
-
-                totalHorasEstudo += horasRecomendadas;
-                const pontoFocal = topicosFocoDisciplinas[disc.id] || "Leitura e resolução de roteiros de estudo.";
-
-                htmlTabela += `
-                    <tr>
-                        <td><strong>${disc.label}</strong> (Nota: ${disc.nota.toFixed(1)})</td>
-                        <td style="text-align: center;"><span class="status-badge ${statusClass}">${urgenciaText}</span></td>
-                        <td style="text-align: center; font-weight: bold;">${horasRecomendadas}h</td>
-                        <td style="font-size: 12px;">${pontoFocal}</td>
-                    </tr>`;
-            });
-
-            document.getElementById('cronograma-tabela-corpo').innerHTML = htmlTabela;
-            document.getElementById('cronograma-resumo').innerHTML = `<strong>Recomendação Global:</strong> Recomendado dedicação semanal de até <strong>${totalHorasEstudo} horas</strong> estruturadas.`;
+            // Ajustar visual de botões de bimestre ativos
+            const botoes = document.querySelectorAll("#modal-semestres button");
+            botoes[0].className = bimestre === 'b1' ? 'btn' : 'btn btn-secondary';
+            botoes[1].className = bimestre === 'b2' ? 'btn' : 'btn btn-secondary';
         }
 
-        function gerarCronogramaAdaptativoPorFeedback() {
-            if (alunoModalAbertoIndex === null) return;
-            
-            const aluno = alunos[alunoModalAbertoIndex];
-            const entendeu = document.getElementById('aluno-entendeu').value.trim();
-            const dificuldade = document.getElementById('aluno-dificuldade').value.trim();
+        function renderizarBoletimRows(aluno, bimestre) {
+            const container = document.getElementById("modal-boletim-rows");
+            container.innerHTML = "";
 
-            if (!entendeu && !dificuldade) {
-                alert("Por favor, relate o que entendeu ou sua dificuldade antes de solicitar à IA.");
+            const notasBimestre = aluno.notas[bimestre] || {};
+            const disciplinas = Object.keys(notasBimestre);
+
+            if(disciplinas.length === 0) {
+                container.innerHTML = `<p style="font-size:13px; color:#666;">Nenhuma nota cadastrada para este bimestre.</p>`;
                 return;
             }
 
-            const containerRetorno = document.getElementById('retorno-cronograma-ia');
-            const diagnosticoTexto = document.getElementById('ia-diagnostico-texto');
-            const tabelaCorpo = document.getElementById('tabela-cronograma-ia-corpo');
+            disciplinas.forEach(disc => {
+                const nota = parseFloat(notasBimestre[disc]) || 0;
+                let colorBar = "var(--success-color)";
+                if(nota < 5.0) colorBar = "var(--danger-color)";
+                else if(nota < 6.5) colorBar = "var(--warning-color)";
 
-            tabelaCorpo.innerHTML = "";
-            containerRetorno.style.display = "block";
-
-            let diagnosticoHTML = `Analisando a autodeclaração de <strong>${aluno.nome}</strong>, geramos diretrizes de estudo inteligentes para otimizar seu aprendizado de forma independente.`;
-            let recomendacoes = [];
-
-            if (dificuldade) {
-                diagnosticoHTML += `<br><br>⚠️ <strong>Foco de Atenção Declarado:</strong> Dificuldades relatadas em <em>"${dificuldade}"</em>. Plano focado em quebrar este tema em microssegundos de estudo diário.`;
-                recomendacoes.push({
-                    foco: `Superar: "${dificuldade.length > 50 ? dificuldade.substring(0, 50) + '...' : dificuldade}"`,
-                    acao: "Assistir a uma videoaula básica focada (máx 15min) e realizar 3 exercícios guiados passo a passo.",
-                    esforço: "🔴 ALTO"
-                });
-            }
-
-            if (entendeu) {
-                diagnosticoHTML += `<br><br>✅ <strong>Ponto de Apoio Forte:</strong> Excelente compreensão demonstrada em <em>"${entendeu}"</em>. Use essa base para ganhar confiança.`;
-                recomendacoes.push({
-                    foco: `Fixar: "${entendeu.length > 50 ? entendeu.substring(0, 50) + '...' : entendeu}"`,
-                    acao: "Fazer um mapa mental rápido de 5 minutos para resumir o que já sabe e consolidar a memória.",
-                    esforço: "🟢 BAIXO"
-                });
-            }
-
-            recomendacoes.push({
-                foco: "Técnica Geral de Pomodoro",
-                acao: "Estudar em blocos de 25 minutos de atenção total com 5 minutos de pausa. Reduz a fadiga cerebral.",
-                esforço: "🟡 MÉDIO"
+                const row = document.createElement("div");
+                row.className = "boletim-row";
+                row.innerHTML = `
+                    <div class="boletim-header-row">
+                        <span style="font-size:13px; font-weight:600;">${disc}</span>
+                        <span style="font-size:13px; font-weight:bold; color: ${colorBar}">${nota.toFixed(1)}</span>
+                    </div>
+                    <div class="nota-meter-bg">
+                        <div class="nota-meter-fill" style="width: ${nota * 10}%; background-color: ${colorBar};"></div>
+                    </div>
+                `;
+                container.appendChild(row);
             });
-
-            let htmlTabela = "";
-            recomendacoes.forEach(rec => {
-                htmlTabela += `
-                    <tr>
-                        <td style="padding: 10px; border-bottom: 1px solid #ddd; font-size:12px;"><strong>${rec.foco}</strong></td>
-                        <td style="padding: 10px; border-bottom: 1px solid #ddd; font-size:12px; color:#555;">${rec.acao}</td>
-                        <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: center; font-weight: bold; font-size:11px;">${rec.esforço}</td>
-                    </tr>`;
-            });
-
-            diagnosticoTexto.innerHTML = diagnosticoHTML;
-            tabelaCorpo.innerHTML = htmlTabela;
         }
 
-        function gerarComunicados(aluno, previsaoFinal) {
-            const media = calcularMediaGeralAluno(aluno).toFixed(1);
-            let whatsappMsg = ""; let emailMsg = "";
+        function construirGraficoRadarAluno(aluno, bimestre) {
+            const canvas = document.getElementById('chartAlunoModal');
+            const ctx = canvas.getContext('2d');
 
-            if (aluno.frequencia < 75 || media < 5.5) {
-                whatsappMsg = `Olá! Da coordenação do EduVision. Solicitamos contato dos responsáveis de ${aluno.nome} para alinhamento pedagógico conjunto sobre frequência (${aluno.frequencia}%) e desempenho.`;
-                emailMsg = `Prezados Responsáveis,\n\nIdentificamos necessidade de atenção focada no desempenho do estudante ${aluno.nome} (Média Geral: ${media} | Presença: ${aluno.frequencia}%).\n\nConvidamos os senhores para dialogar de forma construtiva sobre o progresso curricular do estudante.\n\nAtenciosamente.`;
+            const notasBimestre = aluno.notas[bimestre] || {};
+            const labels = Object.keys(notasBimestre);
+            const dadosNotas = labels.map(d => parseFloat(notasBimestre[d]) || 0);
+
+            if (chartAlunoModalInstance) {
+                chartAlunoModalInstance.destroy();
+            }
+
+            chartAlunoModalInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `Desempenho Geral - ${bimestre.toUpperCase()}`,
+                        data: dadosNotas,
+                        backgroundColor: 'rgba(30, 60, 114, 0.2)',
+                        borderColor: 'rgba(30, 60, 114, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(42, 82, 152, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { display: true },
+                            suggestedMin: 0,
+                            suggestedMax: 10
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- ABA 2: PLANO DE ATENDIMENTO INDIVIDUALIZADO (PAI) ---
+        function popularTabPai(aluno, diag) {
+            const paiDados = document.getElementById("pai-dados-aluno");
+            const curso = obterCursoDaTurma(aluno.turma);
+
+            let statusColor = "var(--success-color)";
+            if(diag.status === "Crítico") statusColor = "var(--danger-color)";
+            if(diag.status === "Atenção") statusColor = "var(--warning-color)";
+
+            paiDados.innerHTML = `
+                <p><strong>Meta Geral de Rendimento:</strong> Reestabelecer ISE acima de 75% e zerar componentes abaixo da média curricular (6.0).</p>
+                <p style="margin-top: 5px;"><strong>Responsável Técnico pela Tutoria:</strong> Orientação Pedagógica Integrada de ${curso}.</p>
+                <p style="margin-top: 5px;"><strong>Fator Crítico de Impacto:</strong> Frequência Atual de <span style="color:${statusColor}; font-weight:bold;">${aluno.frequencia}%</span>.</p>
+            `;
+
+            // Objetivos Dinâmicos Baseados no Diagnóstico
+            const objContainer = document.getElementById("pai-objetivos");
+            objContainer.innerHTML = "";
+            const ulObjetivos = document.createElement("ul");
+            ulObjetivos.className = "list-pedagogica";
+
+            if (diag.pioresDisciplinas.length > 0) {
+                diag.pioresDisciplinas.forEach(p => {
+                    ulObjetivos.innerHTML += `<li>Elevar rendimento acadêmico na disciplina de <strong>${p.nome}</strong> (Nota atual: ${p.nota.toFixed(1)}), com reforço focado em tarefas semanais preventivas.</li>`;
+                });
             } else {
-                whatsappMsg = `Olá! Tudo bem? Passando para avisar que ${aluno.nome} está mantendo um progresso curricular regular e saudável! (Média Geral: ${media})`;
-                emailMsg = `Prezados Responsáveis,\n\nEntramos em contato para reportar que o estudante ${aluno.nome} mantém um percurso letivo estável dentro das diretrizes e competências esperadas. Parabéns pelo apoio continuado.\n\nAtenciosamente.`;
+                ulObjetivos.innerHTML += `<li>Manter excelente índice de aproveitamento curricular nos componentes básicos e técnicos.</li>`;
             }
 
-            document.getElementById('comunicado-whatsapp').innerText = whatsappMsg;
-            document.getElementById('comunicado-email').innerText = emailMsg;
+            if(aluno.frequencia < 75) {
+                ulObjetivos.innerHTML += `<li><strong>Urgência Absoluta:</strong> Cumprir cronograma de recuperação de frequência presencial obrigatória por lei escolar de proteção (mínimo 75%).</li>`;
+            } else if (aluno.frequencia < 85) {
+                ulObjetivos.innerHTML += `<li>Garantir assiduidade estável nas aulas matutinas para evitar evasão ou declínio de ISE.</li>`;
+            } else {
+                ulObjetivos.innerHTML += `<li>Manter constância de frequência acima do limiar padrão de assiduidade ótima.</li>`;
+            }
+
+            objContainer.appendChild(ulObjetivos);
+
+            // Ações Preventivas Escola + Família
+            const acoesContainer = document.getElementById("pai-acoes");
+            acoesContainer.innerHTML = "";
+            const ulAcoes = document.createElement("ul");
+            ulAcoes.className = "list-pedagogica";
+
+            if (diag.status === "Crítico") {
+                ulAcoes.innerHTML += `
+                    <li><strong>Ação Escolar 1 (Imediata):</strong> Plantão presencial individualizado nas disciplinas críticas toda terça e quinta-feira.</li>
+                    <li><strong>Ação Escolar 2:</strong> Atribuição de tutor par (aluno monitor de alto desempenho) nas aulas técnicas.</li>
+                    <li><strong>Ação da Família:</strong> Retirada programada de eletrônicos em horário de estudo fixado e monitoria direta diária das tarefas de casa.</li>
+                `;
+            } else if (diag.status === "Atenção") {
+                ulAcoes.innerHTML += `
+                    <li><strong>Ação Escolar 1:</strong> Integração com grupo de nivelamento acadêmico e reforço focado pré-provas.</li>
+                    <li><strong>Ação Escolar 2:</strong> Apoio psicopedagógico focado em organização da rotina semanal de estudos.</li>
+                    <li><strong>Ação da Família:</strong> Envio semanal do boletim de acompanhamento assinado pelos responsáveis e estímulo a rotinas focadas.</li>
+                `;
+            } else {
+                ulAcoes.innerHTML += `
+                    <li><strong>Ação Escolar:</strong> Desafio de monitoria de pares em disciplinas técnicas para fomento de liderança intelectual.</li>
+                    <li><strong>Ação da Família:</strong> Validação positiva de hábitos organizacionais de estudo autônomo.</li>
+                `;
+            }
+
+            acoesContainer.appendChild(ulAcoes);
         }
 
-        function copiarComunicado(id) {
-            const texto = document.getElementById(id).innerText;
-            navigator.clipboard.writeText(texto).then(() => {
-                alert("Texto copiado!");
+        // --- ABA 3: CRONOGRAMA DE ESTUDOS RECOMENDADO ---
+        function popularTabCronograma(aluno, diag) {
+            const resumo = document.getElementById("cronograma-resumo");
+            const bAtivo = aluno.bimestreAtivo || "b1";
+            const notasBimestre = aluno.notas[bAtivo] || {};
+
+            let cargaHorariaSemana = 10;
+            if(diag.status === "Crítico") cargaHorariaSemana = 18;
+            else if(diag.status === "Atenção") cargaHorariaSemana = 14;
+
+            resumo.innerHTML = `
+                <strong>Plano Semanal Recomendado: ${cargaHorariaSemana} Horas Úteis de Estudo Autônomo.</strong><br>
+                Foco prioritário calculado nas disciplinas com rendimento abaixo da média ideal histórica.
+            `;
+
+            const corpoTabela = document.getElementById("cronograma-tabela-corpo");
+            corpoTabela.innerHTML = "";
+
+            const disciplinas = Object.keys(notasBimestre);
+            
+            // Ordenar disciplinas de forma crescente (piores notas primeiro)
+            const sortedDisciplinas = [...disciplinas].sort((a,b) => (notasBimestre[a] || 0) - (notasBimestre[b] || 0));
+
+            sortedDisciplinas.forEach(disc => {
+                const nota = parseFloat(notasBimestre[disc]) || 0;
+                let statusAlerta = `<span class="status-badge status-bom">Estável</span>`;
+                let horas = 1;
+                let estrategia = "Revisão ativa rápida e autoexplicação periódica.";
+
+                if(nota < 5.0) {
+                    statusAlerta = `<span class="status-badge status-critico">Crítico</span>`;
+                    horas = Math.round(cargaHorariaSemana * 0.3); // Aloca mais tempo às piores
+                    estrategia = "Refazer exercícios de provas anteriores, mapas mentais e plantão presencial com monitor pedagógico.";
+                } else if(nota < 6.5) {
+                    statusAlerta = `<span class="status-badge status-atencao">Risco Médio</span>`;
+                    horas = Math.round(cargaHorariaSemana * 0.2);
+                    estrategia = "Foco em exercícios práticos e construção de resumos de conceitos essenciais.";
+                }
+
+                // Garante que matérias boas tenham tempo mínimo
+                if(horas <= 0) horas = 1; 
+
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td style="font-weight:600;">${disc} (${nota.toFixed(1)})</td>
+                    <td style="text-align: center;">${statusAlerta}</td>
+                    <td style="text-align: center; font-weight:bold;">${horas}h / semana</td>
+                    <td style="font-size:13px; color:#555;">${estrategia}</td>
+                `;
+                corpoTabela.appendChild(tr);
             });
         }
 
-        window.onclick = function(event) {
-            const modal = document.getElementById('detalhe-modal');
-            if (event.target === modal) {
-                fecharModal();
+        // --- ABA 4: VOZ DO ALUNO (CRUZAMENTO DE DADOS ALUNO x NOTAS) ---
+        function popularTabPronunciamento(aluno) {
+            document.getElementById("aluno-entendeu").value = aluno.feedbackAluno.entendeu || "";
+            document.getElementById("aluno-dificuldade").value = aluno.feedbackAluno.dificuldade || "";
+            document.getElementById("retorno-cronograma-ia").style.display = "none";
+        }
+
+        function gerarCronogramaAdaptativoPorFeedback() {
+            const aluno = alunos[alunoSelecionadoIndex];
+            const entendeuStr = document.getElementById("aluno-entendeu").value.trim();
+            const dificuldadeStr = document.getElementById("aluno-dificuldade").value.trim();
+
+            // Salvar no estado
+            aluno.feedbackAluno.entendeu = entendeuStr;
+            aluno.feedbackAluno.dificuldade = dificuldadeStr;
+
+            const bAtivo = aluno.bimestreAtivo || "b1";
+            const diag = calcularISEDoAluno(aluno);
+
+            // Analisa as disciplinas onde o rendimento está baixo (<6) e confronta se o aluno citou ou não no relato de dificuldades.
+            let pioresSemCitar = [];
+            let pioresCitadas = [];
+
+            diag.pioresDisciplinas.forEach(p => {
+                const termoBusca = p.nome.toLowerCase().substring(0, 5); // ex: "física" -> "físic"
+                if (dificuldadeStr.toLowerCase().includes(termoBusca)) {
+                    pioresCitadas.push(p.nome);
+                } else {
+                    pioresSemCitar.push(p.nome);
+                }
+            });
+
+            const diagnosticoArea = document.getElementById("ia-diagnostico-texto");
+            let diagnosticoHTML = "";
+
+            if(pioresCitadas.length > 0) {
+                diagnosticoHTML += `O estudante possui autopercepção clara das suas vulnerabilidades imediatas em <strong>${pioresCitadas.join(", ")}</strong>, alinhado com o desempenho real.<br>`;
             }
-        };
+            if(pioresSemCitar.length > 0) {
+                diagnosticoHTML += `🚨 <strong>Ponto Cego Identificado:</strong> O aluno possui notas baixas em <strong>${pioresSemCitar.join(", ")}</strong>, mas não as listou como dificuldades prioritárias. É necessário redirecionar o foco ativo dele.`;
+            }
+            if(pioresCitadas.length === 0 && pioresSemCitar.length === 0) {
+                diagnosticoHTML = `O estudante possui rendimento geral ótimo e exibe domínio claro dos conteúdos. O plano foca em aprofundamentos eletivos indicados no relato.`;
+            }
+
+            diagnosticoArea.innerHTML = diagnosticoHTML;
+
+            // Criar Grade Emergencial Dinâmica de 15 dias
+            const tabelaCorpo = document.getElementById("ia-cronograma-corpo");
+            tabelaCorpo.innerHTML = "";
+
+            const metasGeradas = [];
+            
+            // Regras de metas
+            if (pioresCitadas.length > 0) {
+                metasGeradas.push({
+                    meta: "Revisão e Aceleração Monitorada",
+                    foco: `Sanar dúvidas explícitas em ${pioresCitadas.join(", ")}`,
+                    recomenda: "Utilizar guias de estudo práticos e formular 5 questões autocorretivas por dia dos tópicos que indicou maior bloqueio."
+                });
+            }
+            if (pioresSemCitar.length > 0) {
+                metasGeradas.push({
+                    meta: "Intervenção em Ponto Cego",
+                    foco: `Nivelamento Teórico em ${pioresSemCitar.join(", ")}`,
+                    recomenda: "Assistir a videoaulas de nivelamento de base conceitual (mínimo 30 min diários) e buscar o professor de plantão."
+                });
+            }
+            
+            // Meta Geral de Estabilização
+            metasGeradas.push({
+                meta: "Gestão Emocional e Cronograma",
+                foco: "Redução de bloqueio e ansiedade em avaliações",
+                recomenda: "Realizar simulados cronometrados em ambiente isolado para ganhar ritmo de prova."
+            });
+
+            metasGeradas.forEach(m => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td style="font-weight:bold; color: var(--secondary-color);">${m.meta}</td>
+                    <td>${m.foco}</td>
+                    <td style="font-size:12px; line-height: 1.4;">${m.recomenda}</td>
+                `;
+                tabelaCorpo.appendChild(tr);
+            });
+
+            document.getElementById("retorno-cronograma-ia").style.display = "block";
+        }
+
+        // --- ABA 5: GERADOR DE COMUNICADOS ---
+        function gerarComunicado(tom) {
+            const aluno = alunos[alunoSelecionadoIndex];
+            const diag = calcularISEDoAluno(aluno);
+            const bAtivo = aluno.bimestreAtivo || "b1";
+
+            const pioresNomes = diag.pioresDisciplinas.map(p => `${p.nome} (nota: ${p.nota.toFixed(1)})`);
+
+            let texto = "";
+
+            if (tom === "acolhedor") {
+                texto = `Olá! Gostaríamos de compartilhar o acompanhamento pedagógico do(a) estudante ${aluno.nome}.\n\n`;
+                texto += `Entendemos que cada jornada acadêmica possui desafios individuais. Atualmente, o(a) estudante apresenta um Índice de Sucesso de ${diag.ise}%, necessitando de apoio mais próximo nos componentes de: ${pioresNomes.length > 0 ? pioresNomes.join(', ') : 'estabilidade curricular'}.\n\n`;
+                texto += `Acreditamos no potencial dele(a) e sugerimos uma agenda especial de apoio em parceria com a escola. Vamos juntos construir caminhos de superação para este bimestre!`;
+            } else if (tom === "urgente") {
+                texto = `ATENÇÃO: Comunicado Urgente de Desempenho Escolar.\n\n`;
+                texto += `Solicitamos a presença imediata dos responsáveis pelo(a) estudante ${aluno.nome} na coordenação pedagógica escolar.\n\n`;
+                texto += `Atualmente, o(a) estudante encontra-se em situação de Risco Acadêmico com frequência de ${aluno.frequencia}% (limite legal: 75%) e rendimento escolar com média geral de ${diag.mediaGeral}. Componentes com alertas graves: ${pioresNomes.length > 0 ? pioresNomes.join(', ') : 'Nenhum'}.\n\n`;
+                texto += `Precisamos intervir conjuntamente de forma célere para resguardar a aprovação direta de ano letivo.`;
+            } else if (tom === "elogio") {
+                texto = `Prezada Família, temos o prazer de enviar este reconhecimento de excelência escolar!\n\n`;
+                texto += `O(A) estudante ${aluno.nome} tem demonstrado excelente comprometimento, assiduidade impecável de ${aluno.frequencia}% e um notável rendimento global, com média avaliativa de ${diag.mediaGeral} e excelente aproveitamento técnico.\n\n`;
+                texto += `Parabenizamos o(a) estudante pela persistência diária, e à família pela rede de apoio contínua que tanto impulsiona o sucesso de nossos jovens!`;
+            }
+
+            document.getElementById("comunicado-texto").textContent = texto;
+        }
+
+        function copiarComunicado() {
+            const txt = document.getElementById("comunicado-texto").textContent;
+            if (txt.includes("Gere um comunicado")) {
+                alert("Nenhum texto gerado para copiar.");
+                return;
+            }
+
+            navigator.clipboard.writeText(txt).then(() => {
+                alert("Comunicado copiado com sucesso para a área de transferência!");
+            }).catch(err => {
+                alert("Erro ao copiar texto automaticamente.");
+            });
+        }
     </script>
 </body>
 </html>
